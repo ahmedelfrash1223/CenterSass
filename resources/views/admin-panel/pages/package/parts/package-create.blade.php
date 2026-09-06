@@ -74,7 +74,8 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">{{ $feature->label() }} <small
                                 class="text-muted">({{ $feature->unit() }})</small></label>
-                        <input type="number" min="0" class="form-control @error('features.'.$index.'.value') is-invalid @enderror"
+                        <input type="number" min="0"
+                               class="form-control @error('features.'.$index.'.value') is-invalid @enderror"
                                wire:model="features.{{ $index }}.value">
                         @error('features.'.$index.'.value')
                         <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -92,6 +93,7 @@
                         wire:loading.attr="disabled"
                         wire:target="save(false)">
                     <span wire:loading.remove wire:target="save(false)">
+                        <i class="ph-duotone ph-floppy-disk me-1"></i>
                         حفظ
                     </span>
                     <span wire:loading wire:target="save(false)">
@@ -105,6 +107,7 @@
                         wire:loading.attr="disabled"
                         wire:target="save(true)">
                     <span wire:loading.remove wire:target="save(true)">
+                        <i class="ph-duotone ph-plus-circle me-1"></i>
                         حفظ وإنشاء جديد
                     </span>
                     <span wire:loading wire:target="save(true)">
@@ -114,6 +117,7 @@
                 </button>
 
                 <a href="{{ route('admin.package.index') }}" wire:navigate class="btn btn-light border">
+                    <i class="ph-duotone ph-x-circle me-1"></i>
                     إلغاء
                 </a>
             </div>

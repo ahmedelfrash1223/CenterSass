@@ -14,7 +14,7 @@
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-2">
                                     <li class="breadcrumb-item">
-                                        <a href="{{ route('admin.dashboard') }}" class="text-decoration-none">
+                                        <a wire:navigate href="{{ route('admin.dashboard') }}" class="text-decoration-none">
                                             <i class="ph-duotone ph-house me-1"></i>
                                             الرئيسية
                                         </a>

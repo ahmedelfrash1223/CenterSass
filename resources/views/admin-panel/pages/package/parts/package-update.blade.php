@@ -94,7 +94,8 @@
                         wire:loading.attr="disabled"
                         wire:target="update(false)">
                     <span wire:loading.remove wire:target="update(false)">
-                        حفظ
+                        <i class="ph-duotone ph-floppy-disk me-1"></i>
+                         حفظ التعديلات
                     </span>
                     <span wire:loading wire:target="update(false)">
                         <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
@@ -103,6 +104,7 @@
                 </button>
 
                 <a href="{{ route('admin.package.index') }}" wire:navigate class="btn btn-light border">
+                    <i class="ph-duotone ph-x-circle me-1"></i>
                     إلغاء
                 </a>
             </div>
