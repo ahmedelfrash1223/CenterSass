@@ -18,6 +18,7 @@ class TeacherSeeder extends Seeder
             'name' => 'Demo Teacher',
             'email' => 'teacher@example.com',
             'password' => Hash::make('P@ssw0rd'),
+            'phone' =>'0123456789',
             'is_active' => 1,
         ]);
     }
