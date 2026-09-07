@@ -45,6 +45,15 @@
                     </a>
                 </li>
 
+                <li class="pc-item @yield('subscription-active')">
+                    <a wire:navigate href="{{route('admin.subscriptions.index')}}" class="pc-link">
+                        <span class="pc-micon">
+                      <i class="ph-duotone ph-repeat"></i>
+                        </span>
+                        <span class="pc-mtext">الاشتراكات</span>
+                    </a>
+                </li>
+
 
             </ul>
         </div>
