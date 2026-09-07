@@ -1,1 +1,1 @@
-@include('admin-panel.pages.subscription.parts.subscription-create', ['editMode' => true])
+@include('admin-panel.pages.subscription.parts.subscription-form', ['editMode' => true])
