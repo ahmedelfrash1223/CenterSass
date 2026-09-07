@@ -56,53 +56,6 @@
                                     class="ph-duotone ph-dot-outline me-1"></i>{{ $description }}</p>
                         </div>
                     </div>
-                    <!-- Page actions stay beside the title for fast navigation. -->
-                    <div class="d-flex gap-2 flex-wrap">
-                        @if ($pageType === 'index')
-                            <a
-                                href="{{ route($createRoute) }}"
-                                wire:navigate
-                                class="btn btn-primary admin-header-action"
-                            >
-                                <i class="ph-duotone ph-plus me-1"></i>
-                                إضافة جديد
-                            </a>
-                        @elseif ($pageType === 'show')
-                            <a
-                                href="{{ route($editRoute, $item) }}"
-                                wire:navigate
-                                class="btn btn-primary admin-header-action"
-                            >
-                                <i class="ph-duotone ph-pencil-simple me-1"></i>
-                                تعديل
-                            </a>
-                            <button
-                                type="button"
-                                wire:click="confirmDelete"
-                                class="btn btn-outline-danger admin-header-action"
-                            >
-                                <i class="ph-duotone ph-trash me-1"></i>
-                                حذف
-                            </button>
-                            <a
-                                href="{{ route($indexRoute) }}"
-                                wire:navigate
-                                class="btn btn-light border admin-header-action"
-                            >
-                                <i class="ph-duotone ph-arrow-right me-1"></i>
-                                رجوع
-                            </a>
-                        @else
-                            <a
-                                href="{{ route($indexRoute) }}"
-                                wire:navigate
-                                class="btn btn-light border admin-header-action"
-                            >
-                                <i class="ph-duotone ph-arrow-right me-1"></i>
-                                رجوع
-                            </a>
-                        @endif
-                    </div>
                 </div>
             </div>
         </div>
