@@ -7,10 +7,10 @@
                 <div class="card-body py-4 welcome-content">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                                <span class="badge bg-white bg-opacity-10 mb-3 px-3 py-2">
-                                    <i class="ph-duotone ph-sparkle me-1"></i>
-                                    مرحباً بك من جديد 👋
-                                </span>
+                            <span class="badge bg-white bg-opacity-10 mb-3 px-3 py-2">
+                                <i class="ph-duotone ph-sparkle me-1"></i>
+                                مرحباً بك من جديد 👋
+                            </span>
 
                             <h2 class="text-white mb-2">
                                 أهلاً بك في لوحة التحكم
@@ -23,8 +23,10 @@
                         </div>
 
                         <div class="col-md-4 text-md-end text-center mt-3 mt-md-0">
-                            <i class="ph-duotone ph-student"
-                               style="font-size:100px;opacity:.18;"></i>
+                            <i
+                                class="ph-duotone ph-student"
+                                style="font-size:100px;opacity:.18;"
+                            ></i>
                         </div>
                     </div>
                 </div>
@@ -49,16 +51,21 @@
                             <div class="d-flex align-items-center">
                                 <h3 class="stat-number mb-0">1,248</h3>
                                 <span class="badge bg-light-success ms-2">
-                                        +12%
-                                    </span>
+                                    +12%
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <div class="progress" style="height:6px;">
-                            <div class="progress-bar bg-primary"
-                                 style="width:78%;"></div>
+                        <div
+                            class="progress"
+                            style="height:6px;"
+                        >
+                            <div
+                                class="progress-bar bg-primary"
+                                style="width:78%;"
+                            ></div>
                         </div>
 
                         <small class="text-muted d-block mt-2">
@@ -86,16 +93,21 @@
                             <div class="d-flex align-items-center">
                                 <h3 class="stat-number mb-0">86</h3>
                                 <span class="badge bg-light-success ms-2">
-                                        +8%
-                                    </span>
+                                    +8%
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <div class="progress" style="height:6px;">
-                            <div class="progress-bar bg-success"
-                                 style="width:65%;"></div>
+                        <div
+                            class="progress"
+                            style="height:6px;"
+                        >
+                            <div
+                                class="progress-bar bg-success"
+                                style="width:65%;"
+                            ></div>
                         </div>
 
                         <small class="text-muted d-block mt-2">
@@ -123,16 +135,21 @@
                             <div class="d-flex align-items-center">
                                 <h3 class="stat-number mb-0">124</h3>
                                 <span class="badge bg-light-warning ms-2">
-                                        +15%
-                                    </span>
+                                    +15%
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <div class="progress" style="height:6px;">
-                            <div class="progress-bar bg-warning"
-                                 style="width:72%;"></div>
+                        <div
+                            class="progress"
+                            style="height:6px;"
+                        >
+                            <div
+                                class="progress-bar bg-warning"
+                                style="width:72%;"
+                            ></div>
                         </div>
 
                         <small class="text-muted d-block mt-2">
@@ -162,17 +179,21 @@
                                     248,500
                                 </h3>
                                 <span class="badge bg-white bg-opacity-10 text-white ms-2">
-                                        +18%
-                                    </span>
+                                    +18%
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <div class="progress bg-white bg-opacity-10"
-                             style="height:6px;">
-                            <div class="progress-bar bg-white"
-                                 style="width:84%;"></div>
+                        <div
+                            class="progress bg-white bg-opacity-10"
+                            style="height:6px;"
+                        >
+                            <div
+                                class="progress-bar bg-white"
+                                style="width:84%;"
+                            ></div>
                         </div>
 
                         <small class="text-white text-opacity-75 d-block mt-2">
@@ -198,7 +219,10 @@
                     <div class="row g-3">
 
                         <div class="col-6 col-md-3">
-                            <a href="#" class="text-decoration-none">
+                            <a
+                                href="#"
+                                class="text-decoration-none"
+                            >
                                 <div class="quick-action d-flex align-items-center">
                                     <div class="dashboard-icon icon-primary">
                                         <i class="ph-duotone ph-user-plus"></i>
@@ -215,7 +239,10 @@
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <a href="#" class="text-decoration-none">
+                            <a
+                                href="#"
+                                class="text-decoration-none"
+                            >
                                 <div class="quick-action d-flex align-items-center">
                                     <div class="dashboard-icon icon-success">
                                         <i class="ph-duotone ph-chalkboard-teacher"></i>
@@ -232,7 +259,10 @@
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <a href="#" class="text-decoration-none">
+                            <a
+                                href="#"
+                                class="text-decoration-none"
+                            >
                                 <div class="quick-action d-flex align-items-center">
                                     <div class="dashboard-icon icon-warning">
                                         <i class="ph-duotone ph-book-open"></i>
@@ -249,7 +279,10 @@
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <a href="#" class="text-decoration-none">
+                            <a
+                                href="#"
+                                class="text-decoration-none"
+                            >
                                 <div class="quick-action d-flex align-items-center">
                                     <div class="dashboard-icon icon-info">
                                         <i class="ph-duotone ph-chart-line-up"></i>
@@ -285,16 +318,27 @@
                     </div>
 
                     <div class="dropdown">
-                        <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none"
-                           href="#"
-                           data-bs-toggle="dropdown">
+                        <a
+                            class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none"
+                            href="#"
+                            data-bs-toggle="dropdown"
+                        >
                             <i class="ph-duotone ph-dots-three f-18"></i>
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#">هذا الشهر</a>
-                            <a class="dropdown-item" href="#">آخر 3 أشهر</a>
-                            <a class="dropdown-item" href="#">هذا العام</a>
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >هذا الشهر</a>
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >آخر 3 أشهر</a>
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >هذا العام</a>
                         </div>
                     </div>
                 </div>
@@ -311,9 +355,9 @@
                         </div>
 
                         <span class="badge bg-light-success ms-auto">
-                                <i class="ph-duotone ph-trend-up"></i>
-                                12.5%
-                            </span>
+                            <i class="ph-duotone ph-trend-up"></i>
+                            12.5%
+                        </span>
                     </div>
 
                     <div id="earnings-users-chart"></div>
@@ -350,9 +394,14 @@
                         <span class="badge bg-light-success">71%</span>
                     </div>
 
-                    <div class="progress mb-4" style="height:9px;">
-                        <div class="progress-bar bg-success"
-                             style="width:71%;"></div>
+                    <div
+                        class="progress mb-4"
+                        style="height:9px;"
+                    >
+                        <div
+                            class="progress-bar bg-success"
+                            style="width:71%;"
+                        ></div>
                     </div>
 
                     <div class="d-flex align-items-center mb-4">
@@ -368,9 +417,14 @@
                         <span class="badge bg-light-warning">10%</span>
                     </div>
 
-                    <div class="progress mb-4" style="height:9px;">
-                        <div class="progress-bar bg-warning"
-                             style="width:10%;"></div>
+                    <div
+                        class="progress mb-4"
+                        style="height:9px;"
+                    >
+                        <div
+                            class="progress-bar bg-warning"
+                            style="width:10%;"
+                        ></div>
                     </div>
 
                     <div class="d-flex align-items-center">
@@ -386,9 +440,14 @@
                         <span class="badge bg-light-danger">19%</span>
                     </div>
 
-                    <div class="progress mt-3" style="height:9px;">
-                        <div class="progress-bar bg-danger"
-                             style="width:19%;"></div>
+                    <div
+                        class="progress mt-3"
+                        style="height:9px;"
+                    >
+                        <div
+                            class="progress-bar bg-danger"
+                            style="width:19%;"
+                        ></div>
                     </div>
 
                 </div>
@@ -410,8 +469,8 @@
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-0">12,281</h4>
                                 <span class="badge bg-light-success ms-2">
-                                        +7.2%
-                                    </span>
+                                    +7.2%
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -445,8 +504,8 @@
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-0">9,842</h4>
                                 <span class="badge bg-light-success ms-2">
-                                        +5.9%
-                                    </span>
+                                    +5.9%
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -480,8 +539,8 @@
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-0">6,520</h4>
                                 <span class="badge bg-light-success ms-2">
-                                        +6.2%
-                                    </span>
+                                    +6.2%
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -515,16 +574,21 @@
                         </p>
                     </div>
 
-                    <a href="#" class="btn btn-sm btn-light-primary">
+                    <a
+                        href="#"
+                        class="btn btn-sm btn-light-primary"
+                    >
                         عرض الكل
                     </a>
                 </div>
 
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
-                        <img src="{{ asset('assets/adminPanel/images/user/avatar-1.jpg') }}"
-                             class="student-avatar"
-                             alt="student">
+                        <img
+                            src="{{ asset('assets/adminPanel/images/user/avatar-1.jpg') }}"
+                            class="student-avatar"
+                            alt="student"
+                        >
 
                         <div class="flex-grow-1 ms-3">
                             <h6 class="mb-1">أحمد محمد</h6>
@@ -534,14 +598,16 @@
                         </div>
 
                         <span class="badge bg-light-success">
-                                نشط
-                            </span>
+                            نشط
+                        </span>
                     </div>
 
                     <div class="d-flex align-items-center mb-4">
-                        <img src="{{ asset('assets/adminPanel/images/user/avatar-2.jpg') }}"
-                             class="student-avatar"
-                             alt="student">
+                        <img
+                            src="{{ asset('assets/adminPanel/images/user/avatar-2.jpg') }}"
+                            class="student-avatar"
+                            alt="student"
+                        >
 
                         <div class="flex-grow-1 ms-3">
                             <h6 class="mb-1">محمد علي</h6>
@@ -551,14 +617,16 @@
                         </div>
 
                         <span class="badge bg-light-success">
-                                نشط
-                            </span>
+                            نشط
+                        </span>
                     </div>
 
                     <div class="d-flex align-items-center mb-4">
-                        <img src="{{ asset('assets/adminPanel/images/user/avatar-3.jpg') }}"
-                             class="student-avatar"
-                             alt="student">
+                        <img
+                            src="{{ asset('assets/adminPanel/images/user/avatar-3.jpg') }}"
+                            class="student-avatar"
+                            alt="student"
+                        >
 
                         <div class="flex-grow-1 ms-3">
                             <h6 class="mb-1">عمر خالد</h6>
@@ -568,14 +636,16 @@
                         </div>
 
                         <span class="badge bg-light-warning">
-                                متأخر
-                            </span>
+                            متأخر
+                        </span>
                     </div>
 
                     <div class="d-flex align-items-center">
-                        <img src="{{ asset('assets/adminPanel/images/user/avatar-4.jpg') }}"
-                             class="student-avatar"
-                             alt="student">
+                        <img
+                            src="{{ asset('assets/adminPanel/images/user/avatar-4.jpg') }}"
+                            class="student-avatar"
+                            alt="student"
+                        >
 
                         <div class="flex-grow-1 ms-3">
                             <h6 class="mb-1">يوسف محمود</h6>
@@ -585,8 +655,8 @@
                         </div>
 
                         <span class="badge bg-light-success">
-                                نشط
-                            </span>
+                            نشط
+                        </span>
                     </div>
                 </div>
             </div>
@@ -607,7 +677,10 @@
                         </p>
                     </div>
 
-                    <a href="#" class="btn btn-sm btn-light-primary">
+                    <a
+                        href="#"
+                        class="btn btn-sm btn-light-primary"
+                    >
                         عرض الكل
                     </a>
                 </div>

@@ -8,27 +8,39 @@
     };
 @endphp
 
-<div class="page-header ">
+<!-- Page Header -->
+<div class="page-header">
     <div class="page-block">
         <div class="row align-items-center g-3">
+            <!-- Breadcrumb Navigation -->
             <div class="col-md-12">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-2">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}" wire:navigate
-                                                       class="text-decoration-none"><i
-                                    class="ph-duotone ph-house me-1"></i>الرئيسية</a></li>
-                        @if($pageType !== 'index')
-                            <li class="breadcrumb-item"><a href="{{ route($indexRoute) }}" wire:navigate
-                                                           class="text-decoration-none"><i
-                                        class="ph-duotone {{ $icon }} me-1"></i>{{ $moduleLabel }}</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{{ $pageLabel }}</li>
+                        <li class="breadcrumb-item"><a
+                                href="{{ route('admin.dashboard') }}"
+                                wire:navigate
+                                class="text-decoration-none"
+                            ><i class="ph-duotone ph-house me-1"></i>الرئيسية</a></li>
+                        @if ($pageType !== 'index')
+                            <li class="breadcrumb-item"><a
+                                    href="{{ route($indexRoute) }}"
+                                    wire:navigate
+                                    class="text-decoration-none"
+                                ><i class="ph-duotone {{ $icon }} me-1"></i>{{ $moduleLabel }}</a></li>
+                            <li
+                                class="breadcrumb-item active"
+                                aria-current="page"
+                            >{{ $pageLabel }}</li>
                         @else
-                            <li class="breadcrumb-item active" aria-current="page"><i
-                                    class="ph-duotone {{ $icon }} me-1"></i>{{ $moduleLabel }}</li>
+                            <li
+                                class="breadcrumb-item active"
+                                aria-current="page"
+                            ><i class="ph-duotone {{ $icon }} me-1"></i>{{ $moduleLabel }}</li>
                         @endif
                     </ol>
                 </nav>
             </div>
+            <!-- Page Title and Actions -->
             <div class="col-md-12">
                 <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
                     <div class="d-flex align-items-center gap-3">
@@ -37,12 +49,59 @@
                         </div>
                         <div>
                             <h1 class="page-header-title mb-0">{{ $title }} <span
-                                    class="badge bg-{{ $badge['color'] }} bg-opacity-10 text-{{ $badge['color'] }} ms-2 fs-6 fw-normal"><i
-                                        class="ph-duotone {{ $badge['icon'] }} me-1"></i>{{ $badge['text'] }}</span>
+                                    class="badge bg-{{ $badge['color'] }} bg-opacity-10 text-{{ $badge['color'] }} ms-2 fs-6 fw-normal"
+                                ><i class="ph-duotone {{ $badge['icon'] }} me-1"></i>{{ $badge['text'] }}</span>
                             </h1>
                             <p class="text-muted small mb-0 mt-1"><i
                                     class="ph-duotone ph-dot-outline me-1"></i>{{ $description }}</p>
                         </div>
+                    </div>
+                    <!-- Page actions stay beside the title for fast navigation. -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        @if ($pageType === 'index')
+                            <a
+                                href="{{ route($createRoute) }}"
+                                wire:navigate
+                                class="btn btn-primary admin-header-action"
+                            >
+                                <i class="ph-duotone ph-plus me-1"></i>
+                                إضافة جديد
+                            </a>
+                        @elseif ($pageType === 'show')
+                            <a
+                                href="{{ route($editRoute, $item) }}"
+                                wire:navigate
+                                class="btn btn-primary admin-header-action"
+                            >
+                                <i class="ph-duotone ph-pencil-simple me-1"></i>
+                                تعديل
+                            </a>
+                            <button
+                                type="button"
+                                wire:click="confirmDelete"
+                                class="btn btn-outline-danger admin-header-action"
+                            >
+                                <i class="ph-duotone ph-trash me-1"></i>
+                                حذف
+                            </button>
+                            <a
+                                href="{{ route($indexRoute) }}"
+                                wire:navigate
+                                class="btn btn-light border admin-header-action"
+                            >
+                                <i class="ph-duotone ph-arrow-right me-1"></i>
+                                رجوع
+                            </a>
+                        @else
+                            <a
+                                href="{{ route($indexRoute) }}"
+                                wire:navigate
+                                class="btn btn-light border admin-header-action"
+                            >
+                                <i class="ph-duotone ph-arrow-right me-1"></i>
+                                رجوع
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

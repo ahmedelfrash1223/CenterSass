@@ -1,10 +1,13 @@
-@section('title','تسجيل الدخول')
+@section('title', 'تسجيل الدخول')
 @extends('admin-panel.auth.master')
 @section('main')
     <div class="auth-main v1">
         <div class="auth-wrapper">
             <div class="auth-form">
-                <div class="card border-0 shadow-sm my-5" style="border-radius:20px;">
+                <div
+                    class="card border-0 shadow-sm my-5"
+                    style="border-radius:20px;"
+                >
                     <div class="card-body p-4 p-md-5">
 
                         <div class="text-center mb-4">

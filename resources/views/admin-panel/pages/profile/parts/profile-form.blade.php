@@ -1,4 +1,7 @@
-<div class="profile-page" dir="rtl">
+<div
+    class="profile-page"
+    dir="rtl"
+>
 
     @if (session()->has('profile-success'))
         <div class="alert alert-success d-flex align-items-center gap-2 border-0 shadow-sm mb-4">
@@ -31,7 +34,8 @@
                         </div>
 
                         <span
-                            class="position-absolute bottom-0 start-0 translate-middle p-2 bg-success border border-3 border-white rounded-circle"></span>
+                            class="position-absolute bottom-0 start-0 translate-middle p-2 bg-success border border-3 border-white rounded-circle"
+                        ></span>
 
                     </div>
 
@@ -112,7 +116,6 @@
                         </label>
 
                         @if ($editing === 'name')
-
                             <div>
 
                                 <input
@@ -124,9 +127,9 @@
                                 >
 
                                 @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
 
                                 <div class="d-flex align-items-center gap-2 mt-3">
@@ -153,9 +156,7 @@
                                 </div>
 
                             </div>
-
                         @else
-
                             <div class="d-flex align-items-center gap-2">
 
                                 <span class="fw-semibold text-body">
@@ -172,7 +173,6 @@
                                 </button>
 
                             </div>
-
                         @endif
 
                     </div>
@@ -199,7 +199,6 @@
                         </label>
 
                         @if ($editing === 'username')
-
                             <div>
 
                                 <input
@@ -211,9 +210,9 @@
                                 >
 
                                 @error('username')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
 
                                 <div class="d-flex align-items-center gap-2 mt-3">
@@ -240,9 +239,7 @@
                                 </div>
 
                             </div>
-
                         @else
-
                             <div class="d-flex align-items-center gap-2">
 
                                 <span class="fw-semibold text-body">
@@ -259,7 +256,6 @@
                                 </button>
 
                             </div>
-
                         @endif
 
                     </div>
@@ -286,7 +282,6 @@
                         </label>
 
                         @if ($editing === 'email')
-
                             <div>
 
                                 <input
@@ -298,9 +293,9 @@
                                 >
 
                                 @error('email')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
 
                                 <div class="d-flex align-items-center gap-2 mt-3">
@@ -327,9 +322,7 @@
                                 </div>
 
                             </div>
-
                         @else
-
                             <div class="d-flex align-items-center gap-2 flex-wrap">
 
                                 <span class="fw-semibold text-body">
@@ -346,7 +339,6 @@
                                 </button>
 
                             </div>
-
                         @endif
 
                     </div>
@@ -445,9 +437,9 @@
                             </div>
 
                             @error('current_password')
-                            <div class="text-danger small mt-1">
-                                {{ $message }}
-                            </div>
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
                             @enderror
 
                         </div>
@@ -475,9 +467,9 @@
                             </div>
 
                             @error('new_password')
-                            <div class="text-danger small mt-1">
-                                {{ $message }}
-                            </div>
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
                             @enderror
 
                         </div>
@@ -506,9 +498,9 @@
                             </div>
 
                             @error('new_password_confirmation')
-                            <div class="text-danger small mt-1">
-                                {{ $message }}
-                            </div>
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
                             @enderror
 
                         </div>
@@ -527,11 +519,17 @@
 
                                     <i class="ph-duotone ph-lock-key"></i>
 
-                                    <span wire:loading.remove wire:target="changePassword">
+                                    <span
+                                        wire:loading.remove
+                                        wire:target="changePassword"
+                                    >
                                         تغيير كلمة المرور
                                     </span>
 
-                                    <span wire:loading wire:target="changePassword">
+                                    <span
+                                        wire:loading
+                                        wire:target="changePassword"
+                                    >
                                         جاري التحديث...
                                     </span>
 

@@ -1,4 +1,4 @@
-@section('title','الملف الشخصي')
+@section('title', 'الملف الشخصي')
 @extends('admin-panel.master')
 
 @section('main')
@@ -14,12 +14,19 @@
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-2">
                                     <li class="breadcrumb-item">
-                                        <a wire:navigate href="{{ route('admin.dashboard') }}" class="text-decoration-none">
+                                        <a
+                                            wire:navigate
+                                            href="{{ route('admin.dashboard') }}"
+                                            class="text-decoration-none"
+                                        >
                                             <i class="ph-duotone ph-house me-1"></i>
                                             الرئيسية
                                         </a>
                                     </li>
-                                    <li class="breadcrumb-item" aria-current="page">
+                                    <li
+                                        class="breadcrumb-item"
+                                        aria-current="page"
+                                    >
                                         <i class="ph-duotone ph-user-circle"></i>
                                         الملف الشخصي
                                     </li>
@@ -40,9 +47,9 @@
                                     <h1 class="page-header-title mb-0">
                                         الملف الشخصي
                                         <span class="badge bg-primary bg-opacity-10 text-primary ms-2 fs-6 fw-normal">
-                                <i class="ph-duotone ph-shield-check me-1"></i>
-                                {{ Auth::guard('admin')->user()->name ?? 'مدير' }}
-                            </span>
+                                            <i class="ph-duotone ph-shield-check me-1"></i>
+                                            {{ Auth::guard('admin')->user()->name ?? 'مدير' }}
+                                        </span>
                                     </h1>
                                     <p class="text-muted small mb-0 mt-1">
                                         <i class="ph-duotone ph-dot-outline me-1"></i>

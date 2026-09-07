@@ -1,64 +1,92 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="{{route('admin.dashboard')}}" class="b-brand text-primary">
-                <img style="max-height: 95px;" src="{{asset('assets/adminPanel')}}/images/logo.png" alt="logo image"/>
+            <a
+                href="{{ route('admin.dashboard') }}"
+                class="b-brand text-primary"
+            >
+                <img
+                    style="max-height: 95px;"
+                    src="{{ asset('assets/adminPanel') }}/images/logo.png"
+                    alt="logo image"
+                />
             </a>
         </div>
         <div class="navbar-content">
             <ul class="pc-navbar">
 
                 <li class="pc-item @yield('home-active')">
-                    <a wire:navigate href="{{route('admin.dashboard')}}" class="pc-link">
+                    <a
+                        wire:navigate
+                        href="{{ route('admin.dashboard') }}"
+                        class="pc-link"
+                    >
                         <span class="pc-micon">
-                      <i class="ph-duotone ph-gauge"></i>
+                            <i class="ph-duotone ph-gauge"></i>
                         </span>
                         <span class="pc-mtext">الصفحة الرئيسية</span>
                     </a>
                 </li>
 
                 <li class="pc-item @yield('admin-active')">
-                    <a wire:navigate href="{{route('admin.admins.index')}}" class="pc-link">
+                    <a
+                        wire:navigate
+                        href="{{ route('admin.admins.index') }}"
+                        class="pc-link"
+                    >
                         <span class="pc-micon">
-                      <i class="ph-duotone ph-users"></i>
+                            <i class="ph-duotone ph-users"></i>
                         </span>
                         <span class="pc-mtext">المديرين</span>
                     </a>
                 </li>
 
                 <li class="pc-item @yield('package-active')">
-                    <a wire:navigate href="{{route('admin.package.index')}}" class="pc-link">
+                    <a
+                        wire:navigate
+                        href="{{ route('admin.package.index') }}"
+                        class="pc-link"
+                    >
                         <span class="pc-micon">
-                      <i class="ph-duotone ph-package"></i>
+                            <i class="ph-duotone ph-package"></i>
                         </span>
                         <span class="pc-mtext">الباقات</span>
                     </a>
                 </li>
 
-
                 <li class="pc-item @yield('teacher-active')">
-                    <a wire:navigate href="{{route('admin.teacher.index')}}" class="pc-link">
+                    <a
+                        wire:navigate
+                        href="{{ route('admin.teacher.index') }}"
+                        class="pc-link"
+                    >
                         <span class="pc-micon">
-                      <i class="ph-duotone ph-folder-user"></i>
+                            <i class="ph-duotone ph-folder-user"></i>
                         </span>
                         <span class="pc-mtext">المدرسين</span>
                     </a>
                 </li>
 
                 <li class="pc-item @yield('subscription-active')">
-                    <a wire:navigate href="{{route('admin.subscriptions.index')}}" class="pc-link">
+                    <a
+                        wire:navigate
+                        href="{{ route('admin.subscriptions.index') }}"
+                        class="pc-link"
+                    >
                         <span class="pc-micon">
-                      <i class="ph-duotone ph-repeat"></i>
+                            <i class="ph-duotone ph-repeat"></i>
                         </span>
                         <span class="pc-mtext">الاشتراكات</span>
                     </a>
                 </li>
 
-
             </ul>
         </div>
         <div class="pc-sidebar-footer">
-            <div class="card pc-user-card" dir="rtl">
+            <div
+                class="card pc-user-card"
+                dir="rtl"
+            >
                 <div class="card-body">
 
                     <div class="d-flex align-items-center">

@@ -10,7 +10,7 @@
         >
 
         @error('login')
-        <span class="text-danger">{{ $message }}</span>
+            <span class="text-danger">{{ $message }}</span>
         @enderror
     </div>
 
@@ -24,7 +24,7 @@
         >
 
         @error('password')
-        <span class="text-danger">{{ $message }}</span>
+            <span class="text-danger">{{ $message }}</span>
         @enderror
     </div>
 
@@ -38,7 +38,10 @@
                 wire:model="remember"
             >
 
-            <label class="form-check-label text-muted" for="rememberMe">
+            <label
+                class="form-check-label text-muted"
+                for="rememberMe"
+            >
                 تذكرني
             </label>
         </div>
@@ -53,11 +56,17 @@
             wire:target="submit"
         >
 
-            <span wire:loading.remove wire:target="submit">
+            <span
+                wire:loading.remove
+                wire:target="submit"
+            >
                 تسجيل الدخول
             </span>
 
-            <div wire:loading wire:target="submit">
+            <div
+                wire:loading
+                wire:target="submit"
+            >
                 <span class="d-inline-flex align-items-center gap-2">
                     <span
                         class="spinner-border spinner-border-sm"
