@@ -76,7 +76,7 @@ class PackageCreate extends Component
             return;
         }
 
-        session()->flash('success', 'تم إنشاء الباقة بنجاح');
+        session()->flash('package-success', 'تم إنشاء الباقة بنجاح');
         $this->redirectRoute('admin.package.index', navigate: true);
     }
 

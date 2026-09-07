@@ -19,7 +19,7 @@ class StoreTeacherRequest extends FormRequest
             'username' => ['required', 'string', 'max:255', 'unique:teachers,username'],
             'email' => ['required', 'email', 'max:255', 'unique:teachers,email'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'is_active' => ['required', 'integer', 'in:0,1'],
         ];
     }

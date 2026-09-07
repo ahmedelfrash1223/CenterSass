@@ -146,8 +146,14 @@
                                             class="border-0 bg-transparent p-0 text-success text-decoration-none"
                                             title="تأكيد الحذف"
                                             wire:loading.attr="disabled"
-                                        >
-                                            <i class="ph-duotone ph-check-circle fs-4"></i>
+                                        ><span
+                                                wire:loading.remove
+                                                wire:target="delete"
+                                            ><i class="ph-duotone ph-check-circle fs-4"></i></span><span
+                                                wire:loading
+                                                wire:target="delete"
+                                                class="spinner-border spinner-border-sm"
+                                            ></span>
                                         </button>
 
                                         <button

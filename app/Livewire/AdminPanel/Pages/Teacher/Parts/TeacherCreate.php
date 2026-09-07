@@ -9,6 +9,9 @@ use Livewire\Component;
 
 class TeacherCreate extends Component
 {
+    // Default password constant
+    private const DEFAULT_PASSWORD = '12345678';
+
     public string $name = '';
     public string $username = '';
     public string $email = '';
@@ -26,6 +29,12 @@ class TeacherCreate extends Component
             $this->savingAndNew = true;
         } else {
             $this->saving = true;
+        }
+
+        // Set default password if empty
+        if (empty($this->password)) {
+            $this->password = self::DEFAULT_PASSWORD;
+            $this->password_confirmation = self::DEFAULT_PASSWORD;
         }
 
         $request = new StoreTeacherRequest();
