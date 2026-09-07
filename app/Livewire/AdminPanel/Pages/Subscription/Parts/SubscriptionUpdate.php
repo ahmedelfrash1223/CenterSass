@@ -10,7 +10,9 @@ use App\Http\Requests\AdminPanel\UpdateSubscriptionRequest;
 use App\Models\Subscription;
 use App\Models\Package;
 use App\Models\Teacher;
+use App\Models\SubscriptionHistory;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -40,15 +42,15 @@ class SubscriptionUpdate extends Component
         $this->package_id = $subscription->package_id;
         $this->starts_at = $subscription->starts_at?->format('Y-m-d\TH:i');
         $this->ends_at = $subscription->ends_at?->format('Y-m-d\TH:i');
-        $this->price = (string) $subscription->price;
+        $this->price = (string)$subscription->price;
         $this->discount_type = $subscription->discount_type ?? DiscountTypeEnum::PERCENTAGE->value;
-        $this->discount_value = (string) $subscription->discount_value;
-        $this->price_after_discount = (string) $subscription->price_after_discount;
+        $this->discount_value = (string)$subscription->discount_value;
+        $this->price_after_discount = (string)$subscription->price_after_discount;
         $this->status = $subscription->status;
         $this->is_paid = $subscription->is_paid ? PaymentStatusEnum::PAID->value : PaymentStatusEnum::UNPAID->value;
         $this->paid_at = $subscription->paid_at?->format('Y-m-d\TH:i') ?? '';
         $this->parent_id = $subscription->parent_id ?? '';
-        $this->features = $subscription->features->map(fn ($feature) => [
+        $this->features = $subscription->features->map(fn($feature) => [
             'key' => $feature->feature_key,
             'value' => $feature->value['value'] ?? $feature->value,
         ])->values()->toArray();
@@ -57,14 +59,14 @@ class SubscriptionUpdate extends Component
     public function updatedPackageId(): void
     {
         $package = Package::with('features')->find($this->package_id);
-        if (! $package) {
+        if (!$package) {
             return;
         }
 
-        $this->price = (string) $package->price;
+        $this->price = (string)$package->price;
         $this->discount_type = $package->discount_type?->value ?? DiscountTypeEnum::PERCENTAGE->value;
-        $this->discount_value = (string) ($package->discount_value ?? 0);
-        $this->features = $package->features->map(fn ($feature) => [
+        $this->discount_value = (string)($package->discount_value ?? 0);
+        $this->features = $package->features->map(fn($feature) => [
             'key' => $feature->package_feature_key->value,
             'value' => $feature->value['value'] ?? $feature->value,
         ])->values()->toArray();
@@ -89,7 +91,7 @@ class SubscriptionUpdate extends Component
 
     public function updatedIsPaid(): void
     {
-        if (! $this->is_paid) {
+        if (!$this->is_paid) {
             $this->paid_at = '';
         } elseif ($this->paid_at === '') {
             $this->paid_at = now()->format('Y-m-d\TH:i');
@@ -98,9 +100,9 @@ class SubscriptionUpdate extends Component
 
     protected function calculatePrice(): void
     {
-        $price = (float) $this->price;
-        $discount = (float) $this->discount_value;
-        $this->price_after_discount = (string) max(0, $this->discount_type == DiscountTypeEnum::PERCENTAGE->value
+        $price = (float)$this->price;
+        $discount = (float)$this->discount_value;
+        $this->price_after_discount = (string)max(0, $this->discount_type == DiscountTypeEnum::PERCENTAGE->value
             ? $price - ($price * $discount / 100)
             : $price - $discount);
     }
@@ -108,7 +110,7 @@ class SubscriptionUpdate extends Component
     protected function calculateEndDate(): void
     {
         $package = Package::find($this->package_id);
-        if (! $package || ! $this->starts_at) {
+        if (!$package || !$this->starts_at) {
             return;
         }
 
@@ -128,7 +130,17 @@ class SubscriptionUpdate extends Component
         $request->merge(['subscription_id' => $this->subscription->id]);
         $this->validate($request->rules(), $request->messages());
 
+        $existingSubscription = Subscription::where('teacher_id', $this->teacher_id)
+            ->where('id', '!=', $this->subscription->id)
+            ->first();
+        if ($existingSubscription) {
+            $this->addError('teacher_id', 'هذا المدرس لديه اشتراك سابق. يرجى تجديد الاشتراك الحالي.');
+            $this->updating = false;
+            return;
+        }
+
         DB::transaction(function () {
+            $oldData = $this->subscription->fresh()->toArray();
             $this->subscription->update([
                 'teacher_id' => $this->teacher_id,
                 'package_id' => $this->package_id,
@@ -147,6 +159,15 @@ class SubscriptionUpdate extends Component
             foreach ($this->features as $feature) {
                 $this->subscription->features()->create(['feature_key' => $feature['key'], 'value' => ['value' => $feature['value']]]);
             }
+            SubscriptionHistory::create([
+                'subscription_id' => $this->subscription->id,
+                'teacher_id' => $this->subscription->teacher_id,
+                'package_id' => $this->subscription->package_id,
+                'action_type' => 'updated',
+                'old_data' => $oldData,
+                'new_data' => $this->subscription->fresh()->toArray(),
+                'performed_by' => Auth::guard('admin')->id(),
+            ]);
         });
 
         $this->updating = false;

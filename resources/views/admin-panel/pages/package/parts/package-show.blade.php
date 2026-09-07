@@ -1,13 +1,75 @@
 <div>
-    <div class="card border-0 shadow-sm mb-4"><div class="card-body"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-        <div><h5 class="mb-1"><i class="ph-duotone ph-package me-2"></i>{{ $package->title }}</h5><span class="text-muted">#{{ $package->id }}</span></div>
-        <div class="d-flex gap-2"><a href="{{ route('admin.package.edit', $package) }}" wire:navigate class="btn btn-primary"><i class="ph-duotone ph-pencil-simple me-1"></i>تعديل</a><a href="{{ route('admin.package.index') }}" wire:navigate class="btn btn-light border"><i class="ph-duotone ph-arrow-right me-1"></i>رجوع</a></div>
-    </div></div></div>
-    <div class="row g-4"><div class="col-lg-7"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h6 class="mb-4">بيانات الباقة</h6><div class="row g-3">
-        <div class="col-sm-6"><small class="text-muted d-block">السعر</small><strong>{{ number_format($package->price, 2) }} ج.م</strong></div><div class="col-sm-6"><small class="text-muted d-block">بعد الخصم</small><strong class="text-success">{{ number_format($package->price_after_discount, 2) }} ج.م</strong></div>
-        <div class="col-sm-6"><small class="text-muted d-block">الخصم</small>{{ $package->discount_value }} {{ $package->discount_type?->label() }}</div><div class="col-sm-6"><small class="text-muted d-block">المدة</small>{{ $package->duration }} {{ $package->duration_type?->label() }}</div>
-        <div class="col-sm-6"><small class="text-muted d-block">أنشأها</small>{{ $package->admin?->name ?? 'غير محدد' }}</div><div class="col-sm-6"><small class="text-muted d-block">تاريخ الإنشاء</small>{{ $package->created_at?->format('Y-m-d H:i') }}</div>
-        <div class="col-sm-6"><small class="text-muted d-block">آخر تحديث</small>{{ $package->updated_at?->format('Y-m-d H:i') }}</div>
-    </div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h6 class="mb-4">خصائص الباقة</h6><div class="table-responsive"><table class="table table-sm align-middle mb-0"><tbody>@forelse($package->features as $feature)<tr><td>{{ $feature->package_feature_key?->label() ?? $feature->package_feature_key }}</td><td class="text-end">{{ $feature->value['value'] ?? $feature->value }}</td></tr>@empty<tr><td class="text-muted">لا توجد خصائص</td></tr>@endforelse</tbody></table></div></div></div></div></div>
-    <div class="d-flex justify-content-end gap-2 mt-4">@if($confirmingDelete)<button type="button" wire:click="delete" wire:loading.attr="disabled" wire:target="delete" class="btn btn-danger"><span wire:loading.remove wire:target="delete"><i class="ph-duotone ph-trash me-1"></i>تأكيد الحذف</span><span wire:loading wire:target="delete"><span class="spinner-border spinner-border-sm me-1"></span>جاري الحذف...</span></button><button type="button" wire:click="cancelDelete" class="btn btn-light border">إلغاء</button>@else<button type="button" wire:click="confirmDelete" class="btn btn-outline-danger"><i class="ph-duotone ph-trash me-1"></i>حذف</button>@endif</div>
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div><h5 class="mb-1"><i class="ph-duotone ph-package me-2"></i>{{ $package->title }}</h5><span
+                        class="text-muted">#{{ $package->id }}</span></div>
+                <div class="d-flex gap-2"><a href="{{ route('admin.package.edit', $package) }}" wire:navigate
+                                             class="btn btn-primary"><i class="ph-duotone ph-pencil-simple me-1"></i>تعديل</a><a
+                        href="{{ route('admin.package.index') }}" wire:navigate class="btn btn-light border"><i
+                            class="ph-duotone ph-arrow-right me-1"></i>رجوع</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body"><h6 class="mb-4">بيانات الباقة</h6>
+                    <div class="row g-3">
+                        <div class="col-sm-6"><small
+                                class="text-muted d-block">السعر</small><strong>{{ number_format($package->price, 2) }}
+                                ج.م</strong></div>
+                        <div class="col-sm-6"><small class="text-muted d-block">بعد الخصم</small><strong
+                                class="text-success">{{ number_format($package->price_after_discount, 2) }} ج.م</strong>
+                        </div>
+                        <div class="col-sm-6"><small
+                                class="text-muted d-block">الخصم</small>{{ $package->discount_value }} {{ $package->discount_type?->label() }}
+                        </div>
+                        <div class="col-sm-6"><small
+                                class="text-muted d-block">المدة</small>{{ $package->duration }} {{ $package->duration_type?->label() }}
+                        </div>
+                        <div class="col-sm-6"><small
+                                class="text-muted d-block">أنشأها</small>{{ $package->admin?->name ?? 'غير محدد' }}
+                        </div>
+                        <div class="col-sm-6"><small class="text-muted d-block">تاريخ
+                                الإنشاء</small>{{ $package->created_at?->format('Y-m-d H:i') }}</div>
+                        <div class="col-sm-6"><small class="text-muted d-block">آخر
+                                تحديث</small>{{ $package->updated_at?->format('Y-m-d H:i') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body"><h6 class="mb-4">خصائص الباقة</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <tbody>@forelse($package->features as $feature)
+                                <tr>
+                                    <td>{{ $feature->package_feature_key?->label() ?? $feature->package_feature_key }}</td>
+                                    <td class="text-end">{{ $feature->value['value'] ?? $feature->value }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td class="text-muted">لا توجد خصائص</td>
+                                </tr>
+                            @endforelse</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-4">@if($confirmingDelete)
+            <button type="button" wire:click="delete" wire:loading.attr="disabled" wire:target="delete"
+                    class="btn btn-danger"><span wire:loading.remove wire:target="delete"><i
+                        class="ph-duotone ph-trash me-1"></i>تأكيد الحذف</span><span wire:loading
+                                                                                     wire:target="delete"><span
+                        class="spinner-border spinner-border-sm me-1"></span>جاري الحذف...</span></button>
+            <button type="button" wire:click="cancelDelete" class="btn btn-light border">إلغاء</button>
+        @else
+            <button type="button" wire:click="confirmDelete" class="btn btn-outline-danger"><i
+                    class="ph-duotone ph-trash me-1"></i>حذف
+            </button>
+        @endif</div>
 </div>

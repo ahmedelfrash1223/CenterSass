@@ -76,4 +76,9 @@ class Subscription extends Model
             'subscription_id'
         );
     }
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(SubscriptionHistory::class)->latest('created_at');
+    }
 }

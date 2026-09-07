@@ -10,7 +10,9 @@ use App\Http\Requests\AdminPanel\StoreSubscriptionRequest;
 use App\Models\Subscription;
 use App\Models\Package;
 use App\Models\Teacher;
+use App\Models\SubscriptionHistory;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -29,6 +31,7 @@ class SubscriptionCreate extends Component
     public $paid_at = '';
     public $parent_id = '';
     public array $features = [];
+    public $existingSubscriptionId = null;
 
     public bool $saving = false;
     public bool $savingAndNew = false;
@@ -42,6 +45,11 @@ class SubscriptionCreate extends Component
     public function updatedPackageId(): void
     {
         $this->loadPackage();
+    }
+
+    public function updatedTeacherId(): void
+    {
+        $this->existingSubscriptionId = Subscription::where('teacher_id', $this->teacher_id)->value('id');
     }
 
     public function updatedStartsAt(): void
@@ -117,9 +125,26 @@ class SubscriptionCreate extends Component
         $request = new StoreSubscriptionRequest();
         $this->validate($request->rules(), $request->messages());
 
+        $existingSubscriptionId = Subscription::where('teacher_id', $this->teacher_id)->value('id');
+        if ($existingSubscriptionId) {
+            $this->existingSubscriptionId = $existingSubscriptionId;
+            $this->addError('teacher_id', 'هذا المدرس لديه اشتراك سابق. يرجى تجديد الاشتراك الحالي.');
+            $this->saving = false;
+            $this->savingAndNew = false;
+            return;
+        }
+
         DB::transaction(function () {
             $subscription = Subscription::create($this->payload());
             $this->syncFeatures($subscription);
+            SubscriptionHistory::create([
+                'subscription_id' => $subscription->id,
+                'teacher_id' => $subscription->teacher_id,
+                'package_id' => $subscription->package_id,
+                'action_type' => 'created',
+                'new_data' => $subscription->fresh()->toArray(),
+                'performed_by' => Auth::guard('admin')->id(),
+            ]);
         });
 
         $this->saving = false;
