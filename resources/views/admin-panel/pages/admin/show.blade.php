@@ -1,4 +1,9 @@
 @section('title','عرض المدير')
 @section('admin-active','active')
 @extends('admin-panel.master')
-@section('main')<div class="pc-container"><div class="pc-content"><div class="page-header"><div class="page-block"><nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.dashboard') }}"><i class="ph-duotone ph-house me-1"></i>الرئيسية</a></li><li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.admins.index') }}">المديرين</a></li><li class="breadcrumb-item active">عرض</li></ol></nav><h1 class="page-header-title mb-0"><i class="ph-duotone ph-user me-2"></i>{{ $admin->name }} <span class="badge bg-primary bg-opacity-10 text-primary fs-6 fw-normal">عرض</span></h1></div></div>@livewire('admin-panel.pages.admin.parts.admin-show', ['admin' => $admin])</div></div>@endsection
+@section('main')
+<div class="pc-container"><div class="pc-content">
+@include('admin-panel.components.page-header', ['moduleLabel' => 'المديرين', 'title' => $admin->name, 'description' => 'عرض بيانات المدير وصلاحياته', 'icon' => 'ph-shield-user', 'pageType' => 'show', 'pageLabel' => 'عرض', 'indexRoute' => 'admin.admins.index', 'editRoute' => 'admin.admins.edit', 'item' => $admin, 'createRoute' => 'admin.admins.create'])
+@livewire('admin-panel.pages.admin.parts.admin-show', ['admin' => $admin])
+</div></div>
+@endsection

@@ -1,4 +1,9 @@
 @section('title','عرض الاشتراك')
 @section('subscription-active','active')
 @extends('admin-panel.master')
-@section('main')<div class="pc-container"><div class="pc-content"><div class="page-header"><div class="page-block"><nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.dashboard') }}"><i class="ph-duotone ph-house me-1"></i>الرئيسية</a></li><li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.subscriptions.index') }}">الاشتراكات</a></li><li class="breadcrumb-item active">عرض</li></ol></nav><h1 class="page-header-title mb-0"><i class="ph-duotone ph-repeat me-2"></i>اشتراك #{{ $subscription->id }} <span class="badge bg-primary bg-opacity-10 text-primary fs-6 fw-normal">عرض</span></h1></div></div>@livewire('admin-panel.pages.subscription.parts.subscription-show', ['subscription' => $subscription])</div></div>@endsection
+@section('main')
+<div class="pc-container"><div class="pc-content">
+@include('admin-panel.components.page-header', ['moduleLabel' => 'الاشتراكات', 'title' => 'اشتراك #'.$subscription->id, 'description' => 'عرض تفاصيل الاشتراك وسجل التغييرات', 'icon' => 'ph-repeat', 'pageType' => 'show', 'pageLabel' => 'عرض', 'indexRoute' => 'admin.subscriptions.index', 'editRoute' => 'admin.subscriptions.edit', 'item' => $subscription, 'createRoute' => 'admin.subscriptions.create'])
+@livewire('admin-panel.pages.subscription.parts.subscription-show', ['subscription' => $subscription])
+</div></div>
+@endsection
