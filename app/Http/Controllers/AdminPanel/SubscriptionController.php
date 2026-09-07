@@ -21,4 +21,9 @@ class SubscriptionController extends Controller
     {
         return view('admin-panel.pages.subscription.edit', compact('subscription'));
     }
+
+    public function show(Subscription $subscription)
+    {
+        return view('admin-panel.pages.subscription.show', compact('subscription'));
+    }
 }

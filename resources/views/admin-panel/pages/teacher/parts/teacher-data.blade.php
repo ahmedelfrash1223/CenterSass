@@ -161,6 +161,15 @@
 
                                     <a
                                         wire:navigate
+                                        href="{{ route('admin.teacher.show', $teacher->id) }}"
+                                        class="border-0 bg-transparent p-0 text-info text-decoration-none"
+                                        title="عرض"
+                                    >
+                                        <i class="ph-duotone ph-eye fs-4"></i>
+                                    </a>
+
+                                    <a
+                                        wire:navigate
                                         href="{{ route('admin.teacher.edit', $teacher->id) }}"
                                         class="border-0 bg-transparent p-0 text-primary text-decoration-none"
                                         title="تعديل"

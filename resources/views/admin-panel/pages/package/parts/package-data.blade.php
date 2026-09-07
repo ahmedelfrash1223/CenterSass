@@ -166,6 +166,15 @@
 
                                     <a
                                         wire:navigate
+                                        href="{{ route('admin.package.show', $package->id) }}"
+                                        class="border-0 bg-transparent p-0 text-info text-decoration-none"
+                                        title="عرض"
+                                    >
+                                        <i class="ph-duotone ph-eye fs-4"></i>
+                                    </a>
+
+                                    <a
+                                        wire:navigate
                                         href="{{ route('admin.package.edit', $package->id) }}"
                                         class="border-0 bg-transparent p-0 text-primary text-decoration-none"
                                         title="تعديل"

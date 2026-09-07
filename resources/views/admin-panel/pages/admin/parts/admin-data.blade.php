@@ -74,6 +74,9 @@
                                             class="border-0 bg-transparent p-0 text-secondary" title="إلغاء"><i
                                             class="ph-duotone ph-x-circle fs-4"></i></button>
                                 @else
+                                    <a wire:navigate href="{{ route('admin.admins.show', $admin->id) }}"
+                                       class="border-0 bg-transparent p-0 text-info" title="عرض"><i
+                                            class="ph-duotone ph-eye fs-4"></i></a>
                                     <a wire:navigate href="{{ route('admin.admins.edit', $admin->id) }}"
                                        class="border-0 bg-transparent p-0 text-primary" title="تعديل"><i
                                             class="ph-duotone ph-pencil-simple fs-4"></i></a>

@@ -21,4 +21,9 @@ class AdminController extends Controller
     {
         return view('admin-panel.pages.admin.edit', compact('admin'));
     }
+
+    public function show(Admin $admin)
+    {
+        return view('admin-panel.pages.admin.show', compact('admin'));
+    }
 }

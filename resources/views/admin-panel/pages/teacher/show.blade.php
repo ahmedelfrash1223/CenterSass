@@ -1,0 +1,4 @@
+@section('title','عرض المدرس')
+@section('teacher-active','active')
+@extends('admin-panel.master')
+@section('main')<div class="pc-container"><div class="pc-content"><div class="page-header"><div class="page-block"><nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.dashboard') }}"><i class="ph-duotone ph-house me-1"></i>الرئيسية</a></li><li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.teacher.index') }}">المدرسين</a></li><li class="breadcrumb-item active">عرض</li></ol></nav><h1 class="page-header-title mb-0"><i class="ph-duotone ph-chalkboard-teacher me-2"></i>{{ $teacher->name }} <span class="badge bg-primary bg-opacity-10 text-primary fs-6 fw-normal">عرض</span></h1></div></div>@livewire('admin-panel.pages.teacher.parts.teacher-show', ['teacher' => $teacher])</div></div>@endsection

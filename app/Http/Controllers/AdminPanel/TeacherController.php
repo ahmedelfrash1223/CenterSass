@@ -23,4 +23,9 @@ class TeacherController extends Controller
         return view('admin-panel.pages.teacher.edit', compact('teacher'));
     }
 
+    public function show(Teacher $teacher)
+    {
+        return view('admin-panel.pages.teacher.show', compact('teacher'));
+    }
+
 }

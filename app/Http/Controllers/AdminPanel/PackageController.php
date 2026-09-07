@@ -21,4 +21,9 @@ class PackageController extends Controller
     {
         return view('admin-panel.pages.package.edit', compact('package'));
     }
+
+    public function show(Package $package)
+    {
+        return view('admin-panel.pages.package.show', compact('package'));
+    }
 }
