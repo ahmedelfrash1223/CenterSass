@@ -17,6 +17,15 @@
                     </a>
                 </li>
 
+                <li class="pc-item @yield('admin-active')">
+                    <a wire:navigate href="{{route('admin.admins.index')}}" class="pc-link">
+                        <span class="pc-micon">
+                      <i class="ph-duotone ph-users"></i>
+                        </span>
+                        <span class="pc-mtext">المديرين</span>
+                    </a>
+                </li>
+
                 <li class="pc-item @yield('package-active')">
                     <a wire:navigate href="{{route('admin.package.index')}}" class="pc-link">
                         <span class="pc-micon">
