@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeacherPanel\BranchController;
 use App\Http\Controllers\TeacherPanel\SubjectController;
+use App\Http\Controllers\TeacherPanel\GroupController;
 
 
 #=================================== AUTH ROUTES ================================================>
@@ -22,6 +23,7 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
     Route::view('profile/subscription', 'teacher-panel.pages.profile.subscription')->name('profile.subscription');
     Route::resource('branches', BranchController::class)->only(['index', 'create', 'edit']);
     Route::resource('subjects', SubjectController::class)->only(['index', 'create', 'edit']);
+    Route::resource('groups', GroupController::class)->only(['index', 'create', 'show', 'edit']);
 
 
 });

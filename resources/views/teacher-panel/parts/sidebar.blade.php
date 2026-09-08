@@ -54,6 +54,13 @@
                     </a>
                 </li>
 
+                <li class="pc-item @yield('groups-active')">
+                    <a wire:navigate href="{{ route('teacher.groups.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ph-duotone ph-users-three"></i></span>
+                        <span class="pc-mtext">المجموعات</span>
+                    </a>
+                </li>
+
 
             </ul>
         </div>
