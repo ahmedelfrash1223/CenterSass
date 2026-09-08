@@ -7,7 +7,7 @@
             >
                 <img
                     style="max-height: 95px;"
-                    src="{{ asset('assets/teacherPanel') }}/images/logo.png"
+                    src="{{ asset('assets/teacherPanel/images/logo.png') }}"
                     alt="logo image"
                 />
             </a>
@@ -25,6 +25,19 @@
                             <i class="ph-duotone ph-gauge"></i>
                         </span>
                         <span class="pc-mtext">الصفحة الرئيسية</span>
+                    </a>
+                </li>
+
+                <li class="pc-item @yield('branches-active')">
+                    <a
+                        wire:navigate
+                        href="{{ route('teacher.branches.index') }}"
+                        class="pc-link"
+                    >
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-buildings"></i>
+                        </span>
+                        <span class="pc-mtext">الأفرع</span>
                     </a>
                 </li>
 
