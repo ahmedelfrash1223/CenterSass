@@ -41,6 +41,19 @@
                     </a>
                 </li>
 
+                <li class="pc-item @yield('subjects-active')">
+                    <a
+                        wire:navigate
+                        href="{{ route('teacher.subjects.index') }}"
+                        class="pc-link"
+                    >
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-books"></i>
+                        </span>
+                        <span class="pc-mtext">المواد الدراسية</span>
+                    </a>
+                </li>
+
 
             </ul>
         </div>

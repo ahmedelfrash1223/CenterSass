@@ -61,6 +61,11 @@ class Teacher extends Authenticatable
         return $this->hasMany(Branch::class);
     }
 
+    public function subjects(): HasMany
+    {
+        return $this->hasMany(TeacherSubject::class);
+    }
+
     public function themeSettings(): HasOne
     {
         return $this->hasOne(TeacherThemeSetting::class);
