@@ -22,5 +22,6 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('/teacher', TeacherController::class);
     Route::resource('/admins', AdminController::class)->parameters(['admins' => 'admin']);
     Route::resource('/subscriptions', SubscriptionController::class)->parameters(['subscriptions' => 'subscription']);
+    Route::view('subscription-requests', 'admin-panel.pages.subscription-request.index')->name('subscription-request');
 });
 

@@ -1,12 +1,12 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a
-                href="{{ route('admin.dashboard') }}"
-                class="b-brand text-primary"
+            <a wire:navigate
+               href="{{ route('admin.dashboard') }}"
+               class="b-brand text-primary"
             >
                 <img
-                    style="max-height: 95px;"
+                    style="max-height: 85px;"
                     src="{{ asset('assets/adminPanel') }}/images/logo.png"
                     alt="logo image"
                 />
@@ -77,6 +77,32 @@
                             <i class="ph-duotone ph-repeat"></i>
                         </span>
                         <span class="pc-mtext">الاشتراكات</span>
+                    </a>
+                </li>
+
+                <li class="pc-item @yield('subscription-request-active')">
+                    <a
+                        wire:navigate
+                        href="{{ route('admin.subscription-request') }}"
+                        class="pc-link position-relative"
+                    >
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-target"></i>
+                        </span>
+                        <span class="pc-mtext">طلبات الاشتراك</span>
+
+                        @php
+                            $pendingCount = \App\Models\SubscriptionRequest::where('status', \App\Enums\Admin\SubscriptionRequestStatusEnum::PENDING->value)->count();
+                        @endphp
+
+                        @if($pendingCount > 0)
+                            <span
+                                class="pc-badge"
+                                style="font-size: 0.65rem; margin-top: 2px; margin-left: -10px;">
+                                {{ $pendingCount }}
+                                <span class="visually-hidden">طلبات قيد الانتظار</span>
+                            </span>
+                        @endif
                     </a>
                 </li>
 
