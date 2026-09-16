@@ -2,6 +2,7 @@
 
 namespace App\Livewire\TeacherPanel\Pages\Profile\Parts;
 
+use App\Enums\Teacher\TeacherRoleEnum;
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +26,7 @@ class ProfileForm extends Component
         'name' => ['required', 'string', 'min:2', 'max:255'],
         'username' => ['required', 'string', 'min:3', 'max:255'],
         'email' => ['required', 'email', 'max:255'],
-        'phone' => ['required', 'string', 'max:255'],
+        'phone' => ['nullable', 'string', 'max:20'],
     ];
 
     public function mount(): void
@@ -39,12 +40,12 @@ class ProfileForm extends Component
         $this->name = $this->teacher->name;
         $this->username = $this->teacher->username;
         $this->email = $this->teacher->email;
-        $this->phone = $this->teacher->phone;
+        $this->phone = $this->teacher->phone ?? '';
     }
 
     public function startEditing(string $field): void
     {
-        if (!in_array($field, ['name', 'username', 'email','phone'], true)) {
+        if (!in_array($field, ['name', 'username', 'email', 'phone'], true)) {
             return;
         }
 
@@ -61,13 +62,31 @@ class ProfileForm extends Component
 
     public function save(): void
     {
-        $this->validate();
+        // Validate with unique rules ignoring current teacher
+        $this->validate([
+            'name' => ['required', 'string', 'min:2', 'max:255'],
+            'username' => ['required', 'string', 'min:3', 'max:255', 'unique:teachers,username,' . $this->teacher->id],
+            'email' => ['required', 'email', 'max:255', 'unique:teachers,email,' . $this->teacher->id],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:teachers,phone,' . $this->teacher->id],
+        ], [
+            'name.required' => 'الاسم مطلوب.',
+            'name.min' => 'الاسم يجب أن يكون حرفين على الأقل.',
+            'name.max' => 'الاسم يجب ألا يتجاوز 255 حرفًا.',
+            'username.required' => 'اسم المستخدم مطلوب.',
+            'username.min' => 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل.',
+            'username.max' => 'اسم المستخدم يجب ألا يتجاوز 255 حرفًا.',
+            'username.unique' => 'اسم المستخدم مستخدم بالفعل.',
+            'email.required' => 'البريد الإلكتروني مطلوب.',
+            'email.email' => 'البريد الإلكتروني غير صالح.',
+            'email.unique' => 'البريد الإلكتروني مستخدم بالفعل.',
+            'phone.unique' => 'رقم الهاتف مستخدم بالفعل.',
+        ]);
 
         $this->teacher->update([
             'name' => $this->name,
             'username' => $this->username,
             'email' => $this->email,
-            'phone' => $this->phone,
+            'phone' => $this->phone ?: null,
         ]);
 
         $this->teacher->refresh();

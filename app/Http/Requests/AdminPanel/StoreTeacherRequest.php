@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AdminPanel;
 
+use App\Enums\Teacher\TeacherRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,12 +15,18 @@ class StoreTeacherRequest extends FormRequest
 
     public function rules(): array
     {
+        $isOwner = (int) $this->input('role') === TeacherRoleEnum::OWNER->value;
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:teachers,username'],
             'email' => ['required', 'email', 'max:255', 'unique:teachers,email'],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:teachers,phone'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'integer', Rule::in(TeacherRoleEnum::values())],
+            'owner_id' => $isOwner
+                ? ['nullable']
+                : ['required', 'integer', 'exists:teachers,id'],
             'is_active' => ['required', 'integer', 'in:0,1'],
         ];
     }
@@ -28,30 +35,20 @@ class StoreTeacherRequest extends FormRequest
     {
         return [
             'name.required' => 'اسم المدرس مطلوب.',
-            'name.string' => 'اسم المدرس يجب أن يكون نصًا.',
-            'name.max' => 'اسم المدرس يجب ألا يتجاوز 255 حرفًا.',
-
             'username.required' => 'اسم المستخدم مطلوب.',
-            'username.string' => 'اسم المستخدم يجب أن يكون نصًا.',
-            'username.max' => 'اسم المستخدم يجب ألا يتجاوز 255 حرفًا.',
             'username.unique' => 'اسم المستخدم مستخدم بالفعل.',
-
             'email.required' => 'البريد الإلكتروني مطلوب.',
-            'email.email' => 'البريد الإلكتروني يجب أن يكون عنوان بريد صحيحًا.',
-            'email.max' => 'البريد الإلكتروني يجب ألا يتجاوز 255 حرفًا.',
+            'email.email' => 'البريد الإلكتروني غير صالح.',
             'email.unique' => 'البريد الإلكتروني مستخدم بالفعل.',
-
-            'phone.string' => 'رقم الهاتف يجب أن يكون نصًا.',
-            'phone.max' => 'رقم الهاتف يجب ألا يتجاوز 20 حرفًا.',
-
-            'password.required' => 'كلمة المرور مطلوبة.',
-            'password.string' => 'كلمة المرور يجب أن تكون نصًا.',
+            'phone.unique' => 'رقم الهاتف مستخدم بالفعل.',
             'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.',
             'password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
-
-            'is_active.required' => 'حالة المدرس مطلوبة.',
-            'is_active.integer' => 'حالة المدرس غير صالحة.',
-            'is_active.in' => 'حالة المدرس يجب أن تكون 0 أو 1.',
+            'role.required' => 'نوع الحساب مطلوب.',
+            'role.in' => 'نوع الحساب المحدد غير صالح.',
+            'owner_id.required' => 'يجب اختيار المسئول التابع له الحساب.',
+            'owner_id.exists' => 'المسئول المحدد غير موجود.',
+            'is_active.required' => 'الحالة مطلوبة.',
+            'is_active.in' => 'الحالة يجب أن تكون 0 أو 1.',
         ];
     }
 }

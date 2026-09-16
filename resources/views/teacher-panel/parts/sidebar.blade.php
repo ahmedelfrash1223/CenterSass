@@ -15,6 +15,7 @@
         <div class="navbar-content">
             <ul class="pc-navbar">
 
+                {{-- الصفحة الرئيسية --}}
                 <li class="pc-item @yield('home-active')">
                     <a
                         wire:navigate
@@ -22,45 +23,87 @@
                         class="pc-link"
                     >
                         <span class="pc-micon">
-                            <i class="ph-duotone ph-gauge"></i>
+                            <i class="ph-duotone ph-squares-four"></i>
                         </span>
                         <span class="pc-mtext">الصفحة الرئيسية</span>
                     </a>
                 </li>
 
-                <li class="pc-item @yield('branches-active')">
-                    <a
-                        wire:navigate
-                        href="{{ route('teacher.branches.index') }}"
-                        class="pc-link"
-                    >
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-buildings"></i>
-                        </span>
-                        <span class="pc-mtext">الأفرع</span>
-                    </a>
-                </li>
+                {{-- الأفرع --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::BRANCH_VIEW))
+                    <li class="pc-item @yield('branches-active')">
+                        <a
+                            wire:navigate
+                            href="{{ route('teacher.branches.index') }}"
+                            class="pc-link"
+                        >
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-map-pin-line"></i>
+                            </span>
+                            <span class="pc-mtext">الأفرع</span>
+                        </a>
+                    </li>
+                @endif
 
-                <li class="pc-item @yield('subjects-active')">
-                    <a
-                        wire:navigate
-                        href="{{ route('teacher.subjects.index') }}"
-                        class="pc-link"
-                    >
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-books"></i>
-                        </span>
-                        <span class="pc-mtext">المواد الدراسية</span>
-                    </a>
-                </li>
+                {{-- فريق العمل --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::STAFF_VIEW))
+                    <li class="pc-item @yield('staff-active')">
+                        <a
+                            wire:navigate
+                            href="{{ route('teacher.staff.index') }}"
+                            class="pc-link"
+                        >
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-users-four"></i>
+                            </span>
+                            <span class="pc-mtext">فريق العمل</span>
+                        </a>
+                    </li>
+                @endif
 
-                <li class="pc-item @yield('groups-active')">
-                    <a wire:navigate href="{{ route('teacher.groups.index') }}" class="pc-link">
-                        <span class="pc-micon"><i class="ph-duotone ph-users-three"></i></span>
-                        <span class="pc-mtext">المجموعات</span>
-                    </a>
-                </li>
+                {{-- المواد الدراسية --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::SUBJECT_VIEW))
+                    <li class="pc-item @yield('subjects-active')">
+                        <a
+                            wire:navigate
+                            href="{{ route('teacher.subjects.index') }}"
+                            class="pc-link"
+                        >
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-notebook"></i>
+                            </span>
+                            <span class="pc-mtext">المواد الدراسية</span>
+                        </a>
+                    </li>
+                @endif
 
+                {{-- المجموعات --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::GROUP_VIEW))
+                    <li class="pc-item @yield('groups-active')">
+                        <a
+                            wire:navigate
+                            href="{{ route('teacher.groups.index') }}"
+                            class="pc-link"
+                        >
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-user-list"></i>
+                            </span>
+                            <span class="pc-mtext">المجموعات</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- الطلاب --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::STUDENT_VIEW))
+                    <li class="pc-item @yield('students-active')">
+                        <a wire:navigate href="{{ route('teacher.students.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-student"></i>
+                            </span>
+                            <span class="pc-mtext">الطلاب</span>
+                        </a>
+                    </li>
+                @endif
 
             </ul>
         </div>
@@ -87,42 +130,22 @@
                                             {{ Auth::guard('teacher')->user()->name }}
                                         </h6>
                                         <small class="teacher-sidebar-role">
-                                            {{Auth::guard('teacher')->user()->email}}
+                                            {{ Auth::guard('teacher')->user()->email }}
                                         </small>
+                                        <div class="mt-1">
+                                            <span
+                                                class="badge bg-{{ Auth::guard('teacher')->user()->role->color() }} bg-opacity-10 text-{{ Auth::guard('teacher')->user()->role->color() }}"
+                                                style="font-size: 10px;">
+                                                <i class="ph-duotone {{ Auth::guard('teacher')->user()->role->icon() }} me-1"></i>
+                                                {{ Auth::guard('teacher')->user()->role->label() }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <style>
-                    .teacher-sidebar-avatar {
-                        width: 45px;
-                        height: 45px;
-                        border-radius: 13px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        background: linear-gradient(135deg, #4680ff, #6f9cff);
-                        color: #fff;
-                        font-size: 19px;
-                        font-weight: 700;
-                        box-shadow: 0 5px 15px rgba(70, 128, 255, .2);
-                    }
-
-                    .teacher-sidebar-name {
-                        font-weight: 700;
-                    }
-
-                    .teacher-sidebar-role {
-                        color: #8c8c8c;
-                        font-size: 11px;
-                    }
-
-                    .pc-user-links {
-                        cursor: pointer;
-                    }
-                </style>
             </div>
         </div>
     </div>

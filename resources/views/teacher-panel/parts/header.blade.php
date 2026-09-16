@@ -26,6 +26,7 @@
         </div>
         <!-- [Mobile Media Block end] -->
         <div class="ms-auto">
+
             <ul class="list-unstyled">
 
                 @livewire('teacher-panel.theme-settings')
@@ -33,6 +34,7 @@
                 @livewire('teacher-panel.parts.teacher-profile-card')
 
             </ul>
+
         </div>
     </div>
 </header>

@@ -2,34 +2,35 @@
 
 namespace App\Models;
 
+use App\Traits\Teacher\HasCreator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
-class Student extends Authenticatable
+class Student extends Model
 {
-    use Notifiable;
-
-    protected $guard = 'student';
+    use HasCreator;
 
     protected $fillable = [
         'code',
+        'uuid',
         'username',
         'name',
         'email',
+        'phone',
         'password',
+        'grade',
+        'branch_id',
         'is_active',
+        'created_by',
         'teacher_id',
-        'group_id',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
-    #===================== CASTS ====================>
     protected function casts(): array
     {
         return [
@@ -38,76 +39,46 @@ class Student extends Authenticatable
         ];
     }
 
-    #================== BOOT METHOD ==================>
     protected static function booted(): void
     {
         static::creating(function (Student $student) {
-            $student->uuid ??= (string) Str::uuid();;
+            $student->uuid ??= (string) Str::uuid();
             $student->code ??= 'STD-' . strtoupper(uniqid());
         });
     }
 
+    // =============================================
+    // 📌 RELATIONS
+    // =============================================
 
-    #=================== RELATIONS ===================>
-    public function teacher()
+    public function teacher(): BelongsTo
     {
-        return $this->belongsTo(Teacher::class);
+        return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 
-    public function group()
+    public function branch(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Branch::class);
     }
 
-    // Many-to-Many with Groups
     public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'group_student')
-            ->withPivot('joined_at', 'left_at', 'status')
+            ->withPivot(['joined_at', 'left_at', 'status', 'created_by'])
             ->withTimestamps();
     }
 
-    // Get active groups only
     public function activeGroups(): BelongsToMany
     {
         return $this->groups()->wherePivot('status', 'active');
     }
 
-    // Get groups where student is currently enrolled
-    public function currentGroups(): BelongsToMany
-    {
-        return $this->groups()
-            ->wherePivot('status', 'active')
-            ->where(function ($query) {
-                $query->whereNull('pivot_left_at')
-                    ->orWhere('pivot_left_at', '>', now());
-            });
-    }
+    // =============================================
+    // 📌 HELPERS
+    // =============================================
 
-    // Check if student is in a specific group
-    public function isInGroup(Group $group): bool
+    public function getOwnerId(): int
     {
-        return $this->groups()
-            ->where('group_id', $group->id)
-            ->wherePivot('status', 'active')
-            ->exists();
-    }
-
-    // Enroll student in a group
-    public function enrollInGroup(Group $group, ?string $joinedAt = null): void
-    {
-        $this->groups()->attach($group->id, [
-            'joined_at' => $joinedAt ?? now(),
-            'status' => 'active',
-        ]);
-    }
-
-    // Leave a group
-    public function leaveGroup(Group $group, ?string $leftAt = null): void
-    {
-        $this->groups()->updateExistingPivot($group->id, [
-            'left_at' => $leftAt ?? now(),
-            'status' => 'left',
-        ]);
+        return $this->teacher_id;
     }
 }

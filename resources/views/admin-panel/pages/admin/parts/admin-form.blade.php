@@ -90,21 +90,28 @@
                 <!-- Status -->
                 <div class="col-md-6 mb-3">
                     <label class="form-label">الحالة <span class="text-danger">*</span></label>
-                    <select
-                        class="form-select @error('is_active') is-invalid @enderror"
-                        wire:model="is_active"
-                    >
-                        <option value="1">نشط</option>
-                        <option value="0">غير نشط</option>
-                    </select>
+                    <div class="d-flex gap-2">
+                        <button type="button"
+                                wire:click="$set('is_active', 1)"
+                                class="status-option {{ $is_active == 1 ? 'active' : '' }}">
+                            <i class="ph-duotone ph-check-circle"></i>
+                            نشط
+                        </button>
+                        <button type="button"
+                                wire:click="$set('is_active', 0)"
+                                class="status-option {{ $is_active == 0 ? 'inactive' : '' }}">
+                            <i class="ph-duotone ph-x-circle"></i>
+                            غير نشط
+                        </button>
+                    </div>
                     @error('is_active')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
 
             <!-- Form Actions -->
-            <div class="d-flex justify-content-end gap-2 mt-4">
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
                 @if($editMode)
                     <!-- Update Button -->
                     <button

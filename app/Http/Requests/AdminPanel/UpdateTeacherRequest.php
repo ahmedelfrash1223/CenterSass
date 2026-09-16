@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AdminPanel;
 
+use App\Enums\Teacher\TeacherRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,34 +15,21 @@ class UpdateTeacherRequest extends FormRequest
 
     public function rules(): array
     {
-        $route = $this->route('teacher');
-
-        if (is_array($route)) {
-            $teacherId = $route['teacher'] ?? $route['teacher_id'] ?? null;
-        } else {
-            $teacherId = $route;
-        }
-
-        if (!$teacherId) {
-            $teacherId = $this->input('teacher_id');
-        }
+        $teacherId = $this->input('teacher_id');
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'username' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('teachers', 'username')->ignore($teacherId)
-            ],
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('teachers', 'email')->ignore($teacherId)
-            ],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'username' => ['required', 'string', 'max:255', Rule::unique('teachers', 'username')->ignore($teacherId)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('teachers', 'email')->ignore($teacherId)],
+            'phone' => ['nullable', 'string', 'max:20', Rule::unique('teachers', 'phone')->ignore($teacherId)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'integer', Rule::in(TeacherRoleEnum::values())],
+            'owner_id' => [
+                'nullable',
+                'integer',
+                'exists:teachers,id',
+                Rule::requiredIf(fn() => (int) $this->input('role') !== TeacherRoleEnum::OWNER->value),
+            ],
             'is_active' => ['required', 'integer', 'in:0,1'],
         ];
     }
@@ -65,10 +53,19 @@ class UpdateTeacherRequest extends FormRequest
 
             'phone.string' => 'رقم الهاتف يجب أن يكون نصًا.',
             'phone.max' => 'رقم الهاتف يجب ألا يتجاوز 20 حرفًا.',
+            'phone.unique' => 'رقم الهاتف مستخدم بالفعل.',
 
             'password.string' => 'كلمة المرور يجب أن تكون نصًا.',
             'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.',
             'password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
+
+            'role.required' => 'نوع الحساب مطلوب.',
+            'role.integer' => 'نوع الحساب غير صالح.',
+            'role.in' => 'نوع الحساب المحدد غير صالح.',
+
+            'owner_id.required_if' => 'يجب اختيار المسئول التابع له الحساب.',
+            'owner_id.integer' => 'المسئول غير صالح.',
+            'owner_id.exists' => 'المسئول المحدد غير موجود.',
 
             'is_active.required' => 'حالة المدرس مطلوبة.',
             'is_active.integer' => 'حالة المدرس غير صالحة.',

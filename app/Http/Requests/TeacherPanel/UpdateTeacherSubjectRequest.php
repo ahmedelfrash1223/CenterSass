@@ -4,27 +4,43 @@ namespace App\Http\Requests\TeacherPanel;
 
 use App\Enums\Teacher\GradeEnum;
 use App\Enums\Teacher\SubjectEnum;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateTeacherSubjectRequest extends StoreTeacherSubjectRequest
+class UpdateTeacherSubjectRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
-        $subjectId = $this->input('subject_id') ?: $this->route('subject');
-        $subjectId = is_object($subjectId) ? $subjectId->id : $subjectId;
-
         return [
-            'grade' => ['required', 'string', Rule::in(array_keys(GradeEnum::options()))],
-            'subject' => [
-                'required',
-                'string',
-                Rule::in(array_keys(SubjectEnum::options())),
-                Rule::unique('teacher_subjects', 'subject')
-                    ->where('teacher_id', auth('teacher')->id())
-                    ->where('grade', $this->input('grade'))
-                    ->ignore($subjectId),
-            ],
+            'grades' => ['required', 'array', 'min:1'],
+            'grades.*' => ['required', 'string', Rule::in(array_keys(GradeEnum::options()))],
+            'subjects' => ['required', 'array', 'min:1'],
+            'subjects.*' => ['required', 'string', Rule::in(array_keys(SubjectEnum::options()))],
             'is_active' => ['required', 'integer', 'in:0,1'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'grades.required' => 'يرجى اختيار مرحلة دراسية واحدة على الأقل.',
+            'grades.array' => 'المراحل يجب أن تكون قائمة صحيحة.',
+            'grades.min' => 'يرجى اختيار مرحلة دراسية واحدة على الأقل.',
+            'grades.*.in' => 'المرحلة المحددة غير صالحة.',
+
+            'subjects.required' => 'يرجى اختيار مادة واحدة على الأقل.',
+            'subjects.array' => 'المواد يجب أن تكون قائمة صحيحة.',
+            'subjects.min' => 'يرجى اختيار مادة واحدة على الأقل.',
+            'subjects.*.in' => 'المادة المحددة غير صالحة.',
+
+            'is_active.required' => 'حالة المادة مطلوبة.',
+            'is_active.integer' => 'حالة المادة غير صالحة.',
+            'is_active.in' => 'حالة المادة يجب أن تكون 0 أو 1.',
         ];
     }
 }

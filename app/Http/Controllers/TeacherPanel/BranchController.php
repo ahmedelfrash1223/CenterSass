@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\TeacherPanel;
 
-use App\Http\Controllers\Controller;
+use App\Enums\Admin\PackageFeatureKeyEnum;
+use App\Enums\Teacher\TeacherPermissionEnum;
 use App\Models\Branch;
 
-class BranchController extends Controller
+class BranchController extends BaseResourceController
 {
     public function index()
     {
@@ -14,12 +15,34 @@ class BranchController extends Controller
 
     public function create()
     {
-        return view('teacher-panel.pages.branch.create');
+        $teacher = $this->currentTeacher();
+
+        abort_unless(
+            $teacher->hasPermission(TeacherPermissionEnum::BRANCH_CREATE),
+            403
+        );
+
+        // Redirect before loading view if the plan is full
+        $count = Branch::where('teacher_id', $teacher->getOwnerId())->count();
+
+        return $this->checkLimitOrRedirect(
+            PackageFeatureKeyEnum::MAX_BRANCHES->value,
+            $count,
+            'branch-error',
+            'teacher.branches.index'
+        ) ?? view('teacher-panel.pages.branch.create');
     }
 
     public function edit(Branch $branch)
     {
-        abort_unless($branch->teacher_id === auth('teacher')->id(), 404);
+        $this->ensureBranchAccess($branch);
+
+        $teacher = $this->currentTeacher();
+
+        abort_unless(
+            $teacher->hasPermission(TeacherPermissionEnum::BRANCH_UPDATE),
+            403
+        );
 
         return view('teacher-panel.pages.branch.edit', compact('branch'));
     }

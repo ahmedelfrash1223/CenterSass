@@ -10,14 +10,14 @@ return new class extends Migration
     {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
             $table->string('name');
             $table->text('address');
             $table->string('phone', 20)->nullable();
             $table->string('email')->nullable();
             $table->unsignedTinyInteger('is_active')->default(1);
             $table->timestamps();
-
+            $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
+            $table->foreignId('created_by')->nullable()->constrained('teachers')->nullOnDelete();
             $table->unique(['teacher_id', 'name']);
             $table->index(['teacher_id', 'is_active']);
         });

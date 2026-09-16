@@ -7,6 +7,7 @@ enum PackageFeatureKeyEnum: int
     case MAX_STUDENTS = 1;
     case MAX_GROUPS = 2;
     case MAX_EMPLOYEES = 3;
+    case MAX_BRANCHES = 4;
 
 
     public function label(): string
@@ -15,6 +16,7 @@ enum PackageFeatureKeyEnum: int
             self::MAX_STUDENTS => 'عدد الطلاب',
             self::MAX_GROUPS => 'عدد المجموعات',
             self::MAX_EMPLOYEES => 'عدد الموظفين',
+            self::MAX_BRANCHES => 'عدد الأفرع',
 
         };
     }
@@ -25,6 +27,8 @@ enum PackageFeatureKeyEnum: int
             self::MAX_STUDENTS => 'طالب',
             self::MAX_GROUPS => 'مجموعة',
             self::MAX_EMPLOYEES => 'موظف',
+            self::MAX_BRANCHES => 'فرع',
+
 
         };
     }

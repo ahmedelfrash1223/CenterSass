@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
+            $table->foreignId('created_by')->nullable()->constrained('teachers')->nullOnDelete();
             $table->date('joined_at')->nullable();
             $table->date('left_at')->nullable();
-            $table->string('status', 20)->default('active'); // active, left, completed
+            $table->string('status', 20)->default('active');
             $table->timestamps();
 
             $table->unique(['group_id', 'student_id']);

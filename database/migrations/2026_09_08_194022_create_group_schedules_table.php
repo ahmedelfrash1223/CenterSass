@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->time('start_time');
             $table->time('end_time');
             $table->foreignId('subject_id')->constrained('teacher_subjects')->cascadeOnDelete();
+            $table->foreignId('teacher_id')->nullable()->constrained('teachers')->nullOnDelete();
             $table->timestamps();
 
             $table->index(['group_id', 'day']);

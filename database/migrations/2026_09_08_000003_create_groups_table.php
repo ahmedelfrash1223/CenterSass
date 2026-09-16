@@ -12,6 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
             $table->foreignId('branch_id')->constrained('branches')->cascadeOnDelete();
+            $table->foreignId('created_by')->nullable()->constrained('teachers')->nullOnDelete();
+            $table->string('grade')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
             $table->unsignedInteger('max_students')->default(0);

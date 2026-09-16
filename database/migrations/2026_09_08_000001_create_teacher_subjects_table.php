@@ -13,8 +13,11 @@ return new class extends Migration
             $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
             $table->string('grade');
             $table->string('subject');
-            $table->timestamps();
+            $table->unsignedTinyInteger('is_active')->default(1);
+            $table->foreignId('created_by')->nullable()->constrained('teachers')->nullOnDelete();
 
+            $table->timestamps();
+            $table->index(['teacher_id', 'is_active']);
             $table->unique(['teacher_id', 'grade', 'subject']);
             $table->index(['teacher_id', 'grade']);
         });

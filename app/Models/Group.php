@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Teacher\HasCreator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,9 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Group extends Model
 {
+    use HasCreator;
+
     protected $fillable = [
         'teacher_id',
+        'created_by',
         'branch_id',
+        'grade',
         'name',
         'description',
         'max_students',
@@ -45,7 +50,6 @@ class Group extends Model
         return $this->hasMany(GroupSchedule::class, 'group_id');
     }
 
-    // ✅ العلاقة الصحيحة مع Pivot Table
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'group_student')
@@ -54,7 +58,6 @@ class Group extends Model
             ->withTimestamps();
     }
 
-    // Get active students only
     public function activeStudents(): BelongsToMany
     {
         return $this->students()->wherePivot('status', 'active');
@@ -64,36 +67,53 @@ class Group extends Model
     // 📌 ACCESSORS
     // =============================================
 
-    public function getStudentCountAttribute(): int
+    public function getStatusColorAttribute(): string
     {
-        return $this->activeStudents()->count();
+        return match ($this->status) {
+            'active' => 'success',
+            'inactive' => 'secondary',
+            'completed' => 'info',
+            default => 'secondary',
+        };
     }
 
-    public function getIsFullAttribute(): bool
+    public function getStatusLabelAttribute(): string
     {
-        if ($this->max_students === 0) {
-            return false;
-        }
-        return $this->student_count >= $this->max_students;
+        return match ($this->status) {
+            'active' => 'نشط',
+            'inactive' => 'غير نشط',
+            'completed' => 'منتهي',
+            default => $this->status,
+        };
     }
+
 
     // =============================================
     // 📌 METHODS
     // =============================================
 
-    public function addStudent(Student $student, ?string $joinedAt = null): bool
+    public function addStudent(Student $student): bool
     {
-        if ($this->is_full) {
+        $exists = $this->students()
+            ->where('student_id', $student->id)
+            ->wherePivot('status', 'active')
+            ->exists();
+
+        if ($exists) {
             return false;
         }
 
-        if ($student->isInGroup($this)) {
-            return false;
+        if ($this->max_students > 0) {
+            $current = $this->students()->wherePivot('status', 'active')->count();
+            if ($current >= $this->max_students) {
+                return false;
+            }
         }
 
         $this->students()->attach($student->id, [
-            'joined_at' => $joinedAt ?? now(),
+            'joined_at' => now()->toDateString(),
             'status' => 'active',
+            'created_by' => auth('teacher')->id(),
         ]);
 
         return true;
@@ -106,4 +126,5 @@ class Group extends Model
             'status' => 'left',
         ]);
     }
+
 }

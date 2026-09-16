@@ -1,767 +1,509 @@
 <div>
-    <div class="row">
-
-        <!-- Welcome -->
-        <div class="col-12 mb-3">
-            <div class="card welcome-card dashboard-card border-0">
-                <div class="card-body py-4 welcome-content">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <span class="badge bg-white bg-opacity-10 mb-3 px-3 py-2">
-                                <i class="ph-duotone ph-sparkle me-1"></i>
-                                مرحباً بك من جديد 👋
+    @if($currentSchedule)
+        <div class="card border-0 shadow-sm mb-4 schedule-current">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="schedule-pulse">
+                        <div class="pulse-ring"></div>
+                        <i class="ph-duotone ph-broadcast fs-1"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                            <span class="badge bg-danger text-white">
+                                <i class="ph-duotone ph-broadcast me-1"></i>
+                                حصة جارية الآن
                             </span>
-
-                            <h2 class="text-white mb-2">
-                                أهلاً بك في لوحة التحكم
-                            </h2>
-
-                            <p class="text-white text-opacity-75 mb-0">
-                                من هنا يمكنك إدارة الطلاب والمدرسين والكورسات
-                                ومتابعة أداء المنصة بالكامل.
-                            </p>
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-clock me-1"></i>
+                                {{ $currentSchedule->start_time->format('H:i') }}
+                                - {{ $currentSchedule->end_time->format('H:i') }}
+                            </small>
                         </div>
-
-                        <div class="col-md-4 text-md-end text-center mt-3 mt-md-0">
-                            <i
-                                class="ph-duotone ph-student"
-                                style="font-size:100px;opacity:.18;"
-                            ></i>
+                        <h5 class="mb-1 fw-bold">
+                            {{ $currentSchedule->subject?->subject_label ?? 'مادة غير محددة' }}
+                            <span class="text-muted">-</span>
+                            {{ $currentSchedule->subject?->grade_label ?? '' }}
+                        </h5>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-users-three me-1"></i>
+                                {{ $currentSchedule->group?->name ?? '—' }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-git-branch me-1"></i>
+                                {{ $currentSchedule->group?->branch?->name ?? '—' }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-chalkboard-teacher me-1"></i>
+                                {{ $currentSchedule->teacher?->name ?? '—' }}
+                            </small>
                         </div>
                     </div>
+                    @if($canViewGroups)
+                        <a href="{{ route('teacher.groups.show', $currentSchedule->group_id) }}"
+                           wire:navigate
+                           class="btn btn-primary">
+                            <i class="ph-duotone ph-arrow-left me-1"></i>
+                            عرض المجموعة
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
+    @elseif($nextSchedule)
+        <div class="card border-0 shadow-sm mb-4 schedule-next">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="schedule-icon-wrapper bg-success bg-opacity-10 text-success">
+                        <i class="ph-duotone ph-calendar-check fs-1"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                            <span class="badge bg-success text-white">
+                                <i class="ph-duotone ph-lightning me-1"></i>
+                                الحصة الجاية
+                            </span>
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-clock me-1"></i>
+                                {{ $nextSchedule->start_time->format('H:i') }}
+                                - {{ $nextSchedule->end_time->format('H:i') }}
+                            </small>
+                        </div>
+                        <h5 class="mb-1 fw-bold">
+                            {{ $nextSchedule->subject?->subject_label ?? 'مادة غير محددة' }}
+                            <span class="text-muted">-</span>
+                            {{ $nextSchedule->subject?->grade_label ?? '' }}
+                        </h5>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-users-three me-1"></i>
+                                {{ $nextSchedule->group?->name ?? '—' }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-git-branch me-1"></i>
+                                {{ $nextSchedule->group?->branch?->name ?? '—' }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-chalkboard-teacher me-1"></i>
+                                {{ $nextSchedule->teacher?->name ?? '—' }}
+                            </small>
+                        </div>
+                    </div>
+                    @if($canViewGroups)
+                        <a href="{{ route('teacher.groups.show', $nextSchedule->group_id) }}"
+                           wire:navigate
+                           class="btn btn-success">
+                            <i class="ph-duotone ph-arrow-left me-1"></i>
+                            عرض المجموعة
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @elseif($todaySchedules->count() > 0)
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4 text-center">
+                <div class="schedule-icon-wrapper bg-info bg-opacity-10 text-info mx-auto mb-2">
+                    <i class="ph-duotone ph-check-circle fs-1"></i>
+                </div>
+                <h6 class="mb-1 fw-bold">خلصت حصص النهارده 🎉</h6>
+                <p class="text-muted mb-0 small">عندك {{ $todaySchedules->count() }} حصة النهارده — كلهم خلصوا</p>
+            </div>
+        </div>
+    @else
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4 text-center">
+                <div class="schedule-icon-wrapper bg-secondary bg-opacity-10 text-secondary mx-auto mb-2">
+                    <i class="ph-duotone ph-coffee fs-1"></i>
+                </div>
+                <h6 class="mb-1 fw-bold">مفيش حصص النهارده</h6>
+                <p class="text-muted mb-0 small">يوم مريح 🌴 — استمتع بيومك</p>
+            </div>
+        </div>
+    @endif
 
-        <!-- Statistics -->
-
-        <div class="col-md-6 col-xl-3">
-            <div class="card dashboard-card dashboard-stat">
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm stat-card-hover h-100">
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon icon-primary">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="stat-icon-box bg-primary bg-opacity-10 text-primary">
                             <i class="ph-duotone ph-student"></i>
                         </div>
-
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-muted mb-1 stat-label">
-                                إجمالي الطلاب
-                            </p>
-
-                            <div class="d-flex align-items-center">
-                                <h3 class="stat-number mb-0">1,248</h3>
-                                <span class="badge bg-light-success ms-2">
-                                    +12%
-                                </span>
-                            </div>
-                        </div>
+                        <i class="ph-duotone ph-trend-up text-success"></i>
                     </div>
-
-                    <div class="mt-3">
-                        <div
-                            class="progress"
-                            style="height:6px;"
-                        >
-                            <div
-                                class="progress-bar bg-primary"
-                                style="width:78%;"
-                            ></div>
-                        </div>
-
-                        <small class="text-muted d-block mt-2">
-                            <i class="ph-duotone ph-trend-up text-success"></i>
-                            زيادة عن الشهر الماضي
-                        </small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <div class="card dashboard-card dashboard-stat">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon icon-success">
-                            <i class="ph-duotone ph-chalkboard-teacher"></i>
-                        </div>
-
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-muted mb-1 stat-label">
-                                إجمالي المدرسين
-                            </p>
-
-                            <div class="d-flex align-items-center">
-                                <h3 class="stat-number mb-0">86</h3>
-                                <span class="badge bg-light-success ms-2">
-                                    +8%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3">
-                        <div
-                            class="progress"
-                            style="height:6px;"
-                        >
-                            <div
-                                class="progress-bar bg-success"
-                                style="width:65%;"
-                            ></div>
-                        </div>
-
-                        <small class="text-muted d-block mt-2">
-                            <i class="ph-duotone ph-users-three text-success"></i>
-                            مدرس نشط على المنصة
-                        </small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <div class="card dashboard-card dashboard-stat">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon icon-warning">
-                            <i class="ph-duotone ph-books"></i>
-                        </div>
-
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-muted mb-1 stat-label">
-                                الكورسات
-                            </p>
-
-                            <div class="d-flex align-items-center">
-                                <h3 class="stat-number mb-0">124</h3>
-                                <span class="badge bg-light-warning ms-2">
-                                    +15%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3">
-                        <div
-                            class="progress"
-                            style="height:6px;"
-                        >
-                            <div
-                                class="progress-bar bg-warning"
-                                style="width:72%;"
-                            ></div>
-                        </div>
-
-                        <small class="text-muted d-block mt-2">
-                            <i class="ph-duotone ph-book-open text-warning"></i>
-                            كورسات متاحة حالياً
-                        </small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <div class="card dashboard-card dashboard-stat bg-brand-color-3">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon bg-white bg-opacity-10 text-white">
-                            <i class="ph-duotone ph-currency-egypt"></i>
-                        </div>
-
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-white text-opacity-75 mb-1 stat-label">
-                                الإيرادات
-                            </p>
-
-                            <div class="d-flex align-items-center">
-                                <h3 class="stat-number text-white mb-0">
-                                    248,500
-                                </h3>
-                                <span class="badge bg-white bg-opacity-10 text-white ms-2">
-                                    +18%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3">
-                        <div
-                            class="progress bg-white bg-opacity-10"
-                            style="height:6px;"
-                        >
-                            <div
-                                class="progress-bar bg-white"
-                                style="width:84%;"
-                            ></div>
-                        </div>
-
-                        <small class="text-white text-opacity-75 d-block mt-2">
-                            <i class="ph-duotone ph-trend-up"></i>
-                            إجمالي إيرادات الشهر
-                        </small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="col-12 mt-2">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="ph-duotone ph-lightning text-warning me-1"></i>
-                        إجراءات سريعة
-                    </h5>
-                </div>
-
-                <div class="card-body">
-                    <div class="row g-3">
-
-                        <div class="col-6 col-md-3">
-                            <a
-                                href="#"
-                                class="text-decoration-none"
-                            >
-                                <div class="quick-action d-flex align-items-center">
-                                    <div class="dashboard-icon icon-primary">
-                                        <i class="ph-duotone ph-user-plus"></i>
-                                    </div>
-
-                                    <div class="ms-3">
-                                        <h6 class="mb-1">إضافة طالب</h6>
-                                        <p class="text-muted mb-0 text-sm">
-                                            تسجيل طالب جديد
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6 col-md-3">
-                            <a
-                                href="#"
-                                class="text-decoration-none"
-                            >
-                                <div class="quick-action d-flex align-items-center">
-                                    <div class="dashboard-icon icon-success">
-                                        <i class="ph-duotone ph-chalkboard-teacher"></i>
-                                    </div>
-
-                                    <div class="ms-3">
-                                        <h6 class="mb-1">إضافة مدرس</h6>
-                                        <p class="text-muted mb-0 text-sm">
-                                            تسجيل مدرس جديد
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6 col-md-3">
-                            <a
-                                href="#"
-                                class="text-decoration-none"
-                            >
-                                <div class="quick-action d-flex align-items-center">
-                                    <div class="dashboard-icon icon-warning">
-                                        <i class="ph-duotone ph-book-open"></i>
-                                    </div>
-
-                                    <div class="ms-3">
-                                        <h6 class="mb-1">إضافة كورس</h6>
-                                        <p class="text-muted mb-0 text-sm">
-                                            إنشاء كورس جديد
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6 col-md-3">
-                            <a
-                                href="#"
-                                class="text-decoration-none"
-                            >
-                                <div class="quick-action d-flex align-items-center">
-                                    <div class="dashboard-icon icon-info">
-                                        <i class="ph-duotone ph-chart-line-up"></i>
-                                    </div>
-
-                                    <div class="ms-3">
-                                        <h6 class="mb-1">التقارير</h6>
-                                        <p class="text-muted mb-0 text-sm">
-                                            عرض تقارير المنصة
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chart -->
-        <div class="col-md-12 col-xl-7">
-            <div class="card dashboard-card">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div>
-                        <h5 class="mb-1">
-                            <i class="ph-duotone ph-chart-line-up text-primary me-1"></i>
-                            نمو الطلاب
-                        </h5>
-                        <p class="text-muted text-sm mb-0">
-                            إحصائيات تسجيل الطلاب خلال الفترة الأخيرة
-                        </p>
-                    </div>
-
-                    <div class="dropdown">
-                        <a
-                            class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none"
-                            href="#"
-                            data-bs-toggle="dropdown"
-                        >
-                            <i class="ph-duotone ph-dots-three f-18"></i>
-                        </a>
-
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a
-                                class="dropdown-item"
-                                href="#"
-                            >هذا الشهر</a>
-                            <a
-                                class="dropdown-item"
-                                href="#"
-                            >آخر 3 أشهر</a>
-                            <a
-                                class="dropdown-item"
-                                href="#"
-                            >هذا العام</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="dashboard-icon icon-primary">
-                            <i class="ph-duotone ph-users-three"></i>
-                        </div>
-
-                        <div class="ms-3">
-                            <p class="text-muted mb-1">إجمالي الطلاب</p>
-                            <h3 class="mb-0">1,248</h3>
-                        </div>
-
-                        <span class="badge bg-light-success ms-auto">
-                            <i class="ph-duotone ph-trend-up"></i>
-                            12.5%
-                        </span>
-                    </div>
-
-                    <div id="earnings-users-chart"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Attendance -->
-        <div class="col-md-12 col-xl-5">
-            <div class="card dashboard-card">
-                <div class="card-header">
-                    <h5 class="mb-1">
-                        <i class="ph-duotone ph-chart-donut text-success me-1"></i>
-                        حضور الطلاب
-                    </h5>
-
-                    <p class="text-muted text-sm mb-0">
-                        حالة الحضور اليوم
+                    <h3 class="mb-1 fw-bold">{{ number_format($stats['students_count']) }}</h3>
+                    <p class="text-muted mb-0 small">
+                        <i class="ph-duotone ph-student me-1"></i>
+                        إجمالي الطلاب
                     </p>
                 </div>
+            </div>
+        </div>
 
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm stat-card-hover h-100">
                 <div class="card-body">
-
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="dashboard-icon icon-success">
-                            <i class="ph-duotone ph-check-circle"></i>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="stat-icon-box bg-success bg-opacity-10 text-success">
+                            <i class="ph-duotone ph-users-three"></i>
                         </div>
-
-                        <div class="ms-3 flex-grow-1">
-                            <p class="text-muted mb-1">حاضر</p>
-                            <h5 class="mb-0">892 طالب</h5>
-                        </div>
-
-                        <span class="badge bg-light-success">71%</span>
+                        <i class="ph-duotone ph-trend-up text-success"></i>
                     </div>
-
-                    <div
-                        class="progress mb-4"
-                        style="height:9px;"
-                    >
-                        <div
-                            class="progress-bar bg-success"
-                            style="width:71%;"
-                        ></div>
-                    </div>
-
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="dashboard-icon icon-warning">
-                            <i class="ph-duotone ph-clock"></i>
-                        </div>
-
-                        <div class="ms-3 flex-grow-1">
-                            <p class="text-muted mb-1">متأخر</p>
-                            <h5 class="mb-0">126 طالب</h5>
-                        </div>
-
-                        <span class="badge bg-light-warning">10%</span>
-                    </div>
-
-                    <div
-                        class="progress mb-4"
-                        style="height:9px;"
-                    >
-                        <div
-                            class="progress-bar bg-warning"
-                            style="width:10%;"
-                        ></div>
-                    </div>
-
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon icon-danger">
-                            <i class="ph-duotone ph-x-circle"></i>
-                        </div>
-
-                        <div class="ms-3 flex-grow-1">
-                            <p class="text-muted mb-1">غائب</p>
-                            <h5 class="mb-0">230 طالب</h5>
-                        </div>
-
-                        <span class="badge bg-light-danger">19%</span>
-                    </div>
-
-                    <div
-                        class="progress mt-3"
-                        style="height:9px;"
-                    >
-                        <div
-                            class="progress-bar bg-danger"
-                            style="width:19%;"
-                        ></div>
-                    </div>
-
+                    <h3 class="mb-1 fw-bold">{{ number_format($stats['groups_count']) }}</h3>
+                    <p class="text-muted mb-0 small">
+                        <i class="ph-duotone ph-users-three me-1"></i>
+                        إجمالي المجموعات
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Social / Platform Statistics -->
-        <div class="col-md-6 col-xl-4">
-            <div class="card dashboard-card">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm stat-card-hover h-100">
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon icon-primary">
-                            <i class="ph-duotone ph-facebook-logo"></i>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="stat-icon-box bg-warning bg-opacity-10 text-warning">
+                            <i class="ph-duotone ph-git-branch"></i>
                         </div>
-
-                        <div class="flex-grow-1 ms-3">
-                            <p class="mb-1 text-muted">متابعو فيسبوك</p>
-
-                            <div class="d-flex align-items-center">
-                                <h4 class="mb-0">12,281</h4>
-                                <span class="badge bg-light-success ms-2">
-                                    +7.2%
-                                </span>
-                            </div>
-                        </div>
+                        <i class="ph-duotone ph-check-circle text-success"></i>
                     </div>
-
-                    <div class="row g-3 mt-4 text-center">
-                        <div class="col-6">
-                            <p class="mb-1 text-muted">المستهدف</p>
-                            <h5 class="mb-0">15,000</h5>
-                        </div>
-
-                        <div class="col-6 border-start">
-                            <p class="mb-1 text-muted">هذا الشهر</p>
-                            <h5 class="mb-0">3,539</h5>
-                        </div>
-                    </div>
+                    <h3 class="mb-1 fw-bold">{{ number_format($stats['branches_count']) }}</h3>
+                    <p class="text-muted mb-0 small">
+                        <i class="ph-duotone ph-git-branch me-1"></i>
+                        {{ $isOwner ? 'إجمالي الفروع' : 'الفروع المتاحة لك' }}
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-xl-4">
-            <div class="card dashboard-card">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm stat-card-hover h-100">
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon icon-danger">
-                            <i class="ph-duotone ph-instagram-logo"></i>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="stat-icon-box bg-info bg-opacity-10 text-info">
+                            <i class="ph-duotone ph-notebook"></i>
                         </div>
-
-                        <div class="flex-grow-1 ms-3">
-                            <p class="mb-1 text-muted">متابعو إنستجرام</p>
-
-                            <div class="d-flex align-items-center">
-                                <h4 class="mb-0">9,842</h4>
-                                <span class="badge bg-light-success ms-2">
-                                    +5.9%
-                                </span>
-                            </div>
-                        </div>
+                        <i class="ph-duotone ph-check-circle text-success"></i>
                     </div>
-
-                    <div class="row g-3 mt-4 text-center">
-                        <div class="col-6">
-                            <p class="mb-1 text-muted">المستهدف</p>
-                            <h5 class="mb-0">12,000</h5>
-                        </div>
-
-                        <div class="col-6 border-start">
-                            <p class="mb-1 text-muted">هذا الشهر</p>
-                            <h5 class="mb-0">2,140</h5>
-                        </div>
-                    </div>
+                    <h3 class="mb-1 fw-bold">{{ number_format($stats['subjects_count']) }}</h3>
+                    <p class="text-muted mb-0 small">
+                        <i class="ph-duotone ph-notebook me-1"></i>
+                        إجمالي المواد
+                    </p>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-12 col-xl-4">
-            <div class="card dashboard-card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="dashboard-icon icon-info">
-                            <i class="ph-duotone ph-youtube-logo"></i>
-                        </div>
-
-                        <div class="flex-grow-1 ms-3">
-                            <p class="mb-1 text-muted">مشتركو يوتيوب</p>
-
-                            <div class="d-flex align-items-center">
-                                <h4 class="mb-0">6,520</h4>
-                                <span class="badge bg-light-success ms-2">
-                                    +6.2%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row g-3 mt-4 text-center">
-                        <div class="col-6">
-                            <p class="mb-1 text-muted">المستهدف</p>
-                            <h5 class="mb-0">10,000</h5>
-                        </div>
-
-                        <div class="col-6 border-start">
-                            <p class="mb-1 text-muted">هذا الشهر</p>
-                            <h5 class="mb-0">1,320</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Students -->
-        <div class="col-md-6 col-xl-5">
-            <div class="card dashboard-card">
-                <div class="card-header d-flex align-items-center justify-content-between py-3">
-                    <div>
-                        <h5 class="mb-1">
-                            <i class="ph-duotone ph-users text-primary me-1"></i>
-                            أحدث الطلاب
-                        </h5>
-                        <p class="text-muted text-sm mb-0">
-                            آخر الطلاب المسجلين
-                        </p>
-                    </div>
-
-                    <a
-                        href="#"
-                        class="btn btn-sm btn-light-primary"
-                    >
-                        عرض الكل
-                    </a>
-                </div>
-
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-4">
-                        <img
-                            src="{{ asset('assets/adminPanel/images/user/avatar-1.jpg') }}"
-                            class="student-avatar"
-                            alt="student"
-                        >
-
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">أحمد محمد</h6>
-                            <p class="text-muted mb-0 text-sm">
-                                طالب ثانوي
-                            </p>
-                        </div>
-
-                        <span class="badge bg-light-success">
-                            نشط
-                        </span>
-                    </div>
-
-                    <div class="d-flex align-items-center mb-4">
-                        <img
-                            src="{{ asset('assets/adminPanel/images/user/avatar-2.jpg') }}"
-                            class="student-avatar"
-                            alt="student"
-                        >
-
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">محمد علي</h6>
-                            <p class="text-muted mb-0 text-sm">
-                                طالب إعدادي
-                            </p>
-                        </div>
-
-                        <span class="badge bg-light-success">
-                            نشط
-                        </span>
-                    </div>
-
-                    <div class="d-flex align-items-center mb-4">
-                        <img
-                            src="{{ asset('assets/adminPanel/images/user/avatar-3.jpg') }}"
-                            class="student-avatar"
-                            alt="student"
-                        >
-
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">عمر خالد</h6>
-                            <p class="text-muted mb-0 text-sm">
-                                طالب ثانوي
-                            </p>
-                        </div>
-
-                        <span class="badge bg-light-warning">
-                            متأخر
-                        </span>
-                    </div>
-
-                    <div class="d-flex align-items-center">
-                        <img
-                            src="{{ asset('assets/adminPanel/images/user/avatar-4.jpg') }}"
-                            class="student-avatar"
-                            alt="student"
-                        >
-
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">يوسف محمود</h6>
-                            <p class="text-muted mb-0 text-sm">
-                                طالب إعدادي
-                            </p>
-                        </div>
-
-                        <span class="badge bg-light-success">
-                            نشط
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="col-md-6 col-xl-7">
-            <div class="card dashboard-card">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div>
-                        <h5 class="mb-1">
-                            <i class="ph-duotone ph-clock-counter-clockwise text-primary me-1"></i>
-                            آخر النشاطات
-                        </h5>
-
-                        <p class="text-muted text-sm mb-0">
-                            أحدث العمليات التي تمت على المنصة
-                        </p>
-                    </div>
-
-                    <a
-                        href="#"
-                        class="btn btn-sm btn-light-primary"
-                    >
-                        عرض الكل
-                    </a>
-                </div>
-
-                <div class="card-body">
-
-                    <div class="activity-item mb-4">
-                        <div class="activity-icon icon-success">
-                            <i class="ph-duotone ph-user-plus"></i>
-                        </div>
-
-                        <h6 class="mb-1">
-                            تم تسجيل طالب جديد
-                        </h6>
-
-                        <p class="text-muted mb-1 text-sm">
-                            تم تسجيل الطالب أحمد محمد في المنصة.
-                        </p>
-
-                        <small class="text-muted">
-                            منذ 10 دقائق
-                        </small>
-                    </div>
-
-                    <div class="activity-item mb-4">
-                        <div class="activity-icon icon-primary">
-                            <i class="ph-duotone ph-book-open"></i>
-                        </div>
-
-                        <h6 class="mb-1">
-                            تم إنشاء كورس جديد
-                        </h6>
-
-                        <p class="text-muted mb-1 text-sm">
-                            تم إضافة كورس الرياضيات للصف الثالث الثانوي.
-                        </p>
-
-                        <small class="text-muted">
-                            منذ 35 دقيقة
-                        </small>
-                    </div>
-
-                    <div class="activity-item mb-4">
-                        <div class="activity-icon icon-warning">
-                            <i class="ph-duotone ph-money"></i>
-                        </div>
-
-                        <h6 class="mb-1">
-                            تم استلام دفعة جديدة
-                        </h6>
-
-                        <p class="text-muted mb-1 text-sm">
-                            تم تسجيل دفعة بقيمة 1,500 جنيه.
-                        </p>
-
-                        <small class="text-muted">
-                            منذ ساعة
-                        </small>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-icon icon-info">
-                            <i class="ph-duotone ph-chalkboard-teacher"></i>
-                        </div>
-
-                        <h6 class="mb-1">
-                            مدرس جديد انضم للمنصة
-                        </h6>
-
-                        <p class="text-muted mb-1 text-sm">
-                            تم إنشاء حساب مدرس جديد بنجاح.
-                        </p>
-
-                        <small class="text-muted">
-                            منذ ساعتين
-                        </small>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1 fw-bold">
+                            <i class="ph-duotone ph-calendar-check me-1"></i>
+                            جدول مواعيد النهارده
+                        </h6>
+                        <small class="text-muted">
+                            <i class="ph-duotone ph-calendar-blank me-1"></i>
+                            {{ now()->locale('ar')->translatedFormat('l، d F Y') }}
+                        </small>
+                    </div>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">
+                        {{ $todaySchedules->count() }} حصة
+                    </span>
+                </div>
+                <div class="card-body p-0">
+                    @if($todaySchedules->count() > 0)
+                        <div class="schedule-list">
+                            @foreach($todaySchedules as $index => $schedule)
+                                @php
+                                    $isNow = $currentSchedule && $currentSchedule->id === $schedule->id;
+                                    $isPast = $schedule->end_time->format('H:i') < now()->format('H:i');
+                                    $isUpcoming = !$isNow && !$isPast;
+                                @endphp
+                                <div
+                                    class="schedule-item {{ $isNow ? 'is-now' : ($isPast ? 'is-past' : 'is-upcoming') }}"
+                                    wire:key="schedule-{{ $schedule->id }}">
+                                    <div class="schedule-time">
+                                        <div class="fw-bold">{{ $schedule->start_time->format('H:i') }}</div>
+                                        <small class="text-muted">{{ $schedule->end_time->format('H:i') }}</small>
+                                    </div>
+
+                                    <div class="schedule-content">
+                                        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                            <h6 class="mb-0 fw-semibold">
+                                                {{ $schedule->subject?->subject_label ?? 'مادة' }}
+                                            </h6>
+                                            @if($isNow)
+                                                <span class="badge bg-danger bg-opacity-10 text-danger">
+                                                    <i class="ph-duotone ph-broadcast me-1"></i>الآن
+                                                </span>
+                                            @elseif($isPast)
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                                    <i class="ph-duotone ph-check me-1"></i>خلصت
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="d-flex gap-3 flex-wrap">
+                                            <small class="text-muted">
+                                                <i class="ph-duotone ph-users-three me-1"></i>
+                                                {{ $schedule->group?->name }}
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="ph-duotone ph-git-branch me-1"></i>
+                                                {{ $schedule->group?->branch?->name }}
+                                            </small>
+                                            @if($isOwner || $schedule->teacher_id !== Auth::guard('teacher')->id())
+                                                <small class="text-muted">
+                                                    <i class="ph-duotone ph-chalkboard-teacher me-1"></i>
+                                                    {{ $schedule->teacher?->name }}
+                                                </small>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="schedule-action">
+                                        @if($canViewGroups)
+                                            <a href="{{ route('teacher.groups.show', $schedule->group_id) }}"
+                                               wire:navigate
+                                               class="btn btn-sm btn-light border">
+                                                <i class="ph-duotone ph-arrow-left"></i>
+                                            </a>
+                                        @else
+                                            <span class="btn btn-sm btn-light border disabled"
+                                                  title="ليس لديك صلاحية">
+                                                <i class="ph-duotone ph-arrow-left"></i>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-5">
+                            <i class="ph-duotone ph-calendar-x fs-1 d-block text-muted mb-2"></i>
+                            <h6 class="text-muted mb-1">لا توجد حصص اليوم</h6>
+                            <small class="text-muted">استمتع بيومك 🌴</small>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            @if($isOwner && $ownerStats)
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="stat-icon-box bg-primary bg-opacity-10 text-primary">
+                                <i class="ph-duotone ph-users-four"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h3 class="mb-0 fw-bold">{{ $ownerStats['staff_count'] }}</h3>
+                                <small class="text-muted">أعضاء الفريق</small>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between pt-3 border-top">
+                            <small class="text-muted">
+                                <i class="ph-duotone ph-check-circle text-success me-1"></i>
+                                نشط: <strong>{{ $ownerStats['active_staff_count'] }}</strong>
+                            </small>
+                            <a href="{{ route('teacher.staff.index') }}" wire:navigate
+                               class="text-primary small text-decoration-none">
+                                عرض الكل <i class="ph-duotone ph-arrow-left"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                @if($ownerStats['subscription'])
+                    @php $sub = $ownerStats['subscription']; @endphp
+                    <div class="card border-0 shadow-sm mb-4 subscription-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ph-duotone ph-crown text-warning fs-4"></i>
+                                    <h6 class="mb-0 fw-bold">اشتراكك</h6>
+                                </div>
+                                <span class="badge bg-success bg-opacity-10 text-success">
+                                    <i class="ph-duotone ph-check-circle me-1"></i>نشط
+                                </span>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">الباقة</small>
+                                <strong>{{ $sub->package?->name ?? 'غير محددة' }}</strong>
+                            </div>
+                            @if($sub->end_date)
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">تاريخ الانتهاء</small>
+                                    <strong>{{ $sub->end_date->format('Y-m-d') }}</strong>
+                                    <small class="text-muted d-block mt-1">
+                                        ({{ (int) now()->diffInDays($sub->end_date, false) }} يوم متبقي)
+                                    </small>
+                                </div>
+                            @endif
+                            <a href="{{ route('teacher.profile.subscription') }}"
+                               wire:navigate
+                               class="btn btn-sm btn-primary w-100">
+                                <i class="ph-duotone ph-crown me-1"></i>
+                                إدارة الاشتراك
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            @endif
+
+            @if(!$isOwner && $staffInfo)
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-transparent border-bottom">
+                        <h6 class="mb-0 fw-bold">
+                            <i class="ph-duotone ph-git-branch me-1"></i>
+                            فروعي
+                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">
+                                {{ $staffInfo['my_branches']->count() }}
+                            </span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        @if($staffInfo['my_branches']->count() > 0)
+                            <div class="list-group list-group-flush">
+                                @foreach($staffInfo['my_branches'] as $branch)
+                                    <div class="list-group-item d-flex align-items-center gap-2">
+                                        <div class="stat-icon-box stat-icon-sm bg-primary bg-opacity-10 text-primary">
+                                            <i class="ph-duotone ph-git-branch"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block small">{{ $branch->name }}</strong>
+                                            @if($branch->phone)
+                                                <small class="text-muted">
+                                                    <i class="ph-duotone ph-phone me-1"></i>{{ $branch->phone }}
+                                                </small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-4">
+                                <i class="ph-duotone ph-git-branch fs-1 text-muted d-block mb-2"></i>
+                                <small class="text-muted">لم يتم إضافتك لأي فرع بعد</small>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <div class="stat-icon-box bg-success bg-opacity-10 text-success mx-auto mb-2">
+                            <i class="ph-duotone ph-calendar-check fs-3"></i>
+                        </div>
+                        <h3 class="mb-1 fw-bold">{{ $staffInfo['my_schedules_count'] }}</h3>
+                        <small class="text-muted">حصصي النهارده</small>
+                    </div>
+                </div>
+            @endif
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="ph-duotone ph-chart-bar me-1"></i>
+                        حصص الأسبوع
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @php $maxWeekly = max(array_values($weeklySchedule)) ?: 1; @endphp
+                    @foreach($weeklySchedule as $day => $count)
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <small class="text-muted" style="min-width: 50px;">{{ $day }}</small>
+                            <div class="progress flex-grow-1" style="height: 8px;">
+                                <div class="progress-bar bg-primary"
+                                     style="width: {{ ($count / $maxWeekly) * 100 }}%"></div>
+                            </div>
+                            <small class="text-muted fw-bold"
+                                   style="min-width: 25px; text-align: end;">{{ $count }}</small>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if($isOwner && $ownerStats && $ownerStats['branch_stats']->count() > 0)
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold">
+                    <i class="ph-duotone ph-buildings me-1"></i>
+                    إحصائيات الفروع
+                </h6>
+                <a href="{{ route('teacher.branches.index') }}" wire:navigate class="btn btn-sm btn-light border">
+                    عرض الفروع <i class="ph-duotone ph-arrow-left ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th class="ps-4">الفرع</th>
+                            <th class="text-center">الطلاب</th>
+                            <th class="text-center">المجموعات</th>
+                            <th class="text-center">حصص النهارده</th>
+                            <th class="text-center">الحالة</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($ownerStats['branch_stats'] as $branch)
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="stat-icon-box stat-icon-sm bg-primary bg-opacity-10 text-primary">
+                                            <i class="ph-duotone ph-git-branch"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block small">{{ $branch->name }}</strong>
+                                            @if($branch->phone)
+                                                <small class="text-muted">
+                                                    <i class="ph-duotone ph-phone me-1"></i>{{ $branch->phone }}
+                                                </small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary">
+                                        {{ $branch->students_count }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success bg-opacity-10 text-success">
+                                        {{ $branch->groups_count }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if($branch->today_schedules_count > 0)
+                                        <span class="badge bg-warning bg-opacity-10 text-warning">
+                                            <i class="ph-duotone ph-broadcast me-1"></i>
+                                            {{ $branch->today_schedules_count }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted small">—</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($branch->is_active)
+                                        <span class="badge bg-success bg-opacity-10 text-success">نشط</span>
+                                    @else
+                                        <span class="badge bg-danger bg-opacity-10 text-danger">غير نشط</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

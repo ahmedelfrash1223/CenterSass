@@ -15,7 +15,7 @@
                                                                    class="text-decoration-none"><i
                                                 class="ph-duotone ph-house me-1"></i>الرئيسية</a></li>
                                     <li class="breadcrumb-item active" aria-current="page"><i
-                                            class="ph-duotone ph-users-three me-1"></i>المجموعات
+                                            class="ph-duotone ph-user-list me-1"></i>المجموعات
                                     </li>
                                 </ol>
                             </nav>
@@ -23,7 +23,7 @@
                         <div class="col-md-12">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="page-header-icon-wrapper">
-                                    <div class="page-header-icon"><i class="ph-duotone ph-users-three fs-1"></i></div>
+                                    <div class="page-header-icon"><i class="ph-duotone ph-user-list fs-1"></i></div>
                                 </div>
                                 <div><h1 class="page-header-title mb-0">المجموعات <span
                                             class="badge bg-primary bg-opacity-10 text-primary ms-2 fs-6 fw-normal"><i
@@ -34,7 +34,8 @@
                         </div>
                     </div>
                 </div>
-            </div>@livewire('teacher-panel.pages.group.parts.group-data')
+            </div>
+            @livewire('teacher-panel.pages.group.parts.group-data')
         </div>
     </div>
 @endsection

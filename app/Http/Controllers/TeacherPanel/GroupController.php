@@ -2,23 +2,40 @@
 
 namespace App\Http\Controllers\TeacherPanel;
 
-use App\Http\Controllers\Controller;
+use App\Enums\Admin\PackageFeatureKeyEnum;
 use App\Models\Group;
 
-class GroupController extends Controller
+class GroupController extends BaseResourceController
 {
-    public function index() { return view('teacher-panel.pages.group.index'); }
-    public function create() { return view('teacher-panel.pages.group.create'); }
+    public function index()
+    {
+        return view('teacher-panel.pages.group.index');
+    }
+
+    public function create()
+    {
+        $teacher = $this->currentTeacher();
+        $count = Group::where('teacher_id', $teacher->getOwnerId())->count();
+
+        return $this->checkLimitOrRedirect(
+            PackageFeatureKeyEnum::MAX_GROUPS->value,
+            $count,
+            'group-error',
+            'teacher.groups.index'
+        ) ?? view('teacher-panel.pages.group.create');
+    }
 
     public function show(Group $group)
     {
-        abort_unless($group->teacher_id === auth('teacher')->id(), 404);
+        $this->ensureGroupAccess($group);
+
         return view('teacher-panel.pages.group.show', compact('group'));
     }
 
     public function edit(Group $group)
     {
-        abort_unless($group->teacher_id === auth('teacher')->id(), 404);
+        $this->ensureGroupAccess($group);
+
         return view('teacher-panel.pages.group.edit', compact('group'));
     }
 }

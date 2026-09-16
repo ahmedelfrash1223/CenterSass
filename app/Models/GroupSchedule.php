@@ -13,6 +13,7 @@ class GroupSchedule extends Model
         'start_time',
         'end_time',
         'subject_id',
+        'teacher_id',
     ];
 
     protected $casts = [
@@ -28,5 +29,10 @@ class GroupSchedule extends Model
     public function subject(): BelongsTo
     {
         return $this->belongsTo(TeacherSubject::class, 'subject_id');
+    }
+
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\TeacherMiddleware;
 use App\Http\Middleware\StudentMiddleware;
+use App\Http\Middleware\TeacherPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => AdminMiddleware::class,
             'teacher' => TeacherMiddleware::class,
             'student' => StudentMiddleware::class,
+            'teacher.permission' => TeacherPermissionMiddleware::class,
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

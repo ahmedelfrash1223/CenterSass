@@ -2,96 +2,175 @@
 
 namespace App\Livewire\TeacherPanel\Pages\Dashboard\Parts;
 
-//use App\Enums\Teacher\SubscriptionStatusEnum;
-use App\Models\Teacher;
-use App\Models\Package;
+use App\Enums\Teacher\TeacherPermissionEnum;
+use App\Models\Branch;
+use App\Models\Group;
+use App\Models\GroupSchedule;
 use App\Models\Student;
-use App\Models\Subscription;
-use Illuminate\Support\Facades\Cache;
+use App\Models\Teacher;
+use App\Models\TeacherSubject;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Data extends Component
 {
-    public int $totalTeachers = 0;
-    public int $activeTeachers = 0;
-    public int $inactiveTeachers = 0;
-    public int $totalStudents = 0;
-    public int $totalPackages = 0;
-    public int $totalSubscriptions = 0;
-    public int $activeSubscriptions = 0;
-    public int $expiredSubscriptions = 0;
-    public int $pendingSubscriptions = 0;
-    public int $newTeachersThisMonth = 0;
-    public int $newSubscriptionsThisMonth = 0;
-    public float $totalRevenue = 0;
-    public float $monthlyRevenue = 0;
-    public float $teachersGrowth = 0;
-    public float $subscriptionsGrowth = 0;
-    public float $revenueGrowth = 0;
-
-    public function mount(): void
-    {
-        $this->loadStatistics();
-    }
-
-    protected function loadStatistics(): void
-    {
-        $statistics = Cache::remember('admin-dashboard-statistics', now()->addMinutes(5), function (): array {
-            $startOfMonth = now()->startOfMonth();
-            $startOfPreviousMonth = now()->subMonth()->startOfMonth();
-            $endOfPreviousMonth = now()->startOfMonth();
-
-            $currentTeachers = Teacher::count();
-            $previousTeachers = Teacher::where('created_at', '<', $startOfPreviousMonth)->count();
-            $currentSubscriptions = Subscription::count();
-            $previousSubscriptions = Subscription::where('created_at', '<', $startOfPreviousMonth)->count();
-            $currentRevenue = (float) Subscription::where('is_paid', true)
-                ->where('created_at', '>=', $startOfMonth)
-                ->sum('price_after_discount');
-            $previousRevenue = (float) Subscription::where('is_paid', true)
-                ->whereBetween('created_at', [$startOfPreviousMonth, $endOfPreviousMonth])
-                ->sum('price_after_discount');
-
-            return [
-                'totalTeachers' => $currentTeachers,
-                'activeTeachers' => Teacher::where('is_active', 1)->count(),
-                'inactiveTeachers' => Teacher::where('is_active', 0)->count(),
-                'totalStudents' => Student::count(),
-                'totalPackages' => Package::count(),
-                'totalSubscriptions' => $currentSubscriptions,
-                'activeSubscriptions' => Subscription::where('status', SubscriptionStatusEnum::ACTIVE->value)->count(),
-                'expiredSubscriptions' => Subscription::where('status', SubscriptionStatusEnum::EXPIRED->value)->count(),
-                'pendingSubscriptions' => Subscription::where('status', SubscriptionStatusEnum::PENDING->value)->count(),
-                'totalTeachers' => Teacher::count(),
-                'newTeachersThisMonth' => Teacher::where('created_at', '>=', $startOfMonth)->count(),
-                'newSubscriptionsThisMonth' => Subscription::where('created_at', '>=', $startOfMonth)->count(),
-                'totalRevenue' => (float) Subscription::where('is_paid', true)->sum('price_after_discount'),
-                'monthlyRevenue' => $currentRevenue,
-                'teachersGrowth' => $this->growth($currentTeachers, $previousTeachers),
-                'subscriptionsGrowth' => $this->growth($currentSubscriptions, $previousSubscriptions),
-                'revenueGrowth' => $this->growth($currentRevenue, $previousRevenue),
-            ];
-        });
-
-        foreach ($statistics as $key => $value) {
-            $this->{$key} = $value;
-        }
-    }
-
-    protected function growth(float|int $current, float|int $previous): float
-    {
-        // Prevent division by zero
-        if ($previous === 0 || $previous === 0.0) {
-            return $current > 0 ? 100 : 0;
-        }
-
-        $change = (($current - $previous) / $previous) * 100;
-
-        return round($change, 1);
-    }
-
     public function render()
     {
-        return view('admin-panel.pages.dashboard.parts.dashboard-stats');
+        $user = Auth::guard('teacher')->user();
+        $ownerId = $user->getOwnerId();
+        $isOwner = $user->isOwner();
+
+        $accessibleBranchIds = $user->getAccessibleBranchIds();
+
+        $hasData = $isOwner || !empty($accessibleBranchIds);
+
+        $studentsQuery = Student::where('teacher_id', $ownerId);
+        $groupsQuery = Group::where('teacher_id', $ownerId);
+
+        if (!$isOwner && !empty($accessibleBranchIds)) {
+            $studentsQuery->whereIn('branch_id', $accessibleBranchIds);
+            $groupsQuery->whereIn('branch_id', $accessibleBranchIds);
+        } elseif (!$isOwner && empty($accessibleBranchIds)) {
+            $studentsQuery->whereRaw('1 = 0');
+            $groupsQuery->whereRaw('1 = 0');
+        }
+
+        $stats = [
+            'students_count' => $studentsQuery->count(),
+            'groups_count' => $groupsQuery->count(),
+            'branches_count' => count($accessibleBranchIds),
+            'subjects_count' => TeacherSubject::where('teacher_id', $ownerId)->count(),
+        ];
+
+        $today = now()->format('l');
+        $now = now()->format('H:i');
+
+        $schedulesQuery = GroupSchedule::query()
+            ->with(['group.branch', 'subject', 'teacher'])
+            ->where('day', $today)
+            ->whereHas('group', function ($q) use ($ownerId, $isOwner, $accessibleBranchIds) {
+                $q->where('teacher_id', $ownerId);
+
+                if (!$isOwner && !empty($accessibleBranchIds)) {
+                    $q->whereIn('branch_id', $accessibleBranchIds);
+                } elseif (!$isOwner && empty($accessibleBranchIds)) {
+                    $q->whereRaw('1 = 0');
+                }
+            });
+
+        if (!$isOwner) {
+            $schedulesQuery->where('teacher_id', $user->id);
+        }
+
+        $todaySchedules = $schedulesQuery
+            ->orderBy('start_time')
+            ->get();
+
+        $upcomingSchedules = $todaySchedules->filter(function ($s) use ($now) {
+            return $s->start_time->format('H:i') >= $now;
+        });
+
+        $currentSchedule = $todaySchedules->first(function ($s) use ($now) {
+            return $s->start_time->format('H:i') <= $now
+                && $s->end_time->format('H:i') >= $now;
+        });
+
+        $nextSchedule = $upcomingSchedules->first();
+
+        $ownerStats = null;
+        if ($isOwner) {
+            $ownerStats = [
+                'staff_count' => Teacher::where('owner_id', $user->id)->count(),
+                'active_staff_count' => Teacher::where('owner_id', $user->id)
+                    ->where('is_active', 1)
+                    ->count(),
+                'subscription' => $user->activeSubscription,
+            ];
+
+            $branchStats = Branch::where('teacher_id', $ownerId)
+                ->withCount([
+                    'students as students_count',
+                    'groups as groups_count',
+                ])
+                ->orderBy('name')
+                ->get()
+                ->map(function ($branch) use ($today) {
+                    $branch->today_schedules_count = GroupSchedule::where('day', $today)
+                        ->whereHas('group', function ($q) use ($branch) {
+                            $q->where('branch_id', $branch->id);
+                        })
+                        ->count();
+                    return $branch;
+                });
+
+            $ownerStats['branch_stats'] = $branchStats;
+        }
+
+        $staffInfo = null;
+        if (!$isOwner) {
+            $staffInfo = [
+                'my_branches' => $user->branches()->orderBy('name')->get(),
+                'my_schedules_count' => GroupSchedule::where('teacher_id', $user->id)
+                    ->where('day', $today)
+                    ->whereHas('group', function ($q) use ($ownerId) {
+                        $q->where('teacher_id', $ownerId);
+                    })
+                    ->count(),
+            ];
+        }
+
+        $weeklySchedule = $this->getWeeklyScheduleData($user, $ownerId, $accessibleBranchIds, $isOwner);
+
+        $canViewGroups = $user->hasPermission(TeacherPermissionEnum::GROUP_VIEW);
+
+        return view('teacher-panel.pages.dashboard.parts.data', [
+            'isOwner' => $isOwner,
+            'hasData' => $hasData,
+            'stats' => $stats,
+            'todaySchedules' => $todaySchedules,
+            'currentSchedule' => $currentSchedule,
+            'nextSchedule' => $nextSchedule,
+            'upcomingSchedules' => $upcomingSchedules,
+            'ownerStats' => $ownerStats,
+            'staffInfo' => $staffInfo,
+            'weeklySchedule' => $weeklySchedule,
+            'today' => $today,
+            'canViewGroups' => $canViewGroups,
+        ]);
+    }
+
+    private function getWeeklyScheduleData($user, $ownerId, $accessibleBranchIds, $isOwner): array
+    {
+        $days = [
+            'Saturday' => 'السبت',
+            'Sunday' => 'الأحد',
+            'Monday' => 'الإثنين',
+            'Tuesday' => 'الثلاثاء',
+            'Wednesday' => 'الأربعاء',
+            'Thursday' => 'الخميس',
+            'Friday' => 'الجمعة',
+        ];
+
+        $data = [];
+        foreach ($days as $dayEn => $dayAr) {
+            $query = GroupSchedule::where('day', $dayEn)
+                ->whereHas('group', function ($q) use ($ownerId, $isOwner, $accessibleBranchIds) {
+                    $q->where('teacher_id', $ownerId);
+
+                    if (!$isOwner && !empty($accessibleBranchIds)) {
+                        $q->whereIn('branch_id', $accessibleBranchIds);
+                    } elseif (!$isOwner && empty($accessibleBranchIds)) {
+                        $q->whereRaw('1 = 0');
+                    }
+                });
+
+            if (!$isOwner) {
+                $query->where('teacher_id', $user->id);
+            }
+
+            $data[$dayAr] = $query->count();
+        }
+
+        return $data;
     }
 }
