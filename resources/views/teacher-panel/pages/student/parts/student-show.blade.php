@@ -3,6 +3,8 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                {{-- Left: Avatar + Info --}}
                 <div class="d-flex align-items-center gap-3">
                     <div class="avtar avtar-l bg-primary bg-opacity-10 text-primary">
                         <span class="fs-2 fw-bold">{{ mb_substr($student->name, 0, 1) }}</span>
@@ -25,6 +27,8 @@
                         </span>
                     </div>
                 </div>
+
+                {{-- Right: Actions --}}
                 <div class="d-flex gap-2">
                     @if($canUpdate)
                         <a href="{{ route('teacher.students.edit', $student) }}" wire:navigate class="btn btn-primary">
@@ -35,7 +39,26 @@
                         <i class="ph-duotone ph-arrow-right me-1"></i>رجوع
                     </a>
                 </div>
+
             </div>
+        </div>
+    </div>
+
+    {{-- ID Card Section --}}
+    <div class="card border-0 shadow-sm mb-4 id-card-section">
+        <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold">
+                <i class="ph-duotone ph-identification-card me-1"></i>
+                كود التعريف
+            </h6>
+        </div>
+        <div class="card-body p-4">
+            <x-card-code
+                :barcode="$student->barcode_value"
+                :qr="$student->qr_value"
+                :barcodeHeight="65"
+                title="الباركود"
+            />
         </div>
     </div>
 
@@ -182,7 +205,8 @@
                                 <tbody>
                                 @foreach($student->groups as $index => $group)
                                     <tr wire:key="group-{{ $group->id }}">
-                                        <td class="ps-4"><span class="text-muted fw-semibold">{{ $index + 1 }}</span>
+                                        <td class="ps-4">
+                                            <span class="text-muted fw-semibold">{{ $index + 1 }}</span>
                                         </td>
                                         <td><span class="fw-semibold">{{ $group->name }}</span></td>
                                         <td>
@@ -204,8 +228,9 @@
                                             @if($group->pivot->status === 'active')
                                                 <span class="badge bg-success bg-opacity-10 text-success">نشط</span>
                                             @else
-                                                <span
-                                                    class="badge bg-secondary bg-opacity-10 text-secondary">{{ $group->pivot->status }}</span>
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                                    {{ $group->pivot->status }}
+                                                </span>
                                             @endif
                                         </td>
                                     </tr>

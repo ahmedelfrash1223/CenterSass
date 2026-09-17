@@ -14,9 +14,11 @@ class GroupSchedule extends Model
         'end_time',
         'subject_id',
         'teacher_id',
+        'hours',
     ];
 
     protected $casts = [
+        'hours' => 'decimal:1',
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
     ];
@@ -34,5 +36,20 @@ class GroupSchedule extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'teacher_id');
+    }
+
+    public function getFormattedHoursAttribute(): string
+    {
+        if (!$this->hours) {
+            return '—';
+        }
+
+        $totalMinutes = (int) round($this->hours * 60);
+        $h = intdiv($totalMinutes, 60);
+        $m = $totalMinutes % 60;
+
+        if ($h > 0 && $m > 0) return "{$h} س {$m} د";
+        if ($h > 0) return "{$h} س";
+        return "{$m} د";
     }
 }

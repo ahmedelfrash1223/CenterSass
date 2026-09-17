@@ -35,8 +35,32 @@ enum GradeEnum: string
         };
     }
 
+    /**
+     * Short numeric code per grade (2 digits).
+     * Used to build student barcode numbers.
+     */
+    public function code(): string
+    {
+        return match ($this) {
+            self::PRIMARY_1   => '10',
+            self::PRIMARY_2   => '11',
+            self::PRIMARY_3   => '12',
+            self::PRIMARY_4   => '13',
+            self::PRIMARY_5   => '14',
+            self::PRIMARY_6   => '15',
+            self::PREP_1      => '20',
+            self::PREP_2      => '21',
+            self::PREP_3      => '22',
+            self::SECONDARY_1 => '30',
+            self::SECONDARY_2 => '31',
+            self::SECONDARY_3 => '32',
+        };
+    }
+
     public static function options(): array
     {
-        return collect(self::cases())->mapWithKeys(fn (self $grade) => [$grade->value => $grade->label()])->toArray();
+        return collect(self::cases())
+            ->mapWithKeys(fn (self $grade) => [$grade->value => $grade->label()])
+            ->toArray();
     }
 }

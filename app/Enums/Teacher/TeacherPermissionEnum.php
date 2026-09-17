@@ -50,6 +50,13 @@ enum TeacherPermissionEnum: string
     case STUDENT_DELETE = 'students.delete';
 
     // =============================================
+    // 📌 Attendance
+    // =============================================
+    case ATTENDANCE_VIEW = 'attendance.view';
+    case ATTENDANCE_MANAGE = 'attendance.manage';
+    case ATTENDANCE_CLOSE_DAY = 'attendance.close_day';
+
+    // =============================================
     // 📌 Reports
     // =============================================
     case VIEW_REPORTS = 'reports.view';
@@ -58,6 +65,14 @@ enum TeacherPermissionEnum: string
     // 📌 Settings
     // =============================================
     case MANAGE_SETTINGS = 'settings.manage';
+
+    // =============================================
+    // 📌 Payments & Invoices
+    // =============================================
+    case PAYMENT_VIEW     = 'payments.view';
+    case PAYMENT_MANAGE   = 'payments.manage';
+    case PAYMENT_RECEIPT  = 'payments.receipt';
+    case PAYMENT_DELETE   = 'payments.delete';
 
     // =============================================
     // 📌 Helpers
@@ -92,8 +107,17 @@ enum TeacherPermissionEnum: string
             self::STUDENT_UPDATE => 'تعديل طالب',
             self::STUDENT_DELETE => 'حذف طالب',
 
+            self::ATTENDANCE_VIEW => 'عرض الحضور',
+            self::ATTENDANCE_MANAGE => 'تسجيل وتعديل الحضور',
+            self::ATTENDANCE_CLOSE_DAY => 'تقفيل اليوم',
+
             self::VIEW_REPORTS => 'عرض التقارير',
             self::MANAGE_SETTINGS => 'إدارة الإعدادات',
+
+            self::PAYMENT_VIEW    => 'عرض المدفوعات',
+            self::PAYMENT_MANAGE  => 'تسجيل وتعديل المدفوعات',
+            self::PAYMENT_RECEIPT => 'طباعة الإيصالات',
+            self::PAYMENT_DELETE  => 'حذف الفواتير والمدفوعات',
         };
     }
 
@@ -106,8 +130,14 @@ enum TeacherPermissionEnum: string
             self::SUBJECT_VIEW, self::SUBJECT_CREATE, self::SUBJECT_UPDATE, self::SUBJECT_DELETE => 'المواد',
             self::GROUP_VIEW, self::GROUP_CREATE, self::GROUP_UPDATE, self::GROUP_DELETE => 'المجموعات',
             self::STUDENT_VIEW, self::STUDENT_CREATE, self::STUDENT_UPDATE, self::STUDENT_DELETE => 'الطلاب',
+            self::ATTENDANCE_VIEW, self::ATTENDANCE_MANAGE, self::ATTENDANCE_CLOSE_DAY => 'الحضور',
             self::VIEW_REPORTS => 'التقارير',
             self::MANAGE_SETTINGS => 'الإعدادات',
+
+            self::PAYMENT_VIEW,
+            self::PAYMENT_MANAGE,
+            self::PAYMENT_RECEIPT,
+            self::PAYMENT_DELETE => 'المالية',
         };
     }
 
@@ -135,8 +165,16 @@ enum TeacherPermissionEnum: string
             self::STUDENT_CREATE => 'ph-plus-circle',
             self::STUDENT_UPDATE => 'ph-pencil-simple',
             self::STUDENT_DELETE => 'ph-trash',
+            self::ATTENDANCE_VIEW => 'ph-eye',
+            self::ATTENDANCE_MANAGE => 'ph-scan',
+            self::ATTENDANCE_CLOSE_DAY => 'ph-lock',
             self::VIEW_REPORTS => 'ph-chart-bar',
             self::MANAGE_SETTINGS => 'ph-gear',
+
+            self::PAYMENT_VIEW    => 'ph-eye',
+            self::PAYMENT_MANAGE  => 'ph-currency-circle-dollar',
+            self::PAYMENT_RECEIPT => 'ph-receipt',
+            self::PAYMENT_DELETE  => 'ph-trash',
         };
     }
 
@@ -188,7 +226,15 @@ enum TeacherPermissionEnum: string
             self::STUDENT_CREATE->value,
             self::STUDENT_UPDATE->value,
 
+            self::ATTENDANCE_VIEW->value,
+            self::ATTENDANCE_MANAGE->value,
+            self::ATTENDANCE_CLOSE_DAY->value,
+
             self::VIEW_REPORTS->value,
+
+            self::PAYMENT_VIEW->value,
+            self::PAYMENT_MANAGE->value,
+            self::PAYMENT_RECEIPT->value,
         ];
     }
 
@@ -199,7 +245,13 @@ enum TeacherPermissionEnum: string
             self::SUBJECT_VIEW->value,
             self::GROUP_VIEW->value,
             self::STUDENT_VIEW->value,
+
+            self::ATTENDANCE_VIEW->value,
+            self::ATTENDANCE_CLOSE_DAY->value,
+
             self::VIEW_REPORTS->value,
+
+            self::PAYMENT_VIEW->value,
         ];
     }
 

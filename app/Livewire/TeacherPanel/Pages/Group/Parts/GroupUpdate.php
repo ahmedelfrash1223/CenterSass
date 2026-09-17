@@ -3,6 +3,7 @@
 namespace App\Livewire\TeacherPanel\Pages\Group\Parts;
 
 use App\Http\Requests\TeacherPanel\UpdateGroupRequest;
+use App\Livewire\TeacherPanel\Concerns\HasGroupScheduleManagement;
 use App\Livewire\TeacherPanel\Concerns\LoadsGroupFormData;
 use App\Models\Group;
 use App\Models\Teacher;
@@ -12,6 +13,7 @@ use Livewire\Component;
 class GroupUpdate extends Component
 {
     use LoadsGroupFormData;
+    use HasGroupScheduleManagement;
 
     public Group $group;
     public string $name = '';
@@ -22,19 +24,29 @@ class GroupUpdate extends Component
     public string $status = 'active';
     public string $start_date = '';
     public string $end_date = '';
+
     public array $schedules = [];
+
+    // Pricing
+    public bool $has_pricing = true;
+    public string $pricing_type = 'fixed_monthly';
+    public string $pricing_amount = '0';
+
+    // Duplicate confirmation modal state
+    public bool $showDuplicateConfirm = false;
+    public ?int $duplicateNewIndex = null;
+    public ?int $duplicateExistingIndex = null;
+    public bool $allowDuplicateOnNextSave = false;
 
     public function mount(Group $group): void
     {
         $user = Auth::guard('teacher')->user();
 
-        // Group must belong to the same owner account
         abort_unless(
             $group->teacher_id === $user->getOwnerId(),
             404
         );
 
-        // For non-owner, group branch must be within accessible branches
         if (!$user->isOwner()) {
             abort_unless(
                 in_array($group->branch_id, $user->getAccessibleBranchIds()),
@@ -54,6 +66,12 @@ class GroupUpdate extends Component
         $this->start_date = $group->start_date?->format('Y-m-d') ?? '';
         $this->end_date = $group->end_date?->format('Y-m-d') ?? '';
 
+        // Pricing
+        $this->has_pricing = (bool) ($group->has_pricing ?? true);
+        $this->pricing_type = $group->pricing_type ?? 'fixed_monthly';
+        $this->pricing_amount = (string) ($group->pricing_amount ?? '0');
+
+        // Schedules
         $this->schedules = $group->schedules->map(fn($schedule) => [
             'id' => $schedule->id,
             'day' => $schedule->day,
@@ -66,6 +84,8 @@ class GroupUpdate extends Component
         if (empty($this->schedules)) {
             $this->addScheduleRow();
         }
+
+        $this->allowDuplicateOnNextSave = false;
     }
 
     public function addScheduleRow(): void
@@ -82,7 +102,6 @@ class GroupUpdate extends Component
 
     public function removeScheduleRow($index): void
     {
-        // Delete existing schedule immediately when removed
         if (!empty($this->schedules[$index]['id'])) {
             $this->group->schedules()->where('id', $this->schedules[$index]['id'])->delete();
         }
@@ -93,17 +112,120 @@ class GroupUpdate extends Component
 
     public function updatedGrade(): void
     {
-        // Reset selected subjects when grade changes
         foreach ($this->schedules as $index => $schedule) {
             $this->schedules[$index]['subject_id'] = '';
         }
+    }
+
+    public function updatedSchedules($value, $key): void
+    {
+        $parts = explode('.', $key);
+        $field = end($parts);
+        $index = (int) ($parts[0] ?? -1);
+
+        if (!in_array($field, ['day', 'subject_id'])) {
+            return;
+        }
+
+        if ($index < 0 || !isset($this->schedules[$index])) {
+            return;
+        }
+
+        $schedule = $this->schedules[$index];
+
+        if (empty($schedule['day']) || empty($schedule['subject_id'])) {
+            return;
+        }
+
+        $existingIndex = $this->findDuplicateScheduleIndex($this->schedules, $index);
+
+        if ($existingIndex !== null) {
+            $this->duplicateNewIndex = $index;
+            $this->duplicateExistingIndex = $existingIndex;
+            $this->showDuplicateConfirm = true;
+        }
+    }
+
+    public function confirmDuplicate(): void
+    {
+        $this->allowDuplicateOnNextSave = true;
+        $this->showDuplicateConfirm = false;
+        $this->duplicateNewIndex = null;
+        $this->duplicateExistingIndex = null;
+    }
+
+    public function cancelDuplicate(): void
+    {
+        if ($this->duplicateNewIndex !== null && isset($this->schedules[$this->duplicateNewIndex])) {
+            $this->schedules[$this->duplicateNewIndex]['day'] = '';
+        }
+
+        $this->showDuplicateConfirm = false;
+        $this->duplicateNewIndex = null;
+        $this->duplicateExistingIndex = null;
+    }
+
+    protected function validateScheduleTimes(): bool
+    {
+        $errors = [];
+
+        foreach ($this->schedules as $index => $schedule) {
+            if (
+                empty($schedule['day'])
+                && empty($schedule['start_time'])
+                && empty($schedule['end_time'])
+                && empty($schedule['subject_id'])
+                && empty($schedule['teacher_id'])
+            ) {
+                continue;
+            }
+
+            $minutes = $this->computeScheduleMinutes($schedule);
+
+            if ($minutes === null) {
+                if (empty($schedule['start_time']) || empty($schedule['end_time'])) {
+                    $errors["schedules.{$index}.end_time"] = 'يجب إدخال وقت البداية والنهاية.';
+                } else {
+                    $errors["schedules.{$index}.end_time"] = 'وقت النهاية يجب أن يكون بعد وقت البداية.';
+                }
+                continue;
+            }
+
+            if ($minutes < 15) {
+                $errors["schedules.{$index}.end_time"] = 'مدة الحصة يجب أن تكون 15 دقيقة على الأقل.';
+            }
+
+            if ($minutes > 480) {
+                $errors["schedules.{$index}.end_time"] = 'مدة الحصة لا يمكن أن تتجاوز 8 ساعات.';
+            }
+        }
+
+        if (!$this->allowDuplicateOnNextSave) {
+            $duplicates = $this->findAllDuplicateSchedules($this->schedules);
+
+            foreach ($duplicates as $duplicate) {
+                $dayLabel = $this->getDayLabel($duplicate['day']);
+                $errors["schedules.{$duplicate['row_index']}.subject_id"] =
+                    "المادة دي مضافة بالفعل يوم {$dayLabel}.";
+            }
+        }
+
+        if (!empty($errors)) {
+            foreach ($errors as $key => $message) {
+                $this->addError($key, $message);
+            }
+
+            $this->dispatch('show-error-message', message: 'فيه أخطاء في المواعيد. راجع الجدول.');
+            return false;
+        }
+
+        return true;
     }
 
     public function update(): void
     {
         $user = Auth::guard('teacher')->user();
 
-        // Re-check ownership and access on update
         abort_unless(
             $this->group->teacher_id === $user->getOwnerId(),
             404
@@ -119,12 +241,15 @@ class GroupUpdate extends Component
         $request = new UpdateGroupRequest();
         $this->validate($request->rules(), $request->messages());
 
+        if (!$this->validateScheduleTimes()) {
+            return;
+        }
+
         if (!$user->hasAccessToBranch((int) $this->branch_id)) {
             $this->addError('branch_id', 'الفرع غير متاح لك.');
             return;
         }
 
-        // Ensure selected teachers belong to accessible scope
         foreach ($this->schedules as $index => $schedule) {
             if (!empty($schedule['teacher_id'])) {
                 $scheduleTeacher = Teacher::find($schedule['teacher_id']);
@@ -145,24 +270,25 @@ class GroupUpdate extends Component
             'status' => $this->status,
             'start_date' => $this->start_date ?: null,
             'end_date' => $this->end_date ?: null,
+            // Pricing
+            'has_pricing' => $this->has_pricing,
+            'pricing_type' => $this->pricing_type,
+            'pricing_amount' => (float) $this->pricing_amount,
         ]);
 
         $existingIds = $this->group->schedules()->pluck('id')->toArray();
         $keptIds = [];
 
-        // Update or create schedules, track ids that survived
         foreach ($this->schedules as $schedule) {
-            if (
-                !empty($schedule['day']) &&
-                !empty($schedule['start_time']) &&
-                !empty($schedule['end_time']) &&
-                !empty($schedule['subject_id']) &&
-                !empty($schedule['teacher_id'])
-            ) {
+            if ($this->isScheduleComplete($schedule)) {
+                $minutes = $this->computeScheduleMinutes($schedule);
+                $hours = $minutes !== null ? round($minutes / 60, 1) : 1.0;
+
                 $data = [
                     'day' => $schedule['day'],
                     'start_time' => $schedule['start_time'],
                     'end_time' => $schedule['end_time'],
+                    'hours' => $hours,
                     'subject_id' => $schedule['subject_id'],
                     'teacher_id' => $schedule['teacher_id'],
                 ];
@@ -177,11 +303,12 @@ class GroupUpdate extends Component
             }
         }
 
-        // Remove schedules that were in db but not resubmitted
         $toDelete = array_diff($existingIds, $keptIds);
         if (!empty($toDelete)) {
             $this->group->schedules()->whereIn('id', $toDelete)->delete();
         }
+
+        $this->allowDuplicateOnNextSave = false;
 
         session()->flash('group-success', 'تم تحديث المجموعة بنجاح.');
         $this->redirect(route('teacher.groups.index'), navigate: true);

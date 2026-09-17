@@ -40,6 +40,10 @@ class PackageSeeder extends Seeder
                 'package_feature_key' => PackageFeatureKeyEnum::MAX_EMPLOYEES->value,
                 'value' => ['value' => 1],
             ],
+            [
+                'package_feature_key' => PackageFeatureKeyEnum::MAX_BRANCHES->value,
+                'value' => ['value' => 2],
+            ],
         ]);
 
 

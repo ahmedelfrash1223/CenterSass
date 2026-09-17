@@ -3,11 +3,14 @@
 namespace App\Livewire\TeacherPanel\Concerns;
 
 use App\Models\Group;
+use App\Models\Student;
 
 trait HasStudentGroupValidation
 {
     /**
-     * Ensure every selected group belongs to accessible branches.
+     * Ensure every selected group:
+     *   - belongs to the same owner account
+     *   - for non-owners: belongs to an accessible branch
      */
     protected function ensureGroupsAuthorized(array $groupIds): bool
     {
@@ -16,18 +19,22 @@ trait HasStudentGroupValidation
         }
 
         $user = auth('teacher')->user();
+        $ownerId = $user->getOwnerId();
         $accessibleBranchIds = $user->getAccessibleBranchIds();
 
-        $hasInvalid = Group::whereIn('id', $groupIds)
-            ->when(!$user->isOwner(), fn($q) => $q->whereNotIn('branch_id', $accessibleBranchIds))
-            ->exists();
+        $validCount = Group::whereIn('id', $groupIds)
+            ->where('teacher_id', $ownerId)
+            ->when(!$user->isOwner(), function ($q) use ($accessibleBranchIds) {
+                $q->whereIn('branch_id', $accessibleBranchIds);
+            })
+            ->count();
 
-        if ($hasInvalid) {
-            $this->addError('group_ids', 'إحدى المجموعات غير متاحة لك.');
-            return false;
+        if ($validCount === count($groupIds)) {
+            return true;
         }
 
-        return true;
+        $this->addError('group_ids', 'إحدى المجموعات غير متاحة لك.');
+        return false;
     }
 
     /**
@@ -49,10 +56,10 @@ trait HasStudentGroupValidation
         // Groups the student already belongs to (for update case)
         $alreadyJoinedIds = [];
         if ($excludeStudentId) {
-            $alreadyJoinedIds = \App\Models\Student::find($excludeStudentId)
+            $alreadyJoinedIds = Student::find($excludeStudentId)
                 ?->activeGroups()
                 ->pluck('groups.id')
-                ->map(fn($id) => (string) $id)
+                ->map(fn($id) => (string)$id)
                 ->toArray() ?? [];
         }
 
@@ -63,8 +70,7 @@ trait HasStudentGroupValidation
 
             $count = $group->students_count;
 
-            // For updates: don't count the student against capacity of already-joined groups
-            if (in_array((string) $group->id, $alreadyJoinedIds)) {
+            if (in_array((string)$group->id, $alreadyJoinedIds)) {
                 $count--;
             }
 

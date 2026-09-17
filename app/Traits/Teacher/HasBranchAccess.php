@@ -15,8 +15,16 @@ trait HasBranchAccess
         return $this->branches()->pluck('branches.id')->toArray();
     }
 
-    public function hasAccessToBranch(int $branchId): bool
+    /**
+     * Check whether the current teacher has access to a specific branch.
+     * Accepts null safely — returns false for null/0.
+     */
+    public function hasAccessToBranch(?int $branchId): bool
     {
+        if ($branchId === null || $branchId === 0) {
+            return false;
+        }
+
         if ($this->isOwner()) {
             return Branch::where('teacher_id', $this->id)
                 ->where('id', $branchId)

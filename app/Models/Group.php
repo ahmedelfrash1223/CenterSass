@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Enums\Teacher\PricingTypeEnum;
+
 
 class Group extends Model
 {
@@ -23,17 +25,31 @@ class Group extends Model
         'status',
         'start_date',
         'end_date',
+        'pricing_type',
+        'pricing_amount',
+        'pricing_config',
+        'has_pricing',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'max_students' => 'integer',
+        'pricing_config' => 'array',
+        'pricing_amount' => 'decimal:2',
+        'has_pricing' => 'boolean',
     ];
 
     // =============================================
     // 📌 RELATIONS
     // =============================================
+
+
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
 
     public function teacher(): BelongsTo
     {
@@ -61,6 +77,11 @@ class Group extends Model
     public function activeStudents(): BelongsToMany
     {
         return $this->students()->wherePivot('status', 'active');
+    }
+
+    public function invoiceItems(): HasMany
+    {
+        return $this->hasMany(InvoiceItem::class);
     }
 
     // =============================================
@@ -125,6 +146,28 @@ class Group extends Model
             'left_at' => $leftAt ?? now(),
             'status' => 'left',
         ]);
+    }
+
+
+
+    public function getPricingTypeEnumAttribute(): ?PricingTypeEnum
+    {
+        return PricingTypeEnum::tryFrom($this->pricing_type);
+    }
+
+    public function getPricingTypeLabelAttribute(): string
+    {
+        return $this->pricing_type_enum?->label() ?? $this->pricing_type;
+    }
+
+
+    public function getFormattedPriceAttribute(): string
+    {
+        if (!$this->has_pricing || $this->pricing_amount <= 0) {
+            return 'مجاني';
+        }
+
+        return number_format((float)$this->pricing_amount, 2) . ' ج.م';
     }
 
 }

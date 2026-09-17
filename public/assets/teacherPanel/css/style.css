@@ -34283,20 +34283,225 @@ body.dark .permission-view-item.is-denied,
         }
     }
 
+/* ============================================
+   📌 GLOBAL THEME VARIABLES (Light Mode)
+   ============================================ */
+
+:root {
+    /* ===== Backgrounds ===== */
+    --pd-bg-card: #ffffff;
+    --pd-bg-page: #f8f9fa;
+    --pd-bg-subtle: #f8f9fa;
+    --pd-bg-soft: #f1f3f5;
+    --pd-bg-hover: #e9ecef;
+    --pd-bg-selected: rgba(13, 110, 253, 0.04);
+    --pd-bg-selected-hover: rgba(13, 110, 253, 0.08);
+
+    /* ===== Borders ===== */
+    --pd-border: #e9ecef;
+    --pd-border-soft: #f1f3f5;
+    --pd-border-subtle: rgba(0, 0, 0, 0.04);
+    --pd-border-dashed: #dee2e6;
+
+    /* ===== Text ===== */
+    --pd-text-primary: #212529;
+    --pd-text-secondary: #6c757d;
+    --pd-text-muted: #adb5bd;
+    --pd-text-on-color: #ffffff;
+
+    /* ===== Primary (Blue) ===== */
+    --pd-primary: #0d6efd;
+    --pd-primary-hover: #0a58ca;
+    --pd-primary-start: #0d6efd;
+    --pd-primary-end: #0a58ca;
+    --pd-primary-bg-04: rgba(13, 110, 253, 0.04);
+    --pd-primary-bg-08: rgba(13, 110, 253, 0.08);
+    --pd-primary-bg-10: rgba(13, 110, 253, 0.1);
+    --pd-primary-bg-15: rgba(13, 110, 253, 0.15);
+    --pd-primary-shadow: rgba(13, 110, 253, 0.25);
+
+    /* ===== Danger (Red) ===== */
+    --pd-danger: #dc3545;
+    --pd-danger-hover: #b02a37;
+    --pd-danger-start: #dc3545;
+    --pd-danger-end: #b02a37;
+    --pd-danger-bg-05: rgba(220, 53, 69, 0.05);
+    --pd-danger-bg-08: rgba(220, 53, 69, 0.08);
+    --pd-danger-bg-10: rgba(220, 53, 69, 0.1);
+    --pd-danger-bg-20: rgba(220, 53, 69, 0.2);
+    --pd-danger-shadow: rgba(220, 53, 69, 0.25);
+
+    /* ===== Success (Green) ===== */
+    --pd-success: #198754;
+    --pd-success-hover: #146c43;
+    --pd-success-start: #198754;
+    --pd-success-end: #146c43;
+    --pd-success-bg-05: rgba(25, 135, 84, 0.05);
+    --pd-success-bg-10: rgba(25, 135, 84, 0.1);
+    --pd-success-bg-20: rgba(25, 135, 84, 0.2);
+    --pd-success-shadow: rgba(25, 135, 84, 0.25);
+
+    /* ===== Warning (Yellow) ===== */
+    --pd-warning: #ffc107;
+    --pd-warning-hover: #d39e00;
+    --pd-warning-start: #ffc107;
+    --pd-warning-end: #d39e00;
+    --pd-warning-bg-05: rgba(255, 193, 7, 0.05);
+    --pd-warning-bg-10: rgba(255, 193, 7, 0.1);
+    --pd-warning-bg-12: rgba(255, 193, 7, 0.12);
+    --pd-warning-bg-15: rgba(255, 193, 7, 0.15);
+    --pd-warning-bg-20: rgba(255, 193, 7, 0.2);
+    --pd-warning-bg-22: rgba(255, 193, 7, 0.22);
+    --pd-warning-text: #997404;
+    --pd-warning-shadow: rgba(255, 193, 7, 0.3);
+
+    /* ===== Info (Cyan) ===== */
+    --pd-info: #0dcaf0;
+    --pd-info-bg-08: rgba(13, 202, 240, 0.08);
+    --pd-info-bg-10: rgba(13, 202, 240, 0.1);
+    --pd-info-text: #087990;
+
+    /* ===== Modal ===== */
+    --pd-modal-bg: #ffffff;
+    --pd-modal-backdrop: rgba(0, 0, 0, 0.5);
+    --pd-modal-shadow: rgba(0, 0, 0, 0.25);
+    --pd-modal-shadow-lg: rgba(0, 0, 0, 0.3);
+
+    /* ===== Card Shadows ===== */
+    --pd-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    --pd-card-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
+    --pd-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+    /* ===== Special backgrounds (gradients) ===== */
+    --pd-current-bg: linear-gradient(135deg, rgba(220, 53, 69, 0.03), rgba(220, 53, 69, 0.08));
+    --pd-next-bg: linear-gradient(135deg, rgba(25, 135, 84, 0.03), rgba(25, 135, 84, 0.08));
+    --pd-subscription-bg: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.1));
+    --pd-student-header-bg: linear-gradient(135deg, #0d6efd, #0a58ca);
+    --pd-modal-icon-danger-bg: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.2));
+    --pd-modal-icon-warning-bg: linear-gradient(135deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.22));
+    --pd-gdm-btn-confirm-bg: linear-gradient(135deg, #ffc107, #d39e00);
+    --pd-pricing-preview-bg: linear-gradient(135deg, rgba(13, 110, 253, 0.05), rgba(13, 110, 253, 0.1));
+    --pd-barcode-wrapper-bg: #000000;
+}
 
 /* ============================================
-   📌 Dashboard Custom Styles
+   📌 DARK MODE OVERRIDES
+   ============================================ */
+
+[data-pc-theme="dark"],
+[data-bs-theme="dark"],
+body.dark,
+html.dark,
+.dark-mode {
+    /* ===== Backgrounds ===== */
+    --pd-bg-card: #1e1f27;
+    --pd-bg-page: #16171d;
+    --pd-bg-subtle: #2a2b35;
+    --pd-bg-soft: #353640;
+    --pd-bg-hover: #353640;
+    --pd-bg-selected: rgba(77, 144, 254, 0.12);
+    --pd-bg-selected-hover: rgba(77, 144, 254, 0.18);
+
+    /* ===== Borders ===== */
+    --pd-border: #353640;
+    --pd-border-soft: #2a2b35;
+    --pd-border-subtle: rgba(255, 255, 255, 0.06);
+    --pd-border-dashed: #3a3b45;
+
+    /* ===== Text ===== */
+    --pd-text-primary: #e9ecef;
+    --pd-text-secondary: #a0a4ab;
+    --pd-text-muted: #6c757d;
+    --pd-text-on-color: #ffffff;
+
+    /* ===== Primary ===== */
+    --pd-primary: #4d90fe;
+    --pd-primary-hover: #6ba4ff;
+    --pd-primary-start: #4d90fe;
+    --pd-primary-end: #3a7ce0;
+    --pd-primary-bg-04: rgba(77, 144, 254, 0.08);
+    --pd-primary-bg-08: rgba(77, 144, 254, 0.12);
+    --pd-primary-bg-10: rgba(77, 144, 254, 0.15);
+    --pd-primary-bg-15: rgba(77, 144, 254, 0.2);
+    --pd-primary-shadow: rgba(77, 144, 254, 0.3);
+
+    /* ===== Danger ===== */
+    --pd-danger: #e04c5c;
+    --pd-danger-hover: #b02a37;
+    --pd-danger-start: #e04c5c;
+    --pd-danger-end: #b02a37;
+    --pd-danger-bg-05: rgba(224, 76, 92, 0.1);
+    --pd-danger-bg-08: rgba(224, 76, 92, 0.12);
+    --pd-danger-bg-10: rgba(224, 76, 92, 0.15);
+    --pd-danger-bg-20: rgba(224, 76, 92, 0.25);
+    --pd-danger-shadow: rgba(224, 76, 92, 0.35);
+
+    /* ===== Success ===== */
+    --pd-success: #2ea86c;
+    --pd-success-hover: #247d52;
+    --pd-success-start: #2ea86c;
+    --pd-success-end: #247d52;
+    --pd-success-bg-05: rgba(46, 168, 108, 0.1);
+    --pd-success-bg-10: rgba(46, 168, 108, 0.15);
+    --pd-success-bg-20: rgba(46, 168, 108, 0.25);
+    --pd-success-shadow: rgba(46, 168, 108, 0.35);
+
+    /* ===== Warning ===== */
+    --pd-warning: #f5b800;
+    --pd-warning-hover: #d39e00;
+    --pd-warning-start: #f5b800;
+    --pd-warning-end: #d39e00;
+    --pd-warning-bg-05: rgba(245, 184, 0, 0.1);
+    --pd-warning-bg-10: rgba(245, 184, 0, 0.15);
+    --pd-warning-bg-12: rgba(245, 184, 0, 0.18);
+    --pd-warning-bg-15: rgba(245, 184, 0, 0.2);
+    --pd-warning-bg-20: rgba(245, 184, 0, 0.25);
+    --pd-warning-bg-22: rgba(245, 184, 0, 0.28);
+    --pd-warning-text: #ffce3d;
+    --pd-warning-shadow: rgba(245, 184, 0, 0.35);
+
+    /* ===== Info ===== */
+    --pd-info: #2fbfdc;
+    --pd-info-bg-08: rgba(47, 191, 220, 0.15);
+    --pd-info-bg-10: rgba(47, 191, 220, 0.18);
+    --pd-info-text: #6dd4ea;
+
+    /* ===== Modal ===== */
+    --pd-modal-bg: #1e1f27;
+    --pd-modal-backdrop: rgba(0, 0, 0, 0.7);
+    --pd-modal-shadow: rgba(0, 0, 0, 0.5);
+    --pd-modal-shadow-lg: rgba(0, 0, 0, 0.6);
+
+    /* ===== Card Shadows ===== */
+    --pd-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    --pd-card-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.3);
+    --pd-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+    /* ===== Special backgrounds (gradients) ===== */
+    --pd-current-bg: linear-gradient(135deg, rgba(224, 76, 92, 0.08), rgba(224, 76, 92, 0.15));
+    --pd-next-bg: linear-gradient(135deg, rgba(46, 168, 108, 0.08), rgba(46, 168, 108, 0.15));
+    --pd-subscription-bg: linear-gradient(135deg, rgba(245, 184, 0, 0.1), rgba(245, 184, 0, 0.18));
+    --pd-student-header-bg: linear-gradient(135deg, #4d90fe, #3a7ce0);
+    --pd-modal-icon-danger-bg: linear-gradient(135deg, rgba(224, 76, 92, 0.15), rgba(224, 76, 92, 0.25));
+    --pd-modal-icon-warning-bg: linear-gradient(135deg, rgba(245, 184, 0, 0.15), rgba(245, 184, 0, 0.28));
+    --pd-gdm-btn-confirm-bg: linear-gradient(135deg, #f5b800, #d39e00);
+    --pd-pricing-preview-bg: linear-gradient(135deg, rgba(77, 144, 254, 0.08), rgba(77, 144, 254, 0.15));
+    --pd-barcode-wrapper-bg: #ffffff;
+}
+
+/* ============================================
+   📌 DASHBOARD STYLES
    ============================================ */
 
 /* Hero Schedule — Current */
 .schedule-current {
-    background: linear-gradient(135deg, rgba(220, 53, 69, 0.03), rgba(220, 53, 69, 0.08));
-    border-right: 4px solid #dc3545 !important;
+    background: var(--pd-current-bg);
+    border-right: 4px solid var(--pd-danger) !important;
 }
 
 .schedule-next {
-    background: linear-gradient(135deg, rgba(25, 135, 84, 0.03), rgba(25, 135, 84, 0.08));
-    border-right: 4px solid #198754 !important;
+    background: var(--pd-next-bg);
+    border-right: 4px solid var(--pd-success) !important;
 }
 
 .schedule-pulse {
@@ -34306,14 +34511,14 @@ body.dark .permission-view-item.is-denied,
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #dc3545;
+    color: var(--pd-danger);
 }
 
 .pulse-ring {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background-color: rgba(220, 53, 69, 0.2);
+    background-color: var(--pd-danger-bg-20);
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
@@ -34338,7 +34543,7 @@ body.dark .permission-view-item.is-denied,
 
 .stat-card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: var(--pd-card-shadow-hover) !important;
 }
 
 .stat-icon-box {
@@ -34368,7 +34573,7 @@ body.dark .permission-view-item.is-denied,
     align-items: center;
     gap: 16px;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--pd-border-subtle);
     transition: background 0.15s ease;
 }
 
@@ -34377,12 +34582,12 @@ body.dark .permission-view-item.is-denied,
 }
 
 .schedule-item:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: var(--pd-primary-bg-04);
 }
 
 .schedule-item.is-now {
-    background: linear-gradient(90deg, rgba(220, 53, 69, 0.05), transparent);
-    border-right: 3px solid #dc3545;
+    background: linear-gradient(90deg, var(--pd-danger-bg-05), transparent);
+    border-right: 3px solid var(--pd-danger);
 }
 
 .schedule-item.is-past {
@@ -34393,7 +34598,7 @@ body.dark .permission-view-item.is-denied,
     min-width: 70px;
     text-align: center;
     padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--pd-bg-soft);
     border-radius: 10px;
 }
 
@@ -34407,6 +34612,2493 @@ body.dark .permission-view-item.is-denied,
 
 /* Subscription */
 .subscription-card {
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.1));
-    border-right: 4px solid #ffc107 !important;
+    background: var(--pd-subscription-bg);
+    border-right: 4px solid var(--pd-warning) !important;
+}
+
+/* ============================================
+   📌 ATTENDANCE SCANNER
+   ============================================ */
+
+.scan-card {
+    min-height: 500px;
+}
+
+.qr-reader-box {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--pd-barcode-wrapper-bg);
+}
+
+#qr-reader video {
+    border-radius: 16px;
+}
+
+.usb-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--pd-primary-bg-10);
+    color: var(--pd-primary);
+    animation: pulse-barcode 2s ease-in-out infinite;
+}
+
+@keyframes pulse-barcode {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.scan-result-card {
+    padding: 20px;
+    border-radius: 16px;
+    border-right: 4px solid;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.scan-result-success {
+    background: linear-gradient(135deg, var(--pd-success-bg-05), var(--pd-success-bg-10));
+    border-right-color: var(--pd-success);
+}
+
+.scan-result-error {
+    background: linear-gradient(135deg, var(--pd-danger-bg-05), var(--pd-danger-bg-10));
+    border-right-color: var(--pd-danger);
+}
+
+.scan-result-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   📌 MANUAL ATTENDANCE MODE
+   ============================================ */
+
+.manual-info-bar {
+    padding: 12px 16px;
+    background: var(--pd-bg-subtle);
+    border-radius: 10px;
+    border: 1px solid var(--pd-border);
+}
+
+.info-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.info-chip i {
+    font-size: 16px;
+}
+
+.info-chip-primary {
+    background: var(--pd-primary-bg-10);
+    color: var(--pd-primary);
+}
+
+.info-chip-success {
+    background: var(--pd-success-bg-10);
+    color: var(--pd-success);
+}
+
+.info-chip-warning {
+    background: var(--pd-warning-bg-15);
+    color: var(--pd-warning-text);
+}
+
+.info-chip-info {
+    background: var(--pd-info-bg-10);
+    color: var(--pd-info-text);
+}
+
+.manual-students-grid {
+    max-height: 480px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.manual-students-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.manual-students-grid::-webkit-scrollbar-track {
+    background: var(--pd-bg-soft);
+    border-radius: 4px;
+}
+
+.manual-students-grid::-webkit-scrollbar-thumb {
+    background: var(--pd-border);
+    border-radius: 4px;
+}
+
+.manual-students-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--pd-text-muted);
+}
+
+.manual-student-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--pd-bg-card);
+    border: 2px solid var(--pd-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    height: 100%;
+}
+
+.manual-student-card:hover {
+    border-color: var(--pd-primary);
+    box-shadow: 0 4px 12px var(--pd-primary-shadow);
+    transform: translateY(-1px);
+}
+
+.manual-student-card.is-selected {
+    border-color: var(--pd-primary);
+    background: var(--pd-pricing-preview-bg);
+    box-shadow: 0 4px 14px var(--pd-primary-shadow);
+}
+
+.manual-student-card.is-registered {
+    background: linear-gradient(135deg, var(--pd-success-bg-05), var(--pd-success-bg-10));
+    border-color: var(--pd-success-bg-20);
+    cursor: not-allowed;
+    opacity: 0.85;
+}
+
+.manual-student-card.is-registered:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--pd-success-bg-20);
+}
+
+.manual-student-avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    background: var(--pd-student-header-bg);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.manual-student-avatar.bg-success {
+    background: linear-gradient(135deg, var(--pd-success), var(--pd-success-hover));
+}
+
+.manual-student-avatar i {
+    font-size: 1.2rem;
+}
+
+.manual-student-info {
+    flex-grow: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.manual-student-info .fw-semibold {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    color: var(--pd-text-primary);
+}
+
+.manual-student-info small {
+    font-size: 11px;
+    font-family: 'Consolas', monospace;
+    letter-spacing: 0.5px;
+    color: var(--pd-text-secondary);
+}
+
+.manual-student-check {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+}
+
+.manual-student-check i {
+    font-size: 1.4rem;
+}
+
+.manual-student-check .badge {
+    font-size: 10px;
+    padding: 4px 8px;
+}
+
+.manual-submit-bar {
+    padding-top: 16px;
+    border-top: 1px solid var(--pd-border);
+}
+
+.manual-submit-bar .btn {
+    font-weight: 600;
+    padding: 14px;
+}
+
+/* ============================================
+   📌 CLOSE DAY — Filters & Header
+   ============================================ */
+
+.close-day-filters,
+.close-day-show-header {
+    background: var(--pd-bg-card);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--pd-card-shadow);
+    border: 1px solid var(--pd-border-subtle);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pd-text-secondary);
+    margin-bottom: 6px;
+}
+
+.filter-input {
+    border-radius: 10px;
+    border: 1px solid var(--pd-border);
+    background: var(--pd-bg-card);
+    color: var(--pd-text-primary);
+    font-size: 15px;
+    padding: 10px 14px;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+    border-color: var(--pd-primary);
+    box-shadow: 0 0 0 3px var(--pd-primary-bg-10);
+    background: var(--pd-bg-card);
+    color: var(--pd-text-primary);
+}
+
+/* ============================================
+   📌 CLOSE DAY — Big Button
+   ============================================ */
+
+.btn-close-day {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--pd-danger-start), var(--pd-danger-end));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    text-align: right;
+    height: 100%;
+    min-height: 62px;
+    box-shadow: 0 4px 14px var(--pd-danger-shadow);
+}
+
+.btn-close-day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--pd-danger-shadow);
+    color: #fff;
+}
+
+.btn-close-day-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-close-day-icon i {
+    font-size: 22px;
+}
+
+.btn-close-day-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.3;
+    flex-grow: 1;
+}
+
+.btn-close-day-title {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.btn-close-day-subtitle {
+    font-size: 11px;
+    opacity: 0.85;
+    font-weight: 400;
+}
+
+/* ============================================
+   📌 CLOSE DAY — Header
+   ============================================ */
+
+.close-day-header {
+    padding: 16px 20px;
+    background: var(--pd-bg-card);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom: 1px solid var(--pd-border);
+    transition: background 0.3s ease;
+}
+
+/* ============================================
+   📌 CLOSE SELECTED BUTTON
+   ============================================ */
+
+.btn-close-selected {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--pd-success);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px var(--pd-success-shadow);
+}
+
+.btn-close-selected:hover:not(:disabled) {
+    background: var(--pd-success-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--pd-success-shadow);
+    color: #fff;
+}
+
+.btn-close-selected:disabled {
+    background: var(--pd-bg-hover);
+    color: var(--pd-text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.badge-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* ============================================
+   📌 TABLE CHECKBOXES
+   ============================================ */
+
+.group-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.group-checkbox:checked {
+    background-color: var(--pd-primary);
+    border-color: var(--pd-primary);
+}
+
+.table tbody tr.row-selected {
+    background: var(--pd-bg-selected);
+}
+
+.table tbody tr.row-selected:hover {
+    background: var(--pd-bg-selected-hover);
+}
+
+/* ============================================
+   📌 CONFIRMATION MODAL
+   ============================================ */
+
+.close-day-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--pd-modal-backdrop);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.close-day-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1051;
+    padding: 20px;
+    pointer-events: none;
+}
+
+.close-day-modal-content {
+    background: var(--pd-modal-bg);
+    border-radius: 20px;
+    padding: 32px 28px 24px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px var(--pd-modal-shadow-lg);
+    pointer-events: auto;
+    animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid var(--pd-border-subtle);
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.close-day-modal-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--pd-modal-icon-danger-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pd-danger);
+}
+
+.close-day-modal-icon i {
+    font-size: 36px;
+}
+
+.close-day-modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--pd-text-primary);
+    margin-bottom: 12px;
+}
+
+.close-day-modal-text {
+    font-size: 15px;
+    color: var(--pd-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.close-day-modal-text strong {
+    color: var(--pd-text-primary);
+    font-weight: 700;
+}
+
+.close-day-modal-warning {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--pd-info-bg-08);
+    color: var(--pd-info-text);
+    border-radius: 10px;
+    font-size: 12px;
+    margin-bottom: 24px;
+}
+
+.close-day-modal-warning i {
+    font-size: 16px;
+}
+
+.close-day-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.btn-modal-cancel,
+.btn-modal-confirm {
+    min-width: 140px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-modal-cancel {
+    background: var(--pd-bg-subtle);
+    color: var(--pd-text-secondary);
+    border: 1px solid var(--pd-border);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--pd-bg-hover);
+    color: var(--pd-text-primary);
+}
+
+.btn-modal-confirm {
+    background: linear-gradient(135deg, var(--pd-danger-start), var(--pd-danger-end));
+    color: #fff;
+    box-shadow: 0 4px 14px var(--pd-danger-shadow);
+}
+
+.btn-modal-confirm:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px var(--pd-danger-shadow);
+    color: #fff;
+}
+
+.btn-modal-confirm:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   📌 CLOSE DAY SHOW — SMALL CLOSE BUTTON
+   ============================================ */
+
+.btn-close-day-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, var(--pd-danger-start), var(--pd-danger-end));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    text-align: right;
+    box-shadow: 0 4px 14px var(--pd-danger-shadow);
+    min-height: 54px;
+}
+
+.btn-close-day-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--pd-danger-shadow);
+    color: #fff;
+}
+
+.btn-close-day-small .btn-close-day-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-close-day-small .btn-close-day-icon i {
+    font-size: 18px;
+}
+
+.btn-close-day-small .btn-close-day-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.25;
+}
+
+.btn-close-day-small .btn-close-day-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.btn-close-day-small .btn-close-day-subtitle {
+    font-size: 11px;
+    opacity: 0.85;
+}
+
+.btn-lg-custom {
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    min-height: 54px;
+    display: inline-flex;
+    align-items: center;
+    background: var(--pd-bg-card);
+    border: 1px solid var(--pd-border);
+    color: var(--pd-text-primary);
+    transition: all 0.2s ease;
+}
+
+.btn-lg-custom:hover {
+    background: var(--pd-bg-hover);
+    color: var(--pd-text-primary);
+}
+
+/* ============================================
+   📌 MODAL ICON VARIANTS
+   ============================================ */
+
+.modal-icon-warning {
+    background: var(--pd-modal-icon-warning-bg) !important;
+    color: var(--pd-warning-hover) !important;
+}
+
+.modal-warning-danger {
+    background: var(--pd-danger-bg-08) !important;
+    color: var(--pd-danger-end) !important;
+}
+
+.btn-modal-warning {
+    background: var(--pd-gdm-btn-confirm-bg) !important;
+    box-shadow: 0 4px 14px var(--pd-warning-shadow) !important;
+    color: #000 !important;
+}
+
+.btn-modal-warning:hover:not(:disabled) {
+    box-shadow: 0 6px 18px var(--pd-warning-shadow) !important;
+    color: #000 !important;
+}
+
+/* ============================================
+   📌 SCHEDULES SECTION (Group Form)
+   ============================================ */
+
+.schedule-row {
+    background: var(--pd-bg-card);
+    border: 1.5px solid var(--pd-border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.schedule-row:hover {
+    box-shadow: var(--pd-card-shadow-md);
+}
+
+.schedule-row.is-valid {
+    border-color: var(--pd-success-bg-20);
+}
+
+.schedule-row.is-incomplete {
+    border-color: var(--pd-warning-bg-20);
+}
+
+.schedule-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--pd-bg-subtle);
+    border-bottom: 1px solid var(--pd-border);
+}
+
+.schedule-row-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--pd-primary);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.schedule-row-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pd-text-primary);
+}
+
+.btn-remove-schedule {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: var(--pd-danger-bg-08);
+    color: var(--pd-danger);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.btn-remove-schedule:hover {
+    background: var(--pd-danger);
+    color: #fff;
+}
+
+.btn-remove-schedule i {
+    font-size: 15px;
+}
+
+.schedule-row-body {
+    padding: 14px 16px;
+}
+
+.schedule-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--pd-text-secondary);
+    margin-bottom: 4px;
+}
+
+.schedule-error {
+    font-size: 11px;
+    color: var(--pd-danger);
+    margin-top: 3px;
+    font-weight: 500;
+}
+
+.empty-schedules {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--pd-bg-subtle);
+    border: 1.5px dashed var(--pd-border-dashed);
+    border-radius: 14px;
+    color: var(--pd-text-muted);
+}
+
+/* ============================================
+   📌 DUPLICATE CONFIRMATION MODAL
+   ============================================ */
+
+.gdm-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--pd-modal-backdrop);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    animation: gdmFadeIn 0.2s ease;
+}
+
+@keyframes gdmFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.gdm-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1051;
+    padding: 20px;
+    pointer-events: none;
+}
+
+.gdm-content {
+    background: var(--pd-modal-bg);
+    border-radius: 20px;
+    padding: 32px 28px 24px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px var(--pd-modal-shadow);
+    pointer-events: auto;
+    animation: gdmPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid var(--pd-border-subtle);
+}
+
+@keyframes gdmPop {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.gdm-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: var(--pd-modal-icon-warning-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pd-warning-hover);
+}
+
+.gdm-icon i {
+    font-size: 34px;
+}
+
+.gdm-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--pd-text-primary);
+    margin-bottom: 10px;
+}
+
+.gdm-text {
+    font-size: 14px;
+    color: var(--pd-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 22px;
+}
+
+.gdm-text strong {
+    color: var(--pd-text-primary);
+    font-weight: 700;
+}
+
+.gdm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.gdm-btn {
+    min-width: 130px;
+    padding: 11px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.gdm-btn-cancel {
+    background: var(--pd-bg-subtle);
+    color: var(--pd-text-secondary);
+    border: 1px solid var(--pd-border);
+}
+
+.gdm-btn-cancel:hover {
+    background: var(--pd-bg-hover);
+    color: var(--pd-text-primary);
+}
+
+.gdm-btn-confirm {
+    background: var(--pd-gdm-btn-confirm-bg);
+    color: #000;
+    box-shadow: 0 4px 14px var(--pd-warning-shadow);
+}
+
+.gdm-btn-confirm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px var(--pd-warning-shadow);
+}
+
+/* ============================================
+   📌 GROUP FORM — SECTIONS
+   ============================================ */
+
+.gs-section {
+    background: var(--pd-bg-card);
+    border: 1px solid var(--pd-border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.gs-section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--pd-bg-subtle);
+    border-bottom: 1px solid var(--pd-border);
+}
+
+.gs-section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.gs-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--pd-text-primary);
+    margin: 0 0 2px;
+}
+
+.gs-section-subtitle {
+    font-size: 12px;
+    color: var(--pd-text-secondary);
+    margin: 0;
+}
+
+.gs-section-body {
+    padding: 20px;
+}
+
+/* Pricing Preview */
+.pricing-preview {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--pd-pricing-preview-bg);
+    border-radius: 12px;
+    border-right: 3px solid var(--pd-primary);
+}
+
+.pricing-preview-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--pd-primary-bg-15);
+    color: var(--pd-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.pricing-preview-content {
+    flex-grow: 1;
+}
+
+.pricing-preview-content strong {
+    color: var(--pd-primary);
+    font-weight: 700;
+}
+
+/* ============================================
+   📌 PAYMENT SEARCH
+   ============================================ */
+
+.payment-search-card {
+    background: var(--pd-bg-card);
+    border: 1px solid var(--pd-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--pd-card-shadow);
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--pd-text-muted);
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.search-input {
+    padding-right: 48px;
+    padding-left: 48px;
+    border-radius: 12px;
+    border: 1.5px solid var(--pd-border);
+    background: var(--pd-bg-card);
+    color: var(--pd-text-primary);
+    font-size: 15px;
+}
+
+.search-input:focus {
+    border-color: var(--pd-primary);
+    box-shadow: 0 0 0 3px var(--pd-primary-bg-10);
+    background: var(--pd-bg-card);
+    color: var(--pd-text-primary);
+}
+
+.search-clear-btn {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--pd-text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.search-clear-btn:hover {
+    color: var(--pd-danger);
+}
+
+.search-results {
+    border-top: 1px solid var(--pd-border);
+    padding-top: 12px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    width: 100%;
+    background: var(--pd-bg-card);
+    border: 1.5px solid var(--pd-border-soft);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: right;
+}
+
+.search-result-item:hover {
+    border-color: var(--pd-primary);
+    background: var(--pd-primary-bg-04);
+    transform: translateX(-2px);
+}
+
+.search-result-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--pd-student-header-bg);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.search-result-info {
+    flex-grow: 1;
+    text-align: right;
+    color: var(--pd-text-primary);
+}
+
+.search-result-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: var(--pd-text-secondary);
+    margin-top: 4px;
+}
+
+.search-result-action {
+    color: var(--pd-primary);
+    font-size: 20px;
+}
+
+.search-empty {
+    text-align: center;
+    padding: 24px;
+    color: var(--pd-text-muted);
+}
+
+/* ============================================
+   📌 STUDENT PAYMENT CARD
+   ============================================ */
+
+.student-payment-wrapper {
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.student-payment-header {
+    background: var(--pd-student-header-bg);
+    color: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px var(--pd-primary-shadow);
+}
+
+.student-payment-header .text-muted {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.student-payment-header .btn-light {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.student-payment-header .btn-light:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.student-payment-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.unpaid-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    font-size: 14px;
+    backdrop-filter: blur(10px);
+}
+
+/* Invoices List */
+.student-invoices-card {
+    background: var(--pd-bg-card);
+    border: 1px solid var(--pd-border);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.student-invoices-card .card-header {
+    padding: 16px 20px;
+    background: var(--pd-bg-subtle);
+    border-bottom: 1px solid var(--pd-border);
+    color: var(--pd-text-primary);
+}
+
+.invoices-list {
+    padding: 16px;
+}
+
+.invoice-item {
+    background: var(--pd-bg-card);
+    border: 1.5px solid var(--pd-border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    transition: all 0.2s ease;
+}
+
+.invoice-item:hover {
+    box-shadow: var(--pd-card-shadow-md);
+}
+
+.invoice-item.is-paid {
+    border-color: var(--pd-success-bg-20);
+    background: linear-gradient(135deg, var(--pd-success-bg-05), var(--pd-success-bg-10));
+}
+
+.invoice-item.is-cancelled {
+    opacity: 0.6;
+    background: var(--pd-bg-subtle);
+}
+
+.invoice-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.invoice-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.invoice-total {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--pd-text-primary);
+    margin-bottom: 4px;
+}
+
+.invoice-items {
+    background: var(--pd-bg-subtle);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    color: var(--pd-text-primary);
+}
+
+.invoice-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.invoice-progress {
+    margin-bottom: 14px;
+}
+
+.invoice-actions {
+    margin-bottom: 14px;
+}
+
+.payments-history {
+    border-top: 1px dashed var(--pd-border-dashed);
+    padding-top: 12px;
+}
+
+.payment-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--pd-border-soft);
+}
+
+.payment-row:last-child {
+    border-bottom: none;
+}
+
+/* ============================================
+   📌 PAYMENT MODAL
+   ============================================ */
+
+.payment-modal-backdrop,
+.receipt-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--pd-modal-backdrop);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    animation: fadeIn 0.2s ease;
+}
+
+.payment-modal-wrapper,
+.receipt-modal-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1051;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.payment-modal-content {
+    background: var(--pd-modal-bg);
+    border-radius: 20px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px var(--pd-modal-shadow);
+    animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid var(--pd-border-subtle);
+    color: var(--pd-text-primary);
+}
+
+.payment-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--pd-border);
+}
+
+.payment-modal-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--pd-success), var(--pd-success-hover));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.btn-close-modal {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--pd-bg-subtle);
+    color: var(--pd-text-secondary);
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-close-modal:hover {
+    background: var(--pd-danger);
+    color: #fff;
+}
+
+.payment-modal-summary {
+    padding: 16px 24px;
+    background: var(--pd-bg-subtle);
+    border-bottom: 1px solid var(--pd-border);
+    color: var(--pd-text-primary);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+.summary-row-highlight {
+    padding-top: 10px;
+    border-top: 1px solid var(--pd-border-dashed);
+    margin-top: 6px;
+    font-size: 16px;
+}
+
+.payment-modal-body {
+    padding: 20px 24px;
+}
+
+.amount-input-wrapper {
+    position: relative;
+}
+
+.amount-suffix {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pd-success);
+}
+
+.quick-amounts {
+    display: flex;
+    gap: 8px;
+}
+
+.quick-amount-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--pd-bg-subtle);
+    border: 1px solid var(--pd-border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pd-text-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.quick-amount-btn:hover {
+    background: var(--pd-primary);
+    color: #fff;
+    border-color: var(--pd-primary);
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.payment-method-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: var(--pd-bg-subtle);
+    border: 2px solid var(--pd-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--pd-text-primary);
+}
+
+.payment-method-item:hover {
+    border-color: var(--pd-primary);
+    background: var(--pd-primary-bg-04);
+}
+
+.payment-method-item.is-selected {
+    border-color: var(--pd-primary);
+    background: var(--pd-primary-bg-08);
+    color: var(--pd-primary);
+}
+
+.payment-method-item i {
+    font-size: 22px;
+}
+
+.payment-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 16px 24px 24px;
+    border-top: 1px solid var(--pd-border);
+}
+
+/* ============================================
+   📌 RECEIPT MODAL
+   ============================================ */
+
+.receipt-modal-content {
+    background: var(--pd-modal-bg);
+    border-radius: 20px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 95vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px var(--pd-modal-shadow);
+    animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid var(--pd-border-subtle);
+    color: var(--pd-text-primary);
+}
+
+.receipt-paper {
+    padding: 28px 24px;
+    font-family: 'Cairo', 'Segoe UI', sans-serif;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.receipt-shop-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--pd-text-primary);
+    margin-bottom: 6px;
+}
+
+.receipt-shop-phone {
+    color: var(--pd-text-secondary);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.receipt-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--pd-primary);
+    margin: 12px 0 8px;
+}
+
+.receipt-number {
+    font-size: 13px;
+    color: var(--pd-text-primary);
+}
+
+.receipt-divider {
+    border-top: 2px solid var(--pd-text-primary);
+    margin: 12px 0;
+}
+
+.receipt-divider-dashed {
+    border-top: 1px dashed var(--pd-text-muted);
+    margin: 14px 0;
+}
+
+.receipt-section {
+    margin-bottom: 12px;
+}
+
+.receipt-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 13px;
+}
+
+.receipt-barcode {
+    text-align: center;
+    margin: 16px 0;
+    padding: 12px;
+    background: var(--pd-bg-subtle);
+    border-radius: 10px;
+}
+
+.receipt-barcode svg,
+.receipt-barcode img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.barcode-value {
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-top: 6px;
+    color: var(--pd-text-primary);
+}
+
+.receipt-amount-section {
+    background: var(--pd-bg-subtle);
+    padding: 14px 16px;
+    border-radius: 12px;
+}
+
+.receipt-amount-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0 0;
+    margin-top: 10px;
+    border-top: 2px solid var(--pd-border-dashed);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pd-success);
+}
+
+.receipt-paid-stamp {
+    text-align: center;
+    padding: 10px;
+    background: var(--pd-success-bg-10);
+    color: var(--pd-success);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.receipt-qr {
+    text-align: center;
+    margin: 16px 0;
+}
+
+.receipt-qr svg,
+.receipt-qr img {
+    max-width: 140px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    background: #fff;
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.qr-caption {
+    font-size: 11px;
+    color: var(--pd-text-secondary);
+    margin-top: 6px;
+}
+
+.receipt-footer {
+    text-align: center;
+    margin-top: 14px;
+}
+
+.receipt-actions {
+    display: flex;
+    gap: 10px;
+    padding: 16px 24px 24px;
+    border-top: 1px solid var(--pd-border);
+    background: var(--pd-bg-subtle);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+/* ============================================
+   📌 RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .close-day-filters,
+    .close-day-show-header {
+        padding: 16px;
+    }
+
+    .btn-close-day {
+        padding: 14px 18px;
+    }
+
+    .btn-close-day-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .close-day-modal-content {
+        padding: 24px 20px 20px;
+    }
+
+    .close-day-modal-title {
+        font-size: 18px;
+    }
+
+    .btn-modal-cancel,
+    .btn-modal-confirm {
+        min-width: auto;
+        flex: 1;
+    }
+
+    .gs-section-header {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+    }
+
+    .gs-section-body {
+        padding: 16px;
+    }
+
+    .gs-section-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    .gs-section-title {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .manual-student-info .fw-semibold {
+        font-size: 13px;
+    }
+
+    .manual-student-avatar {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        font-size: 0.9rem;
+    }
+
+    .info-chip {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .gdm-content {
+        padding: 24px 20px 20px;
+    }
+
+    .gdm-title {
+        font-size: 18px;
+    }
+
+    .gdm-btn {
+        min-width: auto;
+        flex: 1;
+    }
+
+    .payment-methods {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .payment-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .payment-modal-actions .btn {
+        width: 100%;
+    }
+
+    .receipt-actions {
+        flex-direction: column;
+    }
+
+    .receipt-actions .btn,
+    .receipt-actions a {
+        width: 100%;
+    }
+}
+
+/* ============================================
+   📌 DARK MODE — Global Text Fix
+   ============================================ */
+
+[data-pc-theme="dark"] body,
+[data-bs-theme="dark"] body,
+body.dark,
+html.dark body {
+    background-color: var(--pd-bg-page);
+    color: var(--pd-text-primary);
+}
+
+/* Inputs in dark mode */
+[data-pc-theme="dark"] .form-control,
+[data-pc-theme="dark"] .form-select,
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+body.dark .form-control,
+body.dark .form-select {
+    background-color: var(--pd-bg-subtle);
+    border-color: var(--pd-border);
+    color: var(--pd-text-primary);
+}
+
+[data-pc-theme="dark"] .form-control:focus,
+[data-pc-theme="dark"] .form-select:focus,
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus,
+body.dark .form-control:focus,
+body.dark .form-select:focus {
+    background-color: var(--pd-bg-subtle);
+    border-color: var(--pd-primary);
+    color: var(--pd-text-primary);
+}
+
+[data-pc-theme="dark"] .form-control::placeholder,
+[data-bs-theme="dark"] .form-control::placeholder,
+body.dark .form-control::placeholder {
+    color: var(--pd-text-muted);
+}
+
+/* Cards in dark mode */
+[data-pc-theme="dark"] .card,
+[data-bs-theme="dark"] .card,
+body.dark .card {
+    background-color: var(--pd-bg-card);
+    color: var(--pd-text-primary);
+}
+
+/* Tables in dark mode */
+[data-pc-theme="dark"] .table,
+[data-bs-theme="dark"] .table,
+body.dark .table {
+    color: var(--pd-text-primary);
+}
+
+[data-pc-theme="dark"] .table thead th,
+[data-bs-theme="dark"] .table thead th,
+body.dark .table thead th {
+    color: var(--pd-text-secondary);
+    border-color: var(--pd-border);
+}
+
+[data-pc-theme="dark"] .table tbody td,
+[data-bs-theme="dark"] .table tbody td,
+body.dark .table tbody td {
+    border-color: var(--pd-border-subtle);
+    color: var(--pd-text-primary);
+}
+
+[data-pc-theme="dark"] .table tbody tr:hover,
+[data-bs-theme="dark"] .table tbody tr:hover,
+body.dark .table tbody tr:hover {
+    background-color: var(--pd-bg-subtle);
+}
+
+/* ============================================
+   📌 PRINT
+   ============================================ */
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #printable-receipt,
+    #printable-receipt * {
+        visibility: visible;
+    }
+
+    #printable-receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #fff;
+        color: #000;
+    }
+
+    .receipt-actions {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   📌 RECEIPT MODAL
+   ============================================ */
+
+.receipt-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--pd-modal-backdrop);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    animation: fadeIn 0.2s ease;
+}
+
+.receipt-modal-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1051;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.receipt-modal-content {
+    background: var(--pd-modal-bg);
+    border-radius: 20px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 95vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px var(--pd-modal-shadow);
+    animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid var(--pd-border-subtle);
+    color: var(--pd-text-primary);
+}
+
+.receipt-paper {
+    padding: 28px 24px;
+    font-family: 'Cairo', 'Segoe UI', sans-serif;
+    color: var(--pd-text-primary);
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.receipt-logo {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 12px;
+    background: var(--pd-student-header-bg);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.receipt-shop-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--pd-text-primary);
+    margin-bottom: 6px;
+}
+
+.receipt-shop-phone {
+    color: var(--pd-text-secondary);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.receipt-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--pd-primary);
+    margin: 12px 0 8px;
+}
+
+.receipt-number {
+    font-size: 13px;
+    color: var(--pd-text-primary);
+}
+
+.receipt-divider {
+    border-top: 2px solid var(--pd-text-primary);
+    margin: 12px 0;
+}
+
+.receipt-divider-dashed {
+    border-top: 1px dashed var(--pd-text-muted);
+    margin: 14px 0;
+}
+
+.receipt-section {
+    margin-bottom: 12px;
+}
+
+.receipt-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pd-text-primary);
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--pd-border);
+}
+
+.receipt-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 13px;
+    color: var(--pd-text-primary);
+}
+
+.receipt-info-row .text-muted {
+    color: var(--pd-text-secondary) !important;
+}
+
+.receipt-barcode {
+    text-align: center;
+    margin: 16px 0;
+    padding: 12px;
+    background: #ffffff; /* ← أبيض دايماً عشان الباركود */
+    border-radius: 10px;
+}
+
+.receipt-barcode svg,
+.receipt-barcode img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.barcode-value {
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-top: 6px;
+    color: #212529; /* ← أسود دايماً عشان مقروء */
+}
+
+.receipt-amount-section {
+    background: var(--pd-bg-subtle);
+    padding: 14px 16px;
+    border-radius: 12px;
+}
+
+.receipt-amount-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0 0;
+    margin-top: 10px;
+    border-top: 2px solid var(--pd-border-dashed);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pd-success);
+}
+
+.receipt-paid-stamp {
+    text-align: center;
+    padding: 10px;
+    background: var(--pd-success-bg-10);
+    color: var(--pd-success);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.receipt-qr {
+    text-align: center;
+    margin: 16px 0;
+}
+
+.qr-wrapper {
+    display: inline-block;
+    padding: 8px;
+    background: #ffffff; /* ← أبيض دايماً للـ QR */
+    border-radius: 8px;
+}
+
+.receipt-qr svg,
+.receipt-qr img {
+    max-width: 140px;
+    height: auto;
+    display: block;
+}
+
+.qr-caption {
+    font-size: 11px;
+    color: var(--pd-text-secondary);
+    margin-top: 6px;
+}
+
+.receipt-footer {
+    text-align: center;
+    margin-top: 14px;
+}
+
+.receipt-footer .small {
+    font-size: 11px;
+}
+
+.receipt-actions {
+    display: flex;
+    gap: 10px;
+    padding: 16px 24px 24px;
+    border-top: 1px solid var(--pd-border);
+    background: var(--pd-bg-subtle);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+@media (max-width: 576px) {
+    .receipt-actions {
+        flex-direction: column;
+    }
+
+    .receipt-actions .btn,
+    .receipt-actions a {
+        width: 100%;
+    }
+}
+
+/* ============================================
+   DARK MODE — Text Fixes
+   ============================================ */
+
+/* Fix for small text and muted text in dark mode */
+[data-pc-theme="dark"] .text-muted,
+[data-bs-theme="dark"] .text-muted,
+body.dark .text-muted {
+    color: #a0a4ab !important;
+}
+
+[data-pc-theme="dark"] small,
+[data-bs-theme="dark"] small,
+body.dark small {
+    color: inherit;
+}
+
+[data-pc-theme="dark"] .fw-semibold,
+[data-bs-theme="dark"] .fw-semibold,
+body.dark .fw-semibold {
+    color: #e9ecef;
+}
+
+[data-pc-theme="dark"] h1,
+[data-pc-theme="dark"] h2,
+[data-pc-theme="dark"] h3,
+[data-pc-theme="dark"] h4,
+[data-pc-theme="dark"] h5,
+[data-pc-theme="dark"] h6,
+[data-bs-theme="dark"] h1,
+[data-bs-theme="dark"] h2,
+[data-bs-theme="dark"] h3,
+[data-bs-theme="dark"] h4,
+[data-bs-theme="dark"] h5,
+[data-bs-theme="dark"] h6,
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6 {
+    color: #e9ecef;
+}
+
+/* Page header titles in dark mode */
+[data-pc-theme="dark"] .page-header-title,
+[data-bs-theme="dark"] .page-header-title,
+body.dark .page-header-title {
+    color: #e9ecef;
+}
+
+/* Strong tags */
+[data-pc-theme="dark"] strong,
+[data-bs-theme="dark"] strong,
+body.dark strong {
+    color: #e9ecef;
+}
+
+/* Labels */
+[data-pc-theme="dark"] .form-label,
+[data-pc-theme="dark"] label,
+[data-bs-theme="dark"] .form-label,
+[data-bs-theme="dark"] label,
+body.dark .form-label,
+body.dark label {
+    color: #e9ecef;
+}
+
+/* Card headers */
+[data-pc-theme="dark"] .card-header,
+[data-bs-theme="dark"] .card-header,
+body.dark .card-header {
+    background: #2a2b35 !important;
+    color: #e9ecef;
+    border-bottom-color: #353640;
+}
+
+/* Alerts */
+[data-pc-theme="dark"] .alert-info,
+[data-bs-theme="dark"] .alert-info,
+body.dark .alert-info {
+    background: rgba(47, 191, 220, 0.15);
+    border-color: rgba(47, 191, 220, 0.3);
+    color: #6dd4ea;
+}
+
+[data-pc-theme="dark"] .alert-warning,
+[data-bs-theme="dark"] .alert-warning,
+body.dark .alert-warning {
+    background: rgba(245, 184, 0, 0.15);
+    border-color: rgba(245, 184, 0, 0.3);
+    color: #ffce3d;
+}
+
+[data-pc-theme="dark"] .alert-danger,
+[data-bs-theme="dark"] .alert-danger,
+body.dark .alert-danger {
+    background: rgba(224, 76, 92, 0.15);
+    border-color: rgba(224, 76, 92, 0.3);
+    color: #e04c5c;
+}
+
+[data-pc-theme="dark"] .alert-success,
+[data-bs-theme="dark"] .alert-success,
+body.dark .alert-success {
+    background: rgba(46, 168, 108, 0.15);
+    border-color: rgba(46, 168, 108, 0.3);
+    color: #2ea86c;
+}
+
+/* Summary rows in payment modal */
+[data-pc-theme="dark"] .summary-row,
+[data-bs-theme="dark"] .summary-row,
+body.dark .summary-row {
+    color: #e9ecef;
+}
+
+/* Invoice item rows */
+[data-pc-theme="dark"] .invoice-item-row,
+[data-bs-theme="dark"] .invoice-item-row,
+body.dark .invoice-item-row {
+    color: #e9ecef;
+}
+
+/* Search result items */
+[data-pc-theme="dark"] .search-result-item,
+[data-bs-theme="dark"] .search-result-item,
+body.dark .search-result-item {
+    background: #2a2b35;
+    border-color: #353640;
+    color: #e9ecef;
+}
+
+[data-pc-theme="dark"] .search-result-item:hover,
+[data-bs-theme="dark"] .search-result-item:hover,
+body.dark .search-result-item:hover {
+    background: rgba(77, 144, 254, 0.12);
+    border-color: #4d90fe;
+}
+
+/* Barcode/QR in receipt — always white background */
+[data-pc-theme="dark"] .receipt-barcode,
+[data-bs-theme="dark"] .receipt-barcode,
+body.dark .receipt-barcode {
+    background: #ffffff !important;
+}
+
+[data-pc-theme="dark"] .receipt-barcode svg,
+[data-pc-theme="dark"] .receipt-barcode img,
+[data-pc-theme="dark"] .receipt-qr svg,
+[data-pc-theme="dark"] .receipt-qr img,
+[data-bs-theme="dark"] .receipt-barcode svg,
+[data-bs-theme="dark"] .receipt-barcode img,
+body.dark .receipt-barcode svg,
+body.dark .receipt-barcode img,
+body.dark .receipt-qr svg,
+body.dark .receipt-qr img {
+    background: #ffffff;
+}
+
+/* Receipt paper in dark mode */
+[data-pc-theme="dark"] .receipt-paper,
+[data-bs-theme="dark"] .receipt-paper,
+body.dark .receipt-paper {
+    color: #e9ecef;
+}
+
+[data-pc-theme="dark"] .receipt-barcode .barcode-value,
+[data-bs-theme="dark"] .receipt-barcode .barcode-value,
+body.dark .receipt-barcode .barcode-value {
+    color: #212529 !important;
+    background: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Receipt info rows */
+[data-pc-theme="dark"] .receipt-info-row span:first-child,
+[data-bs-theme="dark"] .receipt-info-row span:first-child,
+body.dark .receipt-info-row span:first-child {
+    color: #a0a4ab;
+}
+
+[data-pc-theme="dark"] .receipt-info-row strong,
+[data-bs-theme="dark"] .receipt-info-row strong,
+body.dark .receipt-info-row strong {
+    color: #e9ecef;
+}
+
+
+/* ============================================
+   Invoice & Receipt — Dark Mode Fixes
+   ============================================ */
+
+/* Invoice items section */
+.invoice-items {
+    background: var(--pd-bg-subtle);
+    color: var(--pd-text-primary);
+}
+
+[data-pc-theme="dark"] .invoice-items,
+[data-bs-theme="dark"] .invoice-items,
+body.dark .invoice-items {
+    background: #2a2b35 !important;
+    color: #e9ecef !important;
+}
+
+/* All small text inside invoice */
+[data-pc-theme="dark"] .invoice-item small,
+[data-bs-theme="dark"] .invoice-item small,
+body.dark .invoice-item small {
+    color: #a0a4ab !important;
+}
+
+/* Invoice items strong */
+[data-pc-theme="dark"] .invoice-item strong,
+[data-bs-theme="dark"] .invoice-item strong,
+body.dark .invoice-item strong {
+    color: #e9ecef !important;
+}
+
+/* Payments history */
+[data-pc-theme="dark"] .payments-history,
+[data-bs-theme="dark"] .payments-history,
+body.dark .payments-history {
+    border-color: #353640;
+}
+
+[data-pc-theme="dark"] .payment-row,
+[data-bs-theme="dark"] .payment-row,
+body.dark .payment-row {
+    border-bottom-color: #2a2b35;
+    color: #e9ecef;
+}
+
+/* Receipt modal — receipt paper always light for print */
+[data-pc-theme="dark"] .receipt-paper,
+[data-bs-theme="dark"] .receipt-paper,
+body.dark .receipt-paper {
+    background: #ffffff;
+    color: #212529;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-info-row span:first-child,
+[data-bs-theme="dark"] .receipt-paper .receipt-info-row span:first-child,
+body.dark .receipt-paper .receipt-info-row span:first-child {
+    color: #6c757d;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-info-row strong,
+[data-bs-theme="dark"] .receipt-paper .receipt-info-row strong,
+body.dark .receipt-paper .receipt-info-row strong {
+    color: #212529;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-shop-name,
+[data-bs-theme="dark"] .receipt-paper .receipt-shop-name,
+body.dark .receipt-paper .receipt-shop-name {
+    color: #212529;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-title,
+[data-bs-theme="dark"] .receipt-paper .receipt-title,
+body.dark .receipt-paper .receipt-title {
+    color: #0d6efd;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-number,
+[data-bs-theme="dark"] .receipt-paper .receipt-number,
+body.dark .receipt-paper .receipt-number {
+    color: #495057;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-amount-section,
+[data-bs-theme="dark"] .receipt-paper .receipt-amount-section,
+body.dark .receipt-paper .receipt-amount-section {
+    background: #f8f9fa;
+    color: #212529;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-amount-total span:first-child,
+[data-bs-theme="dark"] .receipt-paper .receipt-amount-total span:first-child,
+body.dark .receipt-paper .receipt-amount-total span:first-child {
+    color: #212529;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-divider,
+[data-bs-theme="dark"] .receipt-paper .receipt-divider,
+body.dark .receipt-paper .receipt-divider {
+    border-color: #212529;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-divider-dashed,
+[data-bs-theme="dark"] .receipt-paper .receipt-divider-dashed,
+body.dark .receipt-paper .receipt-divider-dashed {
+    border-color: #adb5bd;
+}
+
+[data-pc-theme="dark"] .receipt-paper .barcode-value,
+[data-bs-theme="dark"] .receipt-paper .barcode-value,
+body.dark .receipt-paper .barcode-value {
+    color: #495057;
+}
+
+[data-pc-theme="dark"] .receipt-paper .receipt-footer,
+[data-bs-theme="dark"] .receipt-paper .receipt-footer,
+body.dark .receipt-paper .receipt-footer {
+    color: #6c757d;
+}
+
+[data-pc-theme="dark"] .receipt-paper .qr-caption,
+[data-bs-theme="dark"] .receipt-paper .qr-caption,
+body.dark .receipt-paper .qr-caption {
+    color: #6c757d;
+}
+
+
+/* ============================================
+   Payment — Bootstrap dark overrides
+   ============================================ */
+
+/* List group items */
+[data-pc-theme="dark"] .list-group-item,
+[data-bs-theme="dark"] .list-group-item,
+body.dark .list-group-item {
+    background: var(--pd-bg-card);
+    border-color: var(--pd-border);
+    color: var(--pd-text-primary);
+}
+
+[data-pc-theme="dark"] .list-group-item:hover,
+[data-bs-theme="dark"] .list-group-item:hover,
+body.dark .list-group-item:hover {
+    background: var(--pd-bg-subtle);
+}
+
+[data-pc-theme="dark"] .list-group-item.border-primary,
+[data-bs-theme="dark"] .list-group-item.border-primary,
+body.dark .list-group-item.border-primary {
+    background: rgba(77, 144, 254, 0.1) !important;
+}
+
+/* bg-light in dark mode */
+[data-pc-theme="dark"] .bg-light,
+[data-bs-theme="dark"] .bg-light,
+body.dark .bg-light {
+    background: var(--pd-bg-subtle) !important;
+}
+
+/* bg-white in dark mode */
+[data-pc-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .bg-white,
+body.dark .bg-white {
+    background: var(--pd-bg-card) !important;
+}
+
+/* Badge light */
+[data-pc-theme="dark"] .badge.bg-light,
+[data-bs-theme="dark"] .badge.bg-light,
+body.dark .badge.bg-light {
+    background: var(--pd-bg-soft) !important;
+    color: var(--pd-text-primary) !important;
+}
+
+/* Input group text */
+[data-pc-theme="dark"] .input-group-text,
+[data-bs-theme="dark"] .input-group-text,
+body.dark .input-group-text {
+    background: var(--pd-bg-soft);
+    border-color: var(--pd-border);
+    color: var(--pd-text-primary);
+}
+
+/* Outline buttons */
+[data-pc-theme="dark"] .btn-outline-secondary,
+[data-bs-theme="dark"] .btn-outline-secondary,
+body.dark .btn-outline-secondary {
+    color: var(--pd-text-secondary);
+    border-color: var(--pd-border);
+}
+
+[data-pc-theme="dark"] .btn-outline-secondary:hover,
+[data-bs-theme="dark"] .btn-outline-secondary:hover,
+body.dark .btn-outline-secondary:hover {
+    background: var(--pd-bg-soft);
+    color: var(--pd-text-primary);
+}
+
+/* Card header */
+[data-pc-theme="dark"] .card-header,
+[data-bs-theme="dark"] .card-header,
+body.dark .card-header {
+    background: transparent !important;
+    border-bottom-color: var(--pd-border);
+    color: var(--pd-text-primary);
 }

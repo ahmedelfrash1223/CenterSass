@@ -105,6 +105,44 @@
                     </li>
                 @endif
 
+
+                {{-- تسجيل الحضور --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::ATTENDANCE_VIEW))
+                    <li class="pc-item @yield('attendance-active')">
+                        <a wire:navigate href="{{ route('teacher.attendance.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-scan"></i>
+                            </span>
+                            <span class="pc-mtext">الحضور</span>
+                        </a>
+                    </li>
+                @endif
+
+
+                {{-- تقفيل اليوم --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::ATTENDANCE_CLOSE_DAY))
+                    <li class="pc-item @yield('attendance-close-day-active')">
+                        <a wire:navigate href="{{ route('teacher.attendance.close-day.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-lock"></i>
+                            </span>
+                            <span class="pc-mtext">تقفيل اليوم</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- المدفوعات --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::PAYMENT_VIEW))
+                    <li class="pc-item @yield('payments-active')">
+                        <a wire:navigate href="{{ route('teacher.payments.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-currency-circle-dollar"></i>
+                            </span>
+                            <span class="pc-mtext">المدفوعات</span>
+                        </a>
+                    </li>
+                @endif
+
             </ul>
         </div>
         <div class="pc-sidebar-footer">

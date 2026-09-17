@@ -122,4 +122,14 @@ class Teacher extends Authenticatable
         return $this->subscription()
             ->where('status', SubscriptionStatusEnum::ACTIVE->value);
     }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'teacher_id');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'teacher_id');
+    }
 }

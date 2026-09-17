@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\TeacherPanel;
 
-use App\Enums\Teacher\GroupStatusEnum;
 use App\Enums\Teacher\GradeEnum;
+use App\Enums\Teacher\GroupStatusEnum;
+use App\Enums\Teacher\PricingTypeEnum;
 use App\Models\TeacherSubject;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class StoreGroupRequest extends FormRequest
@@ -17,7 +19,13 @@ class StoreGroupRequest extends FormRequest
 
     public function rules(): array
     {
+        $currentTeacher = Auth::guard('teacher')->user();
+        $ownerId = $currentTeacher->getOwnerId();
+
         return [
+            // ============================================
+            // Main Data
+            // ============================================
             'name' => ['required', 'string', 'max:255'],
             'branch_id' => ['required', 'exists:branches,id'],
             'grade' => ['required', 'string', Rule::in(array_keys(GradeEnum::options()))],
@@ -26,17 +34,25 @@ class StoreGroupRequest extends FormRequest
             'status' => ['required', Rule::in(GroupStatusEnum::values())],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'schedules' => ['nullable', 'array', 'min:1'],
+
+            // ============================================
+            // Pricing
+            // ============================================
+            'has_pricing' => ['boolean'],
+            'pricing_type' => ['required_if:has_pricing,true', 'in:' . implode(',', PricingTypeEnum::values())],
+            'pricing_amount' => ['required_if:has_pricing,true', 'numeric', 'min:0'],
+
+            // ============================================
+            // Schedules
+            // ============================================
+            'schedules' => ['nullable', 'array'],
             'schedules.*.day' => ['required', 'string', 'in:Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday'],
             'schedules.*.start_time' => ['required', 'date_format:H:i'],
             'schedules.*.end_time' => ['required', 'date_format:H:i', 'after:schedules.*.start_time'],
             'schedules.*.subject_id' => [
                 'required',
                 'exists:teacher_subjects,id',
-                function ($attribute, $value, $fail) {
-                    $currentTeacher = auth('teacher')->user();
-                    $ownerId = $currentTeacher->getOwnerId();
-
+                function ($attribute, $value, $fail) use ($ownerId) {
                     $subject = TeacherSubject::where('id', $value)
                         ->where('teacher_id', $ownerId)
                         ->exists();
@@ -48,10 +64,7 @@ class StoreGroupRequest extends FormRequest
             'schedules.*.teacher_id' => [
                 'required',
                 'exists:teachers,id',
-                function ($attribute, $value, $fail) {
-                    $currentTeacher = auth('teacher')->user();
-                    $ownerId = $currentTeacher->getOwnerId();
-
+                function ($attribute, $value, $fail) use ($currentTeacher, $ownerId) {
                     $isValid = \App\Models\Teacher::where('id', $value)
                         ->where(function ($query) use ($ownerId) {
                             $query->where('id', $ownerId)
@@ -87,23 +100,24 @@ class StoreGroupRequest extends FormRequest
             'end_date.date' => 'تاريخ النهاية غير صالح.',
             'end_date.after_or_equal' => 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية.',
 
-            'schedules.required' => 'يجب إضافة موعد واحد على الأقل.',
-            'schedules.array' => 'المواعيد يجب أن تكون مصفوفة.',
-            'schedules.min' => 'يجب إضافة موعد واحد على الأقل.',
+            // Pricing
+            'pricing_type.required_if' => 'نوع التسعير مطلوب.',
+            'pricing_type.in' => 'نوع التسعير غير صالح.',
+            'pricing_amount.required_if' => 'المبلغ مطلوب.',
+            'pricing_amount.numeric' => 'المبلغ يجب أن يكون رقمًا.',
+            'pricing_amount.min' => 'المبلغ لا يمكن أن يكون سالبًا.',
 
+            // Schedules
+            'schedules.array' => 'المواعيد يجب أن تكون مصفوفة.',
             'schedules.*.day.required' => 'اليوم مطلوب.',
             'schedules.*.day.in' => 'اليوم غير صالح.',
-
             'schedules.*.start_time.required' => 'وقت البداية مطلوب.',
             'schedules.*.start_time.date_format' => 'وقت البداية غير صالح.',
-
             'schedules.*.end_time.required' => 'وقت النهاية مطلوب.',
             'schedules.*.end_time.date_format' => 'وقت النهاية غير صالح.',
             'schedules.*.end_time.after' => 'وقت النهاية يجب أن يكون بعد وقت البداية.',
-
             'schedules.*.subject_id.required' => 'المادة مطلوبة.',
             'schedules.*.subject_id.exists' => 'المادة غير صالحة.',
-
             'schedules.*.teacher_id.required' => 'المدرس مطلوب.',
             'schedules.*.teacher_id.exists' => 'المدرس غير صالح.',
         ];
