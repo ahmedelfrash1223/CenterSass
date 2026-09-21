@@ -32,17 +32,17 @@ enum InvoiceStatusEnum: string
     public function icon(): string
     {
         return match ($this) {
-            self::UNPAID    => 'ph-x-circle',
+            self::UNPAID    => 'ph-warning-circle',
             self::PARTIAL   => 'ph-clock',
             self::PAID      => 'ph-check-circle',
-            self::CANCELLED => 'ph-prohibit',
+            self::CANCELLED => 'ph-x-circle',
         };
     }
 
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $type) => [$type->value => $type->label()])
+            ->mapWithKeys(fn(self $c) => [$c->value => $c->label()])
             ->toArray();
     }
 

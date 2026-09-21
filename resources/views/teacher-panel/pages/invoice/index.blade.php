@@ -1,9 +1,11 @@
 @section('title', 'الفواتير')
 @section('payments-active', 'active')
 @extends('teacher-panel.master')
+
 @section('main')
     <div class="pc-container">
         <div class="pc-content">
+
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center g-3">
@@ -11,14 +13,18 @@
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-2">
                                     <li class="breadcrumb-item">
-                                        <a href="{{ route('teacher.dashboard') }}" wire:navigate>
+                                        <a href="{{ route('teacher.dashboard') }}" wire:navigate class="text-decoration-none">
                                             <i class="ph-duotone ph-house me-1"></i>الرئيسية
                                         </a>
                                     </li>
                                     <li class="breadcrumb-item">
-                                        <a href="{{ route('teacher.payments.index') }}" wire:navigate>المدفوعات</a>
+                                        <a href="{{ route('teacher.payments.index') }}" wire:navigate class="text-decoration-none">
+                                            المدفوعات
+                                        </a>
                                     </li>
-                                    <li class="breadcrumb-item active">الفواتير</li>
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        <i class="ph-duotone ph-receipt me-1"></i>الفواتير
+                                    </li>
                                 </ol>
                             </nav>
                         </div>
@@ -38,15 +44,13 @@
                                             </span>
                                         </h1>
                                         <p class="text-muted small mb-0 mt-1">
-                                            <i class="ph-duotone ph-info me-1"></i>
-                                            عرض وإدارة كل الفواتير
+                                            <i class="ph-duotone ph-dot-outline me-1"></i>عرض وإدارة كل الفواتير
                                         </p>
                                     </div>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('teacher.payments.index') }}" wire:navigate class="btn btn-light border">
-                                        <i class="ph-duotone ph-currency-circle-dollar me-1"></i>
-                                        صفحة الدفع
+                                        <i class="ph-duotone ph-currency-circle-dollar me-1"></i>صفحة الدفع
                                     </a>
                                 </div>
                             </div>
@@ -54,6 +58,8 @@
                     </div>
                 </div>
             </div>
+
+            @livewire('teacher-panel.pages.payment.parts.month-selector', ['context' => 'invoices'])
 
             @livewire('teacher-panel.pages.invoice.parts.invoice-data')
         </div>

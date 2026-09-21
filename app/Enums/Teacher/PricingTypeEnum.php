@@ -13,29 +13,29 @@ enum PricingTypeEnum: string
     {
         return match ($this) {
             self::FIXED_MONTHLY => 'شهري ثابت',
-            self::PER_SESSION   => 'لكل حصة',
-            self::PER_SUBJECT   => 'لكل مادة',
-            self::PER_GRADE     => 'لكل صف',
-        };
-    }
-
-    public function description(): string
-    {
-        return match ($this) {
-            self::FIXED_MONTHLY => 'مبلغ ثابت يدفعه الطالب شهرياً',
-            self::PER_SESSION   => 'مبلغ مضروب في عدد حصص الشهر',
-            self::PER_SUBJECT   => 'مبلغ مضروب في عدد المواد المسجل فيها',
-            self::PER_GRADE     => 'مبلغ ثابت حسب المرحلة الدراسية',
+            self::PER_SESSION   => 'بالحصة',
+            self::PER_SUBJECT   => 'بالمادة',
+            self::PER_GRADE     => 'بالصف',
         };
     }
 
     public function icon(): string
     {
         return match ($this) {
-            self::FIXED_MONTHLY => 'ph-calendar',
+            self::FIXED_MONTHLY => 'ph-calendar-check',
             self::PER_SESSION   => 'ph-clock',
-            self::PER_SUBJECT   => 'ph-notebook',
+            self::PER_SUBJECT   => 'ph-books',
             self::PER_GRADE     => 'ph-graduation-cap',
+        };
+    }
+
+    public function description(): string
+    {
+        return match ($this) {
+            self::FIXED_MONTHLY => 'مبلغ ثابت كل شهر مهما حضر الطالب.',
+            self::PER_SESSION   => 'المبلغ مضروب في عدد الحصص اللي الطالب حضرها.',
+            self::PER_SUBJECT   => 'المبلغ مضروب في عدد المواد اللي الطالب مشترك فيها.',
+            self::PER_GRADE     => 'مبلغ ثابت حسب المرحلة الدراسية للطالب.',
         };
     }
 
@@ -43,8 +43,8 @@ enum PricingTypeEnum: string
     {
         return match ($this) {
             self::FIXED_MONTHLY => 'primary',
-            self::PER_SESSION   => 'success',
-            self::PER_SUBJECT   => 'info',
+            self::PER_SESSION   => 'info',
+            self::PER_SUBJECT   => 'success',
             self::PER_GRADE     => 'warning',
         };
     }
@@ -52,7 +52,7 @@ enum PricingTypeEnum: string
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $type) => [$type->value => $type->label()])
+            ->mapWithKeys(fn(self $c) => [$c->value => $c->label()])
             ->toArray();
     }
 

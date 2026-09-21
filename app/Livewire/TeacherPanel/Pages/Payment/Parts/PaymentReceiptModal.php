@@ -2,28 +2,30 @@
 
 namespace App\Livewire\TeacherPanel\Pages\Payment\Parts;
 
-use App\Enums\Teacher\TeacherPermissionEnum;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceManagement;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class PaymentReceipt extends Component
+class PaymentReceiptModal extends Component
 {
-    use HasInvoiceManagement;
-
     public ?Payment $payment = null;
+    public array $breakdown = [];
     public bool $showModal = false;
 
-    #[On('show-receipt')]
+    #[On('show-payment-receipt')]
     public function show(int $paymentId): void
     {
         $user = Auth::guard('teacher')->user();
 
-        $payment = Payment::query()
+        $payment = Payment::with([
+            'student.branch',
+            'invoice.items.group',
+            'teacher',
+            'creator',
+            'allocations.invoiceItem',
+        ])
             ->where('teacher_id', $user->getOwnerId())
-            ->with(['student', 'invoice.items.group', 'creator'])
             ->find($paymentId);
 
         if (!$payment) {
@@ -31,7 +33,16 @@ class PaymentReceipt extends Component
             return;
         }
 
+        $breakdown = [];
+        foreach ($payment->allocations as $alloc) {
+            $breakdown[$alloc->invoice_item_id] = [
+                'description' => $alloc->invoiceItem?->description ?? '—',
+                'amount'      => (float) $alloc->amount,
+            ];
+        }
+
         $this->payment = $payment;
+        $this->breakdown = $breakdown;
         $this->showModal = true;
     }
 
@@ -39,10 +50,11 @@ class PaymentReceipt extends Component
     {
         $this->showModal = false;
         $this->payment = null;
+        $this->breakdown = [];
     }
 
     public function render()
     {
-        return view('teacher-panel.pages.payment.parts.payment-receipt');
+        return view('teacher-panel.pages.payment.parts.payment-receipt-modal');
     }
 }

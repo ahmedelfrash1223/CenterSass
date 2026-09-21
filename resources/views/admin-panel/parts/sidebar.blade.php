@@ -119,7 +119,7 @@
 
                         <div class="flex-shrink-0">
                             <div class="admin-sidebar-avatar">
-                                {{ mb_substr(Auth::guard('admin')->user()->name, 0, 1) }}
+                                {{ mb_substr(auth('admin')->user()->name, 0, 1) }}
                             </div>
                         </div>
 
@@ -128,7 +128,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1 ms-2">
                                         <h6 class="mb-0 admin-sidebar-name">
-                                            {{ Auth::guard('admin')->user()->name }}
+                                            {{ auth('admin')->user()->name }}
                                         </h6>
                                         <small class="admin-sidebar-role">
                                             مدير النظام

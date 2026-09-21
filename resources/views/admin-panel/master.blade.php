@@ -1,5 +1,5 @@
 @php
-    $admin = Auth::guard('admin')->user();
+    $admin = \Illuminate\Support\Facades\Auth::guard('admin')->user();
     $themeSettings = $admin?->themeSettings;
 @endphp
 <!DOCTYPE html>

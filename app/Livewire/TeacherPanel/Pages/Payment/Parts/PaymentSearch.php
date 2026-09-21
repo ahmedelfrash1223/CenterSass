@@ -22,7 +22,11 @@ class PaymentSearch extends Component
     public function selectStudent(int $studentId): void
     {
         $this->search = '';
-        $this->dispatch('student-selected', studentId: $studentId);
+
+        $this->dispatch('student-selected', studentId: $studentId)
+            ->to('teacher-panel.pages.payment.parts.student-payment-card');
+
+        $this->dispatch('scroll-to-payment-form');
     }
 
     public function handleScan(string $value): void

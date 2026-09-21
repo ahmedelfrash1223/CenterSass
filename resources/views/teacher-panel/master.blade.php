@@ -1,5 +1,5 @@
 @php
-    $teacher = Auth::guard('teacher')->user();
+    $teacher = \Illuminate\Support\Facades\Auth::guard('teacher')->user();
     $themeSettings = $teacher?->themeSettings;
 @endphp
 <!DOCTYPE html>

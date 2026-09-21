@@ -4,10 +4,12 @@ namespace App\Services\Teacher;
 
 use App\Enums\Teacher\PaymentMethodEnum;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Payment;
+use App\Models\PaymentAllocation;
 use App\Models\Teacher;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentService
 {
@@ -15,14 +17,9 @@ class PaymentService
         private readonly InvoiceNumberGenerator $numberGenerator
     ) {}
 
-    /**
-     * Record a payment against an invoice.
-     *
-     * @return Payment|null
-     */
     public function record(
         Invoice $invoice,
-        float $amount,
+        array $items,
         string $paymentMethod,
         Teacher $user,
         ?string $reference = null,
@@ -32,57 +29,106 @@ class PaymentService
     ): ?Payment {
         $ownerId = $user->getOwnerId();
 
-        // Guard: invoice must belong to the same owner
         if ($invoice->teacher_id !== $ownerId) {
+            Log::warning('PaymentService: invoice owner mismatch', ['invoice_id' => $invoice->id]);
             return null;
         }
 
-        // Guard: invoice must not be cancelled or fully paid
-        if ($invoice->isCancelled() || $invoice->isPaid()) {
+        if ($invoice->isCancelled()) {
+            Log::warning('PaymentService: invoice is cancelled', ['invoice_id' => $invoice->id]);
             return null;
         }
 
-        // Guard: amount must be > 0 and <= remaining
-        $amount = round($amount, 2);
-        $remaining = (float) $invoice->remaining_amount;
-
-        if ($amount <= 0 || $amount > $remaining) {
-            return null;
-        }
-
-        // Guard: valid payment method
         if (!PaymentMethodEnum::tryFrom($paymentMethod)) {
+            Log::warning('PaymentService: invalid payment method', ['method' => $paymentMethod]);
             return null;
         }
 
-        return DB::transaction(function () use (
-            $invoice, $amount, $paymentMethod, $user, $reference, $paidAt, $paidTime, $notes
-        ) {
-            $payment = Payment::create([
-                'receipt_number' => $this->numberGenerator->receipt(),
+        $validatedItems = [];
+        $totalAmount = 0;
+
+        foreach ($items as $entry) {
+            $itemId = $entry['invoice_item_id'] ?? null;
+            $amount = round((float) ($entry['amount'] ?? 0), 2);
+
+            if (!$itemId || $amount <= 0) continue;
+
+            $item = InvoiceItem::where('id', $itemId)
+                ->where('invoice_id', $invoice->id)
+                ->first();
+
+            if (!$item) {
+                Log::warning('PaymentService: item not found', [
+                    'item_id' => $itemId,
+                    'invoice_id' => $invoice->id,
+                ]);
+                continue;
+            }
+
+            $itemRemaining = (float) $item->remaining_amount;
+
+            if ($amount > $itemRemaining) {
+                $amount = $itemRemaining;
+            }
+
+            if ($amount <= 0) continue;
+
+            $validatedItems[] = ['item' => $item, 'amount' => $amount];
+            $totalAmount += $amount;
+        }
+
+        if (empty($validatedItems) || $totalAmount <= 0) {
+            Log::warning('PaymentService: no valid items', ['invoice_id' => $invoice->id]);
+            return null;
+        }
+
+        try {
+            return DB::transaction(function () use (
+                $invoice, $validatedItems, $totalAmount, $paymentMethod,
+                $user, $reference, $paidAt, $paidTime, $notes
+            ) {
+                $payment = Payment::create([
+                    'receipt_number' => $this->numberGenerator->receipt(),
+                    'invoice_id'     => $invoice->id,
+                    'student_id'     => $invoice->student_id,
+                    'teacher_id'     => $invoice->teacher_id,
+                    'amount'         => $totalAmount,
+                    'payment_method' => $paymentMethod,
+                    'reference'      => $reference ?: null,
+                    'paid_at'        => $paidAt ?: now()->toDateString(),
+                    'paid_time'      => $paidTime ?: now()->format('H:i'),
+                    'notes'          => $notes ?: null,
+                    'created_by'     => $user->id,
+                ]);
+
+                foreach ($validatedItems as $entry) {
+                    PaymentAllocation::create([
+                        'payment_id'      => $payment->id,
+                        'invoice_item_id' => $entry['item']->id,
+                        'group_id'        => $entry['item']->group_id,
+                        'amount'          => $entry['amount'],
+                    ]);
+                }
+
+                $invoice->refresh();
+
+                foreach ($invoice->items as $item) {
+                    $item->recalculate();
+                }
+
+                $invoice->recalculate();
+
+                return $payment;
+            });
+        } catch (\Throwable $e) {
+            Log::error('PaymentService: exception', [
+                'error' => $e->getMessage(),
                 'invoice_id' => $invoice->id,
-                'student_id' => $invoice->student_id,
-                'teacher_id' => $invoice->teacher_id,
-                'amount' => $amount,
-                'payment_method' => $paymentMethod,
-                'reference' => $reference ?: null,
-                'paid_at' => $paidAt ?: now()->toDateString(),
-                'paid_time' => $paidTime ?: now()->format('H:i'),
-                'notes' => $notes ?: null,
-                'created_by' => $user->id,
             ]);
-
-            // Recalculate invoice totals + status
-            $invoice->recalculate();
-
-            return $payment;
-        });
+            return null;
+        }
     }
 
-    /**
-     * Delete a payment and recalculate the invoice.
-     * Only allowed for the same owner.
-     */
     public function delete(Payment $payment, Teacher $user): bool
     {
         if ($payment->teacher_id !== $user->getOwnerId()) {
@@ -91,19 +137,15 @@ class PaymentService
 
         return DB::transaction(function () use ($payment) {
             $invoice = $payment->invoice;
-
             $payment->delete();
-
             if ($invoice) {
+                $invoice->refresh();
+                foreach ($invoice->items as $item) {
+                    $item->recalculate();
+                }
                 $invoice->recalculate();
             }
-
             return true;
         });
     }
-
-    /**
-     * Refund = create a negative payment entry (future use).
-     * Not implemented yet.
-     */
 }

@@ -2,34 +2,58 @@
 
 namespace App\Livewire\TeacherPanel\Pages\Invoice\Parts;
 
-use App\Enums\Teacher\TeacherPermissionEnum;
 use App\Models\Invoice;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
+use App\Livewire\TeacherPanel\Concerns\HasInvoiceManagement;
+use App\Livewire\TeacherPanel\Concerns\HasInvoiceReceipt;
+use App\Livewire\TeacherPanel\Concerns\HasPaymentPermissions;
 
 class InvoiceShow extends Component
 {
+    use HasPaymentPermissions;
+    use HasInvoiceManagement;
+    use HasInvoiceReceipt;
+
     public Invoice $invoice;
 
     public function mount(Invoice $invoice): void
     {
-        $user = Auth::guard('teacher')->user();
+        $this->ensureInvoiceAccess($invoice);
 
-        abort_unless(
-            $invoice->teacher_id === $user->getOwnerId(),
-            404
-        );
+        $this->loadInvoice($invoice);
+    }
 
-        if (!$user->isOwner() && !in_array($invoice->branch_id, $user->getAccessibleBranchIds())) {
-            abort(404);
-        }
-
+    protected function loadInvoice(Invoice $invoice): void
+    {
         $this->invoice = $invoice->load([
             'student.branch',
             'items.group',
             'payments.creator',
+            'payments.allocations.invoiceItem',
             'creator',
         ]);
+    }
+
+    #[On('invoice-updated')]
+    public function refreshInvoice(): void
+    {
+        $this->invoice->refresh();
+        $this->loadInvoice($this->invoice);
+    }
+
+    #[On('discount-updated')]
+    public function onDiscountUpdated(): void
+    {
+        $this->refreshInvoice();
+    }
+
+    #[On('show-payment-receipt')]
+    public function showReceipt(int $paymentId): void
+    {
+        if (!$this->loadReceipt($paymentId)) {
+            $this->dispatch('show-error-message', message: 'الإيصال غير موجود.');
+        }
     }
 
     public function render()

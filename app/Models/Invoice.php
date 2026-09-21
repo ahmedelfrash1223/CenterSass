@@ -2,43 +2,29 @@
 
 namespace App\Models;
 
+use App\Enums\Teacher\DiscountTypeEnum;
 use App\Enums\Teacher\InvoiceStatusEnum;
-use App\Traits\Teacher\HasCreator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Invoice extends Model
 {
-    use HasCreator;
-
     protected $fillable = [
-        'invoice_number',
-        'student_id',
-        'teacher_id',
-        'branch_id',
-        'period_start',
-        'period_end',
-        'period_label',
-        'subtotal',
-        'discount',
-        'extra',
-        'total',
-        'paid_amount',
-        'remaining_amount',
-        'status',
-        'breakdown',
-        'notes',
-        'created_by',
-        'cancelled_at',
-        'cancelled_by',
-        'cancellation_reason',
+        'invoice_number', 'student_id', 'teacher_id', 'branch_id',
+        'period_start', 'period_end', 'period_label',
+        'subtotal', 'discount_type', 'discount_value', 'discount', 'discount_reason',
+        'extra', 'total',
+        'paid_amount', 'remaining_amount', 'status',
+        'breakdown', 'notes', 'created_by',
+        'cancelled_at', 'cancelled_by', 'cancellation_reason',
     ];
 
     protected $casts = [
         'period_start' => 'date',
         'period_end' => 'date',
         'subtotal' => 'decimal:2',
+        'discount_value' => 'decimal:2',
         'discount' => 'decimal:2',
         'extra' => 'decimal:2',
         'total' => 'decimal:2',
@@ -48,10 +34,7 @@ class Invoice extends Model
         'cancelled_at' => 'datetime',
     ];
 
-    // =============================================
-    // 📌 RELATIONS
-    // =============================================
-
+    // ============ Relations ============
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
@@ -67,11 +50,6 @@ class Invoice extends Model
         return $this->belongsTo(Branch::class);
     }
 
-    public function canceller(): BelongsTo
-    {
-        return $this->belongsTo(Teacher::class, 'cancelled_by');
-    }
-
     public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
@@ -82,70 +60,126 @@ class Invoice extends Model
         return $this->hasMany(Payment::class);
     }
 
-    // =============================================
-    // 📌 HELPERS
-    // =============================================
-
-    public function getStatusEnumAttribute(): ?InvoiceStatusEnum
+    public function creator(): BelongsTo
     {
-        return InvoiceStatusEnum::tryFrom($this->status);
+        return $this->belongsTo(Teacher::class, 'created_by');
+    }
+
+    // ============ Accessors ============
+    public function getStatusEnumAttribute(): InvoiceStatusEnum
+    {
+        return InvoiceStatusEnum::tryFrom($this->status) ?? InvoiceStatusEnum::UNPAID;
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return $this->status_enum?->label() ?? $this->status;
+        return $this->status_enum->label();
     }
 
     public function getStatusColorAttribute(): string
     {
-        return $this->status_enum?->color() ?? 'secondary';
+        return $this->status_enum->color();
     }
 
     public function getStatusIconAttribute(): string
     {
-        return $this->status_enum?->icon() ?? 'ph-circle';
+        return $this->status_enum->icon();
     }
 
-    public function isPaid(): bool
+    public function getDiscountTypeEnumAttribute(): ?DiscountTypeEnum
+    {
+        return $this->discount_type
+            ? DiscountTypeEnum::tryFrom($this->discount_type)
+            : null;
+    }
+
+    public function getDiscountTypeLabelAttribute(): string
+    {
+        return $this->discount_type_enum?->label() ?? '—';
+    }
+
+    public function getHasDiscountAttribute(): bool
+    {
+        return (float)$this->discount > 0;
+    }
+
+    public function getHasRemainingAttribute(): bool
+    {
+        return (float)$this->remaining_amount > 0;
+    }
+
+    public function getIsPaidAttribute(): bool
     {
         return $this->status === InvoiceStatusEnum::PAID->value;
     }
 
-    public function isCancelled(): bool
+    public function getIsCancelledAttribute(): bool
     {
         return $this->status === InvoiceStatusEnum::CANCELLED->value;
     }
 
-    public function isUnpaid(): bool
+    public function isPaid(): bool
     {
-        return $this->status === InvoiceStatusEnum::UNPAID->value;
+        return $this->is_paid;
     }
 
-    public function hasRemaining(): bool
+    public function isCancelled(): bool
     {
-        return $this->remaining_amount > 0 && !$this->isCancelled();
+        return $this->is_cancelled;
     }
 
-    /**
-     * Recalculate totals based on payments.
-     */
+    // ============ Methods ============
+    public function recalculateTotals(): void
+    {
+        $subtotal = (float)$this->subtotal;
+        $discountValue = (float)$this->discount_value;
+        $discountType = DiscountTypeEnum::tryFrom($this->discount_type);
+
+        $discountAmount = match ($discountType) {
+            DiscountTypeEnum::PERCENTAGE => round($subtotal * ($discountValue / 100), 2),
+            DiscountTypeEnum::FIXED => round($discountValue, 2),
+            default => 0,
+        };
+
+        $discountAmount = min($discountAmount, $subtotal);
+        $total = max(0, $subtotal - $discountAmount + (float)$this->extra);
+
+        $this->update([
+            'discount' => $discountAmount,
+            'total' => $total,
+        ]);
+    }
+
     public function recalculate(): void
     {
-        $paid = (float) $this->payments()->sum('amount');
-
-        $this->paid_amount = $paid;
-        $this->remaining_amount = max(0, (float) $this->total - $paid);
-
-        if ($this->cancelled_at) {
-            $this->status = InvoiceStatusEnum::CANCELLED->value;
-        } elseif ($paid <= 0) {
-            $this->status = InvoiceStatusEnum::UNPAID->value;
-        } elseif ($paid < $this->total) {
-            $this->status = InvoiceStatusEnum::PARTIAL->value;
-        } else {
-            $this->status = InvoiceStatusEnum::PAID->value;
+        foreach ($this->items()->get() as $item) {
+            $item->recalculate();
         }
 
-        $this->save();
+        $subtotal = (float)$this->items()->sum('total');
+
+        $discount = (float)$this->items()->sum('discount_amount');
+
+        $total = max(0, $subtotal - $discount + (float)$this->extra);
+
+        $rawPaid = (float)$this->payments()->sum('amount');
+
+        $paid = min($rawPaid, $total);
+        $remaining = max(0, $total - $paid);
+
+        $status = match (true) {
+            $remaining <= 0 && $total > 0 => InvoiceStatusEnum::PAID->value,
+            $paid > 0 => InvoiceStatusEnum::PARTIAL->value,
+            default => InvoiceStatusEnum::UNPAID->value,
+        };
+
+        $this->update([
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'total' => $total,
+            'paid_amount' => $paid,
+            'remaining_amount' => $remaining,
+            'status' => $status,
+        ]);
     }
 }

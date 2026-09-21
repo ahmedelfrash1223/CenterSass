@@ -1,3 +1,8 @@
+@php
+use  Illuminate\Support\Facades\Auth;
+$user = Auth::guard('teacher')->user();
+@endphp
+
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
@@ -156,7 +161,7 @@
 
                         <div class="flex-shrink-0">
                             <div class="teacher-sidebar-avatar">
-                                {{ mb_substr(Auth::guard('teacher')->user()->name, 0, 1) }}
+                                {{ mb_substr(auth('teacher')->user()->name, 0, 1) }}
                             </div>
                         </div>
 
@@ -165,17 +170,17 @@
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1 ms-2">
                                         <h6 class="mb-0 teacher-sidebar-name">
-                                            {{ Auth::guard('teacher')->user()->name }}
+                                            {{ auth('teacher')->user()->name }}
                                         </h6>
                                         <small class="teacher-sidebar-role">
-                                            {{ Auth::guard('teacher')->user()->email }}
+                                            {{ auth('teacher')->user()->email }}
                                         </small>
                                         <div class="mt-1">
                                             <span
-                                                class="badge bg-{{ Auth::guard('teacher')->user()->role->color() }} bg-opacity-10 text-{{ Auth::guard('teacher')->user()->role->color() }}"
+                                                class="badge bg-{{ auth('teacher')->user()->role->color() }} bg-opacity-10 text-{{ Auth::guard('teacher')->user()->role->color() }}"
                                                 style="font-size: 10px;">
                                                 <i class="ph-duotone {{ Auth::guard('teacher')->user()->role->icon() }} me-1"></i>
-                                                {{ Auth::guard('teacher')->user()->role->label() }}
+                                                {{ auth('teacher')->user()->role->label() }}
                                             </span>
                                         </div>
                                     </div>

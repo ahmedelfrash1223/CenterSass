@@ -69,10 +69,10 @@ enum TeacherPermissionEnum: string
     // =============================================
     // 📌 Payments & Invoices
     // =============================================
-    case PAYMENT_VIEW     = 'payments.view';
-    case PAYMENT_MANAGE   = 'payments.manage';
-    case PAYMENT_RECEIPT  = 'payments.receipt';
-    case PAYMENT_DELETE   = 'payments.delete';
+    case PAYMENT_VIEW = 'payments.view';
+    case PAYMENT_MANAGE = 'payments.manage';
+    case PAYMENT_RECEIPT = 'payments.receipt';
+    case PAYMENT_DELETE = 'payments.delete';
 
     // =============================================
     // 📌 Helpers
@@ -114,10 +114,10 @@ enum TeacherPermissionEnum: string
             self::VIEW_REPORTS => 'عرض التقارير',
             self::MANAGE_SETTINGS => 'إدارة الإعدادات',
 
-            self::PAYMENT_VIEW    => 'عرض المدفوعات',
-            self::PAYMENT_MANAGE  => 'تسجيل وتعديل المدفوعات',
+            self::PAYMENT_VIEW => 'عرض المدفوعات',
+            self::PAYMENT_MANAGE => 'تسجيل وتعديل المدفوعات',
             self::PAYMENT_RECEIPT => 'طباعة الإيصالات',
-            self::PAYMENT_DELETE  => 'حذف الفواتير والمدفوعات',
+            self::PAYMENT_DELETE => 'حذف وتعديل الفواتير',
         };
     }
 
@@ -171,10 +171,10 @@ enum TeacherPermissionEnum: string
             self::VIEW_REPORTS => 'ph-chart-bar',
             self::MANAGE_SETTINGS => 'ph-gear',
 
-            self::PAYMENT_VIEW    => 'ph-eye',
-            self::PAYMENT_MANAGE  => 'ph-currency-circle-dollar',
+            self::PAYMENT_VIEW => 'ph-eye',
+            self::PAYMENT_MANAGE => 'ph-currency-circle-dollar',
             self::PAYMENT_RECEIPT => 'ph-receipt',
-            self::PAYMENT_DELETE  => 'ph-trash',
+            self::PAYMENT_DELETE => 'ph-trash',
         };
     }
 
@@ -235,6 +235,7 @@ enum TeacherPermissionEnum: string
             self::PAYMENT_VIEW->value,
             self::PAYMENT_MANAGE->value,
             self::PAYMENT_RECEIPT->value,
+            self::PAYMENT_DELETE->value,
         ];
     }
 

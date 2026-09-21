@@ -2,8 +2,8 @@
 
 namespace App\Services\Teacher;
 
+use App\Enums\Teacher\DiscountTypeEnum;
 use App\Enums\Teacher\PricingTypeEnum;
-use App\Enums\Teacher\TeacherRoleEnum;
 use App\Models\Attendance;
 use App\Models\Group;
 use App\Models\GroupSchedule;
@@ -20,16 +20,7 @@ class InvoiceService
         private readonly InvoiceNumberGenerator $numberGenerator
     ) {}
 
-    /**
-     * Generate an invoice for a student for a specific month.
-     *
-     * @param Student $student
-     * @param Carbon  $periodStart  First day of the billing period
-     * @param Carbon  $periodEnd    Last day of the billing period
-     * @param Teacher $user         Who is generating the invoice
-     * @return Invoice|null
-     */
-    public function generateForStudent(
+    public function ensureForStudent(
         Student $student,
         Carbon $periodStart,
         Carbon $periodEnd,
@@ -37,24 +28,22 @@ class InvoiceService
     ): ?Invoice {
         $ownerId = $user->getOwnerId();
 
-        // Guard: student must belong to the same owner
         if ($student->teacher_id !== $ownerId) {
             return null;
         }
 
-        // Prevent duplicate invoice for the same period
-        $exists = Invoice::where('student_id', $student->id)
+        $existing = Invoice::where('student_id', $student->id)
             ->where('teacher_id', $ownerId)
             ->whereDate('period_start', $periodStart->toDateString())
             ->whereDate('period_end', $periodEnd->toDateString())
             ->whereNull('cancelled_at')
-            ->exists();
+            ->with('items')
+            ->first();
 
-        if ($exists) {
-            return null;
+        if ($existing) {
+            return $existing;
         }
 
-        // Get active groups for the student
         $groups = $student->activeGroups()
             ->where('groups.teacher_id', $ownerId)
             ->where('groups.has_pricing', true)
@@ -64,13 +53,11 @@ class InvoiceService
             return null;
         }
 
-        // Build invoice items from group pricings
         $items = [];
         $subtotal = 0.0;
 
         foreach ($groups as $group) {
             $item = $this->buildInvoiceItem($student, $group, $periodStart, $periodEnd);
-
             if ($item) {
                 $items[] = $item;
                 $subtotal += $item['total'];
@@ -84,48 +71,61 @@ class InvoiceService
         return DB::transaction(function () use (
             $student, $ownerId, $periodStart, $periodEnd, $items, $subtotal, $user
         ) {
-            $periodLabel = $this->buildPeriodLabel($periodStart, $periodEnd);
-
             $invoice = Invoice::create([
-                'invoice_number' => $this->numberGenerator->invoice(),
-                'student_id' => $student->id,
-                'teacher_id' => $ownerId,
-                'branch_id' => $student->branch_id,
-                'period_start' => $periodStart->toDateString(),
-                'period_end' => $periodEnd->toDateString(),
-                'period_label' => $periodLabel,
-                'subtotal' => $subtotal,
-                'discount' => 0,
-                'extra' => 0,
-                'total' => $subtotal,
-                'paid_amount' => 0,
+                'invoice_number'   => $this->numberGenerator->invoice(),
+                'student_id'       => $student->id,
+                'teacher_id'       => $ownerId,
+                'branch_id'        => $student->branch_id,
+                'period_start'     => $periodStart->toDateString(),
+                'period_end'       => $periodEnd->toDateString(),
+                'period_label'     => $this->buildPeriodLabel($periodStart, $periodEnd),
+                'subtotal'         => $subtotal,
+                'discount_type'    => DiscountTypeEnum::FIXED->value,
+                'discount_value'   => 0,
+                'discount'         => 0,
+                'discount_reason'  => null,
+                'extra'            => 0,
+                'total'            => $subtotal,
+                'paid_amount'      => 0,
                 'remaining_amount' => $subtotal,
-                'status' => 'unpaid',
-                'breakdown' => ['groups' => $items],
-                'created_by' => $user->id,
+                'status'           => 'unpaid',
+                'breakdown'        => ['groups' => $items],
+                'created_by'       => $user->id,
             ]);
 
             foreach ($items as $item) {
                 InvoiceItem::create([
-                    'invoice_id' => $invoice->id,
-                    'group_id' => $item['group_id'],
-                    'description' => $item['description'],
-                    'pricing_type' => $item['pricing_type'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
-                    'total' => $item['total'],
-                    'details' => $item['details'] ?? null,
+                    'invoice_id'        => $invoice->id,
+                    'group_id'          => $item['group_id'],
+                    'description'       => $item['description'],
+                    'pricing_type'      => $item['pricing_type'],
+                    'quantity'          => $item['quantity'],
+                    'unit_price'        => $item['unit_price'],
+                    'total'             => $item['total'],
+                    'discount_type'     => DiscountTypeEnum::FIXED->value,
+                    'discount_value'    => 0,
+                    'discount_amount'   => 0,
+                    'discount_reason'   => null,
+                    'discounted_total'  => $item['total'],
+                    'paid_amount'       => 0,
+                    'remaining_amount'  => $item['total'],
+                    'details'           => $item['details'] ?? null,
                 ]);
             }
 
-            return $invoice;
+            return $invoice->load('items');
         });
     }
 
-    /**
-     * Build an invoice item for a single group + student + period.
-     * Returns null when there's nothing to charge.
-     */
+    public function generateForStudent(
+        Student $student,
+        Carbon $periodStart,
+        Carbon $periodEnd,
+        Teacher $user
+    ): ?Invoice {
+        return $this->ensureForStudent($student, $periodStart, $periodEnd, $user);
+    }
+
     protected function buildInvoiceItem(
         Student $student,
         Group $group,
@@ -141,41 +141,28 @@ class InvoiceService
 
         return match ($pricingType) {
             PricingTypeEnum::FIXED_MONTHLY => [
-                'group_id' => $group->id,
-                'description' => "شهري ثابت - {$group->name}",
+                'group_id'     => $group->id,
+                'description'  => "شهري ثابت - {$group->name}",
                 'pricing_type' => $pricingType->value,
-                'quantity' => 1,
-                'unit_price' => $amount,
-                'total' => $amount,
-                'details' => [
-                    'group_name' => $group->name,
-                    'type' => 'fixed_monthly',
-                ],
+                'quantity'     => 1,
+                'unit_price'   => $amount,
+                'total'        => $amount,
+                'details'      => ['group_name' => $group->name, 'type' => 'fixed_monthly'],
             ],
-
             PricingTypeEnum::PER_SESSION => $this->buildPerSessionItem($student, $group, $amount, $periodStart, $periodEnd),
-
             PricingTypeEnum::PER_SUBJECT => $this->buildPerSubjectItem($student, $group, $amount),
-
-            PricingTypeEnum::PER_GRADE => [
-                'group_id' => $group->id,
-                'description' => "حسب الصف - {$group->name}",
+            PricingTypeEnum::PER_GRADE   => [
+                'group_id'     => $group->id,
+                'description'  => "حسب الصف - {$group->name}",
                 'pricing_type' => $pricingType->value,
-                'quantity' => 1,
-                'unit_price' => $amount,
-                'total' => $amount,
-                'details' => [
-                    'group_name' => $group->name,
-                    'grade' => $group->grade,
-                    'type' => 'per_grade',
-                ],
+                'quantity'     => 1,
+                'unit_price'   => $amount,
+                'total'        => $amount,
+                'details'      => ['group_name' => $group->name, 'grade' => $group->grade, 'type' => 'per_grade'],
             ],
         };
     }
 
-    /**
-     * Per-session: count distinct schedules attended in the period × amount.
-     */
     protected function buildPerSessionItem(
         Student $student,
         Group $group,
@@ -196,23 +183,16 @@ class InvoiceService
         }
 
         return [
-            'group_id' => $group->id,
-            'description' => "حضور {$sessionsCount} حصة - {$group->name}",
+            'group_id'     => $group->id,
+            'description'  => "حضور {$sessionsCount} حصة - {$group->name}",
             'pricing_type' => PricingTypeEnum::PER_SESSION->value,
-            'quantity' => $sessionsCount,
-            'unit_price' => $amount,
-            'total' => $sessionsCount * $amount,
-            'details' => [
-                'group_name' => $group->name,
-                'sessions' => $sessionsCount,
-                'type' => 'per_session',
-            ],
+            'quantity'     => $sessionsCount,
+            'unit_price'   => $amount,
+            'total'        => $sessionsCount * $amount,
+            'details'      => ['group_name' => $group->name, 'sessions' => $sessionsCount, 'type' => 'per_session'],
         ];
     }
 
-    /**
-     * Per-subject: count distinct subjects in the group × amount.
-     */
     protected function buildPerSubjectItem(
         Student $student,
         Group $group,
@@ -228,24 +208,16 @@ class InvoiceService
         }
 
         return [
-            'group_id' => $group->id,
-            'description' => "{$subjectsCount} مواد - {$group->name}",
+            'group_id'     => $group->id,
+            'description'  => "{$subjectsCount} مواد - {$group->name}",
             'pricing_type' => PricingTypeEnum::PER_SUBJECT->value,
-            'quantity' => $subjectsCount,
-            'unit_price' => $amount,
-            'total' => $subjectsCount * $amount,
-            'details' => [
-                'group_name' => $group->name,
-                'subjects' => $subjectsCount,
-                'type' => 'per_subject',
-            ],
+            'quantity'     => $subjectsCount,
+            'unit_price'   => $amount,
+            'total'        => $subjectsCount * $amount,
+            'details'      => ['group_name' => $group->name, 'subjects' => $subjectsCount, 'type' => 'per_subject'],
         ];
     }
 
-    /**
-     * Human-readable label for a billing period.
-     * e.g. "سبتمبر 2026"
-     */
     protected function buildPeriodLabel(Carbon $start, Carbon $end): string
     {
         $months = [
@@ -261,10 +233,6 @@ class InvoiceService
         return $start->format('Y-m-d') . ' → ' . $end->format('Y-m-d');
     }
 
-    /**
-     * Generate invoices for every active student in scope.
-     * Returns count of generated invoices.
-     */
     public function generateBulk(
         Teacher $user,
         Carbon $periodStart,
@@ -279,31 +247,23 @@ class InvoiceService
             ->where('teacher_id', $ownerId)
             ->where('is_active', 1);
 
-        // Branch scope for non-owner
         if (!$user->isOwner()) {
             $studentsQuery->whereIn('branch_id', $accessibleBranches);
         }
 
-        // Optional branch filter
         if ($branchId) {
             $studentsQuery->where('branch_id', $branchId);
         }
 
-        // Optional group filter
         if (!empty($groupIds)) {
-            $studentsQuery->whereHas('activeGroups', function ($q) use ($groupIds) {
-                $q->whereIn('groups.id', $groupIds);
-            });
+            $studentsQuery->whereHas('activeGroups', fn($q) => $q->whereIn('groups.id', $groupIds));
         }
 
         $count = 0;
 
-        $studentsQuery->chunk(50, function ($students) use (
-            $periodStart, $periodEnd, $user, &$count
-        ) {
+        $studentsQuery->chunk(50, function ($students) use ($periodStart, $periodEnd, $user, &$count) {
             foreach ($students as $student) {
-                $invoice = $this->generateForStudent($student, $periodStart, $periodEnd, $user);
-                if ($invoice) {
+                if ($this->ensureForStudent($student, $periodStart, $periodEnd, $user)) {
                     $count++;
                 }
             }

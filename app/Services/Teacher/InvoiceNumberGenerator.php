@@ -8,9 +8,6 @@ use Carbon\Carbon;
 
 class InvoiceNumberGenerator
 {
-    /**
-     * Generate a unique invoice number: INV-YYYY-NNNNN
-     */
     public function invoice(): string
     {
         $year = Carbon::now()->year;
@@ -36,9 +33,6 @@ class InvoiceNumberGenerator
         return $number;
     }
 
-    /**
-     * Generate a unique receipt number: REC-YYYY-NNNNN
-     */
     public function receipt(): string
     {
         $year = Carbon::now()->year;

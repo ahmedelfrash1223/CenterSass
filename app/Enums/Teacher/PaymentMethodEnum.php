@@ -9,17 +9,15 @@ enum PaymentMethodEnum: string
     case INSTAPAY      = 'instapay';
     case BANK_TRANSFER = 'bank_transfer';
     case CHEQUE        = 'cheque';
-    case OTHER         = 'other';
 
     public function label(): string
     {
         return match ($this) {
-            self::CASH          => 'كاش',
+            self::CASH          => 'نقدي',
             self::VODAFONE_CASH => 'فودافون كاش',
-            self::INSTAPAY      => 'انستاباي',
+            self::INSTAPAY      => 'إنستاباي',
             self::BANK_TRANSFER => 'تحويل بنكي',
             self::CHEQUE        => 'شيك',
-            self::OTHER         => 'أخرى',
         };
     }
 
@@ -30,15 +28,24 @@ enum PaymentMethodEnum: string
             self::VODAFONE_CASH => 'ph-device-mobile',
             self::INSTAPAY      => 'ph-lightning',
             self::BANK_TRANSFER => 'ph-bank',
-            self::CHEQUE        => 'ph-receipt',
-            self::OTHER         => 'ph-dots-three-circle',
+            self::CHEQUE        => 'ph-note',
         };
+    }
+
+    public function requiresReference(): bool
+    {
+        return in_array($this, [
+            self::VODAFONE_CASH,
+            self::INSTAPAY,
+            self::BANK_TRANSFER,
+            self::CHEQUE,
+        ]);
     }
 
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $type) => [$type->value => $type->label()])
+            ->mapWithKeys(fn($c) => [$c->value => $c->label()])
             ->toArray();
     }
 
