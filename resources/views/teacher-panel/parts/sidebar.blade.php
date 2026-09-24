@@ -1,32 +1,21 @@
 @php
-use  Illuminate\Support\Facades\Auth;
-$user = Auth::guard('teacher')->user();
+    use  Illuminate\Support\Facades\Auth;
+    $user = Auth::guard('teacher')->user();
 @endphp
 
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a
-                href="{{ route('teacher.dashboard') }}"
-                class="b-brand text-primary"
-            >
-                <img
-                    style="max-height: 95px;"
-                    src="{{ asset('assets/teacherPanel/images/logo.png') }}"
-                    alt="logo image"
-                />
+            <a href="{{ route('teacher.dashboard') }}" class="b-brand text-primary">
+                <img style="max-height: 95px;" src="{{ asset('assets/teacherPanel/images/logo.png') }}" alt="logo image"/>
             </a>
         </div>
         <div class="navbar-content">
             <ul class="pc-navbar">
 
-                {{-- الصفحة الرئيسية --}}
+                {{-- Home Page --}}
                 <li class="pc-item @yield('home-active')">
-                    <a
-                        wire:navigate
-                        href="{{ route('teacher.dashboard') }}"
-                        class="pc-link"
-                    >
+                    <a wire:navigate href="{{ route('teacher.dashboard') }}" class="pc-link">
                         <span class="pc-micon">
                             <i class="ph-duotone ph-squares-four"></i>
                         </span>
@@ -34,14 +23,22 @@ $user = Auth::guard('teacher')->user();
                     </a>
                 </li>
 
-                {{-- الأفرع --}}
+                {{-- Time Table Page --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::TIMETABLE_VIEW))
+                    <li class="pc-item @yield('timetable-active')">
+                        <a wire:navigate href="{{ route('teacher.timetable.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-calendar"></i>
+                            </span>
+                            <span class="pc-mtext">جدول الأسبوع</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Branches Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::BRANCH_VIEW))
                     <li class="pc-item @yield('branches-active')">
-                        <a
-                            wire:navigate
-                            href="{{ route('teacher.branches.index') }}"
-                            class="pc-link"
-                        >
+                        <a wire:navigate href="{{ route('teacher.branches.index') }}" class="pc-link">
                             <span class="pc-micon">
                                 <i class="ph-duotone ph-map-pin-line"></i>
                             </span>
@@ -50,30 +47,10 @@ $user = Auth::guard('teacher')->user();
                     </li>
                 @endif
 
-                {{-- فريق العمل --}}
-                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::STAFF_VIEW))
-                    <li class="pc-item @yield('staff-active')">
-                        <a
-                            wire:navigate
-                            href="{{ route('teacher.staff.index') }}"
-                            class="pc-link"
-                        >
-                            <span class="pc-micon">
-                                <i class="ph-duotone ph-users-four"></i>
-                            </span>
-                            <span class="pc-mtext">فريق العمل</span>
-                        </a>
-                    </li>
-                @endif
-
-                {{-- المواد الدراسية --}}
+                {{-- Subjects Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::SUBJECT_VIEW))
                     <li class="pc-item @yield('subjects-active')">
-                        <a
-                            wire:navigate
-                            href="{{ route('teacher.subjects.index') }}"
-                            class="pc-link"
-                        >
+                        <a wire:navigate href="{{ route('teacher.subjects.index') }}" class="pc-link">
                             <span class="pc-micon">
                                 <i class="ph-duotone ph-notebook"></i>
                             </span>
@@ -82,14 +59,22 @@ $user = Auth::guard('teacher')->user();
                     </li>
                 @endif
 
-                {{-- المجموعات --}}
+                {{-- Staff Page --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::STAFF_VIEW))
+                    <li class="pc-item @yield('staff-active')">
+                        <a wire:navigate href="{{ route('teacher.staff.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-users-four"></i>
+                            </span>
+                            <span class="pc-mtext">فريق العمل</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Groups Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::GROUP_VIEW))
                     <li class="pc-item @yield('groups-active')">
-                        <a
-                            wire:navigate
-                            href="{{ route('teacher.groups.index') }}"
-                            class="pc-link"
-                        >
+                        <a wire:navigate href="{{ route('teacher.groups.index') }}" class="pc-link">
                             <span class="pc-micon">
                                 <i class="ph-duotone ph-user-list"></i>
                             </span>
@@ -98,7 +83,7 @@ $user = Auth::guard('teacher')->user();
                     </li>
                 @endif
 
-                {{-- الطلاب --}}
+                {{-- Students Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::STUDENT_VIEW))
                     <li class="pc-item @yield('students-active')">
                         <a wire:navigate href="{{ route('teacher.students.index') }}" class="pc-link">
@@ -111,7 +96,7 @@ $user = Auth::guard('teacher')->user();
                 @endif
 
 
-                {{-- تسجيل الحضور --}}
+                {{-- Attendance Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::ATTENDANCE_VIEW))
                     <li class="pc-item @yield('attendance-active')">
                         <a wire:navigate href="{{ route('teacher.attendance.index') }}" class="pc-link">
@@ -124,7 +109,7 @@ $user = Auth::guard('teacher')->user();
                 @endif
 
 
-                {{-- تقفيل اليوم --}}
+                {{-- Close Day Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::ATTENDANCE_CLOSE_DAY))
                     <li class="pc-item @yield('attendance-close-day-active')">
                         <a wire:navigate href="{{ route('teacher.attendance.close-day.index') }}" class="pc-link">
@@ -136,7 +121,7 @@ $user = Auth::guard('teacher')->user();
                     </li>
                 @endif
 
-                {{-- المدفوعات --}}
+                {{-- Payments Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::PAYMENT_VIEW))
                     <li class="pc-item @yield('payments-active')">
                         <a wire:navigate href="{{ route('teacher.payments.index') }}" class="pc-link">
@@ -151,10 +136,7 @@ $user = Auth::guard('teacher')->user();
             </ul>
         </div>
         <div class="pc-sidebar-footer">
-            <div
-                class="card pc-user-card"
-                dir="rtl"
-            >
+            <div class="card pc-user-card" dir="rtl">
                 <div class="card-body">
 
                     <div class="d-flex align-items-center">

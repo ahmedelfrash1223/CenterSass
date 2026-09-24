@@ -18,6 +18,8 @@ class CloseDayShow extends Component
     public bool $confirmingClose = false;
     public ?int $confirmingReopenId = null;
 
+    public bool $isClosed = false;
+
     public function mount(Group $group): void
     {
         $user = Auth::guard('teacher')->user();
@@ -41,11 +43,21 @@ class CloseDayShow extends Component
 
         $this->group = $group;
         $this->date = request('date') ?? now()->toDateString();
+
+        $this->refreshIsClosed();
     }
 
-    /**
-     * Open confirmation modal for closing the group.
-     */
+    protected function refreshIsClosed(): void
+    {
+        $this->isClosed = app(AttendanceService::class)
+            ->isGroupClosed($this->group, Carbon::parse($this->date));
+    }
+
+    public function updatedDate(): void
+    {
+        $this->refreshIsClosed();
+    }
+
     public function confirmCloseGroup(): void
     {
         $user = Auth::guard('teacher')->user();
@@ -55,7 +67,15 @@ class CloseDayShow extends Component
             return;
         }
 
+        $this->refreshIsClosed();
+
+        if ($this->isClosed) {
+            $this->dispatch('show-error-message', message: 'المجموعة مقفلة بالفعل في هذا اليوم.');
+            return;
+        }
+
         $this->confirmingClose = true;
+        $this->confirmingReopenId = null;
     }
 
     public function cancelClose(): void
@@ -64,9 +84,6 @@ class CloseDayShow extends Component
         $this->confirmingReopenId = null;
     }
 
-    /**
-     * Close attendance for this group.
-     */
     public function closeGroup(AttendanceService $service): void
     {
         $this->confirmingClose = false;
@@ -82,14 +99,12 @@ class CloseDayShow extends Component
 
         if ($result['success']) {
             $this->dispatch('show-success-message', message: $result['message']);
+            $this->refreshIsClosed();
         } else {
             $this->dispatch('show-error-message', message: $result['message']);
         }
     }
 
-    /**
-     * Open confirmation modal for reopening a schedule.
-     */
     public function confirmReopenSchedule(int $scheduleId): void
     {
         $user = Auth::guard('teacher')->user();
@@ -100,11 +115,9 @@ class CloseDayShow extends Component
         }
 
         $this->confirmingReopenId = $scheduleId;
+        $this->confirmingClose = false;
     }
 
-    /**
-     * Reopen a schedule — deletes all auto-closed "absent" records.
-     */
     public function reopenSchedule(int $scheduleId): void
     {
         $this->confirmingReopenId = null;
@@ -124,6 +137,7 @@ class CloseDayShow extends Component
 
         if ($deleted > 0) {
             $this->dispatch('show-success-message', message: "تم فتح الحصة، وحذف {$deleted} سجل غياب.");
+            $this->refreshIsClosed();
         } else {
             $this->dispatch('show-error-message', message: 'لا يوجد غياب تلقائي لهذه الحصة.');
         }
@@ -150,6 +164,7 @@ class CloseDayShow extends Component
             'stats' => $stats,
             'students' => $students,
             'attendances' => $attendances,
+            'isClosed' => $this->isClosed,
         ]);
     }
 }

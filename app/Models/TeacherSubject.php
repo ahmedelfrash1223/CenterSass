@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use App\Enums\Teacher\GradeEnum;
-use App\Enums\Teacher\SubjectEnum;
 use App\Traits\Teacher\HasCreator;
+use App\Traits\TeacherSubject\HasEnumLabels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TeacherSubject extends Model
 {
-    use HasCreator;
+    use HasCreator, HasEnumLabels;
 
     protected $fillable = [
         'teacher_id',
@@ -24,26 +23,8 @@ class TeacherSubject extends Model
         'is_active' => 'boolean',
     ];
 
-    // =============================================
-    // 📌 RELATIONS
-    // =============================================
-
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'teacher_id');
-    }
-
-    // =============================================
-    // 📌 ACCESSORS
-    // =============================================
-
-    public function getGradeLabelAttribute(): string
-    {
-        return GradeEnum::tryFrom($this->grade)?->label() ?? $this->grade;
-    }
-
-    public function getSubjectLabelAttribute(): string
-    {
-        return SubjectEnum::tryFrom($this->subject)?->label() ?? $this->subject;
     }
 }

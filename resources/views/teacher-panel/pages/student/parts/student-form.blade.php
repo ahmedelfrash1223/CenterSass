@@ -4,33 +4,34 @@
             <h5 class="mb-4">{{ $editMode ? 'تعديل بيانات الطالب' : 'إضافة طالب جديد' }}</h5>
 
             @if($editMode && isset($student))
-                <div class="info-strip mb-4">
+                <div class="alert alert-light border mb-4">
                     <div class="row g-2">
                         <div class="col-md-6">
-                            <div class="info-item">
-                                <div class="info-icon info-icon-primary">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary"
+                                     style="width: 40px; height: 40px;">
                                     <i class="ph-duotone ph-user-plus"></i>
                                 </div>
-                                <div class="info-content">
-                                    <small class="info-label">أضيف بواسطة</small>
+                                <div>
+                                    <small class="text-body-secondary d-block">أضيف بواسطة</small>
                                     @if($student->creator)
-                                        <span class="badge bg-{{ $student->creator->role->color() }} bg-opacity-10 text-{{ $student->creator->role->color() }}">
-                                            <i class="ph-duotone {{ $student->creator->role->icon() }} me-1"></i>
+                                        <span class="badge bg-{{ $student->creator->role->color() }}-subtle text-{{ $student->creator->role->color() }}-emphasis">
                                             {{ $student->creator->name }}
                                         </span>
                                     @else
-                                        <span class="text-muted small">—</span>
+                                        <span class="text-body-secondary small">—</span>
                                     @endif
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="info-item">
-                                <div class="info-icon info-icon-info">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center bg-info-subtle text-info"
+                                     style="width: 40px; height: 40px;">
                                     <i class="ph-duotone ph-calendar"></i>
                                 </div>
-                                <div class="info-content">
-                                    <small class="info-label">تاريخ الإضافة</small>
+                                <div>
+                                    <small class="text-body-secondary d-block">تاريخ الإضافة</small>
                                     <span class="fw-semibold small">{{ $student->created_at?->format('Y-m-d h:i A') }}</span>
                                 </div>
                             </div>
@@ -39,161 +40,287 @@
                 </div>
             @endif
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">الاسم <span class="text-danger">*</span></label>
-                    <input type="text" wire:model="name" class="form-control @error('name') is-invalid @enderror" placeholder="أدخل الاسم">
-                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">اسم المستخدم <span class="text-danger">*</span></label>
-                    <input type="text" wire:model="username" class="form-control @error('username') is-invalid @enderror" placeholder="أدخل اسم المستخدم">
-                    @error('username')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">البريد الإلكتروني <span class="text-danger">*</span></label>
-                    <input type="email" wire:model="email" class="form-control @error('email') is-invalid @enderror" placeholder="example@mail.com">
-                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">رقم الهاتف</label>
-                    <input type="text" wire:model="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="01xxxxxxxxx">
-                    @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">المرحلة الدراسية <span class="text-danger">*</span></label>
-                    <select wire:model="grade" class="form-select @error('grade') is-invalid @enderror">
-                        <option value="">اختر المرحلة</option>
-                        @foreach($grades as $value => $label)
-                            <option value="{{ $value }}">{{ $label }}</option>
-                        @endforeach
-                    </select>
-                    @error('grade')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">الفرع <span class="text-danger">*</span></label>
-                    <select wire:model="branch_id" class="form-select @error('branch_id') is-invalid @enderror">
-                        <option value="">اختر الفرع</option>
-                        @foreach($branches as $branch)
-                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('branch_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">
-                        كلمة المرور
-                        @if($editMode)
-                            <small class="text-muted">(اتركها فارغة إذا لم تريد التغيير)</small>
-                        @else
-                            <small class="text-muted">(اتركها فارغة لاستخدام 12345678)</small>
-                        @endif
-                    </label>
-                    <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" placeholder="أدخل كلمة المرور">
-                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">تأكيد كلمة المرور</label>
-                    <input type="password" wire:model="password_confirmation" class="form-control" placeholder="أعد إدخال كلمة المرور">
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">الحالة <span class="text-danger">*</span></label>
-                    <div class="d-flex gap-2">
-                        <button type="button" wire:click="$set('is_active', 1)" class="status-option {{ $is_active == 1 ? 'active' : '' }}">
-                            <i class="ph-duotone ph-check-circle"></i> نشط
-                        </button>
-                        <button type="button" wire:click="$set('is_active', 0)" class="status-option {{ $is_active == 0 ? 'inactive' : '' }}">
-                            <i class="ph-duotone ph-x-circle"></i> غير نشط
-                        </button>
+            <div class="card border mb-3">
+                <div class="card-header bg-body d-flex align-items-center justify-content-between"
+                     style="cursor: pointer;"
+                     wire:click="toggleSection('sectionBasic')">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary"
+                             style="width: 40px; height: 40px;">
+                            <i class="ph-duotone ph-user"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">البيانات الأساسية</h6>
+                            <small class="text-body-secondary">الاسم، البريد، المرحلة، الفرع</small>
+                        </div>
                     </div>
+                    <i class="ph-duotone {{ $sectionBasic ? 'ph-caret-up' : 'ph-caret-down' }}"></i>
                 </div>
+
+                @if($sectionBasic)
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">الاسم <span class="text-danger">*</span></label>
+                                <input type="text" wire:model="name" class="form-control @error('name') is-invalid @enderror" placeholder="أدخل الاسم">
+                                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">اسم المستخدم <span class="text-danger">*</span></label>
+                                <input type="text" wire:model="username" class="form-control @error('username') is-invalid @enderror" placeholder="أدخل اسم المستخدم">
+                                @error('username')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">البريد الإلكتروني <span class="text-danger">*</span></label>
+                                <input type="email" wire:model="email" class="form-control @error('email') is-invalid @enderror" placeholder="example@mail.com">
+                                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">رقم الهاتف</label>
+                                <input type="text" wire:model="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="01xxxxxxxxx">
+                                @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">المرحلة الدراسية <span class="text-danger">*</span></label>
+                                <select wire:model.live="grade" class="form-select @error('grade') is-invalid @enderror">
+                                    <option value="">اختر المرحلة</option>
+                                    @foreach($grades as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('grade')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">الفرع <span class="text-danger">*</span></label>
+                                <select wire:model.live="branch_id" class="form-select @error('branch_id') is-invalid @enderror">
+                                    <option value="">اختر الفرع</option>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('branch_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    كلمة المرور
+                                    @if($editMode)
+                                        <small class="text-body-secondary">(اتركها فارغة إذا لم تريد التغيير)</small>
+                                    @else
+                                        <small class="text-body-secondary">(اتركها فارغة لاستخدام 12345678)</small>
+                                    @endif
+                                </label>
+                                <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" placeholder="أدخل كلمة المرور">
+                                @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">تأكيد كلمة المرور</label>
+                                <input type="password" wire:model="password_confirmation" class="form-control" placeholder="أعد إدخال كلمة المرور">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">الحالة <span class="text-danger">*</span></label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" wire:click="$set('is_active', 1)" class="status-option {{ $is_active == 1 ? 'active' : '' }}">
+                                        <i class="ph-duotone ph-check-circle"></i> نشط
+                                    </button>
+                                    <button type="button" wire:click="$set('is_active', 0)" class="status-option {{ $is_active == 0 ? 'inactive' : '' }}">
+                                        <i class="ph-duotone ph-x-circle"></i> غير نشط
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
 
-            <hr class="my-4">
-            <div class="mb-3">
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-                    <div>
-                        <h6 class="fw-bold mb-1">
-                            <i class="ph-duotone ph-users-three me-1"></i>
-                            المجموعات
-                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ count($group_ids) }} مختارة</span>
-                        </h6>
-                        <p class="text-muted small mb-0">اختياري — يمكنك إضافة الطالب لمجموعة أو أكثر</p>
+
+            <div class="card border mb-3">
+                <div class="card-header bg-body d-flex align-items-center justify-content-between"
+                     style="cursor: pointer;"
+                     wire:click="toggleSection('sectionProfile')">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center bg-success-subtle text-success"
+                             style="width: 40px; height: 40px;">
+                            <i class="ph-duotone ph-identification-card"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">بيانات إضافية</h6>
+                            <small class="text-body-secondary">ولي الأمر، المدرسة، العنوان</small>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" wire:click="$set('group_ids', @js($groups->where('is_full', false)->pluck('id')->map(fn($id) => (string)$id)->toArray()))" class="btn btn-sm btn-outline-success">
-                            <i class="ph-duotone ph-check-square me-1"></i>تحديد الكل
-                        </button>
-                        <button type="button" wire:click="$set('group_ids', [])" class="btn btn-sm btn-outline-danger">
-                            <i class="ph-duotone ph-x-square me-1"></i>إلغاء الكل
-                        </button>
+                    <div class="d-flex align-items-center gap-2">
+                        @if($guardian_name || $school_name)
+                            <span class="badge bg-success text-white">
+                                <i class="ph-duotone ph-check me-1"></i>مكتمل جزئيًا
+                            </span>
+                        @endif
+                        <i class="ph-duotone {{ $sectionProfile ? 'ph-caret-up' : 'ph-caret-down' }}"></i>
                     </div>
                 </div>
 
-                @error('group_ids')
-                <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
-                    <i class="ph-duotone ph-warning-circle fs-5"></i>
-                    <span>{{ $message }}</span>
-                </div>
-                @enderror
-
-                @if($groups->count() > 0)
-                    <div class="row g-2">
-                        @foreach($groups as $group)
-                            @php
-                                $isSelected = in_array((string)$group->id, $group_ids);
-                                $isDisabled = $group->is_full && !$isSelected;
-                            @endphp
-                            <div class="col-md-4 col-lg-3">
-                                <label class="permission-item {{ $isSelected ? 'is-selected' : '' }} {{ $isDisabled ? 'opacity-50' : '' }}"
-                                       for="grp-{{ $group->id }}"
-                                       title="{{ $isDisabled ? 'المجموعة ممتلئة' : '' }}">
-                                    <input
-                                        type="checkbox"
-                                        wire:model.live="group_ids"
-                                        value="{{ (string) $group->id }}"
-                                        id="grp-{{ $group->id }}"
-                                        class="permission-checkbox"
-                                        {{ $isSelected ? 'checked' : '' }}
-                                        {{ $isDisabled ? 'disabled' : '' }}
-                                    >
-                                    <div class="permission-content">
-                                        <span class="permission-icon">
-                                            <i class="ph-duotone ph-users-three"></i>
-                                        </span>
-                                        <span class="permission-label">
-                                            {{ $group->name }}
-                                            @if($group->max_students > 0)
-                                                <small class="text-muted d-block">
-                                                    {{ $group->students_count }}/{{ $group->max_students }}
-                                                    @if($group->is_full)
-                                                        <span class="badge bg-danger bg-opacity-10 text-danger ms-1">ممتلئة</span>
-                                                    @endif
-                                                </small>
-                                            @endif
-                                        </span>
-                                        <span class="permission-check">
-                                            <i class="ph-duotone ph-check"></i>
-                                        </span>
-                                    </div>
-                                </label>
+                @if($sectionProfile)
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">اسم ولي الأمر</label>
+                                <input type="text" wire:model="guardian_name" class="form-control" placeholder="أدخل اسم ولي الأمر">
                             </div>
-                        @endforeach
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">رقم ولي الأمر</label>
+                                <input type="text" wire:model="guardian_phone" class="form-control" placeholder="01xxxxxxxxx">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">صلة القرابة</label>
+                                <select wire:model="guardian_relation" class="form-select">
+                                    <option value="">اختر صلة القرابة</option>
+                                    <option value="father">الأب</option>
+                                    <option value="mother">الأم</option>
+                                    <option value="brother">الأخ</option>
+                                    <option value="sister">الأخت</option>
+                                    <option value="uncle">العم / الخال</option>
+                                    <option value="aunt">العمة / الخالة</option>
+                                    <option value="grandfather">الجد</option>
+                                    <option value="grandmother">الجدة</option>
+                                    <option value="other">أخرى</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">اسم المدرسة</label>
+                                <input type="text" wire:model="school_name" class="form-control" placeholder="أدخل اسم المدرسة">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">المدينة</label>
+                                <input type="text" wire:model="city" class="form-control" placeholder="أدخل المدينة">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">العنوان</label>
+                                <input type="text" wire:model="address" class="form-control" placeholder="أدخل العنوان الكامل">
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label class="form-label">ملاحظات</label>
+                                <textarea rows="3" wire:model="notes" class="form-control" placeholder="ملاحظات إضافية عن الطالب"></textarea>
+                            </div>
+                        </div>
                     </div>
-                @else
-                    <div class="alert alert-info mb-0 d-flex align-items-center gap-2">
-                        <i class="ph-duotone ph-info fs-5"></i>
-                        <span>لا توجد مجموعات متاحة. يمكنك إضافة الطالب بدون مجموعة.</span>
+                @endif
+            </div>
+
+
+            <div class="card border mb-3">
+                <div class="card-header bg-body d-flex align-items-center justify-content-between"
+                     style="cursor: pointer;"
+                     wire:click="toggleSection('sectionGroups')">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center bg-warning-subtle text-warning"
+                             style="width: 40px; height: 40px;">
+                            <i class="ph-duotone ph-users-three"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">المجموعات</h6>
+                            <small class="text-body-secondary">اختيار المجموعات اللي الطالب هينضم لها</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-warning text-dark">{{ count($group_ids) }} مختارة</span>
+                        <i class="ph-duotone {{ $sectionGroups ? 'ph-caret-up' : 'ph-caret-down' }}"></i>
+                    </div>
+                </div>
+
+                @if($sectionGroups)
+                    <div class="card-body">
+
+                        @if(!$grade || !$branch_id)
+                            <div class="alert alert-info d-flex align-items-center gap-2 mb-0">
+                                <i class="ph-duotone ph-info fs-5"></i>
+                                <span>
+                                    لازم تختار
+                                    <strong>المرحلة الدراسية</strong>
+                                    و
+                                    <strong>الفرع</strong>
+                                    الأول عشان تظهر المجموعات المتاحة.
+                                </span>
+                            </div>
+                        @else
+
+                            <div class="d-flex justify-content-end gap-2 mb-3">
+                                <button type="button"
+                                        wire:click="$set('group_ids', @js($groups->where('is_full', false)->pluck('id')->map(fn($id) => (string)$id)->toArray()))"
+                                        class="btn btn-sm btn-outline-success">
+                                    <i class="ph-duotone ph-check-square me-1"></i>تحديد الكل
+                                </button>
+                                <button type="button" wire:click="$set('group_ids', [])" class="btn btn-sm btn-outline-danger">
+                                    <i class="ph-duotone ph-x-square me-1"></i>إلغاء الكل
+                                </button>
+                            </div>
+
+                            @error('group_ids')
+                            <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+                                <i class="ph-duotone ph-warning-circle fs-5"></i>
+                                <span>{{ $message }}</span>
+                            </div>
+                            @enderror
+
+                            @if($groups->count() > 0)
+                                <div class="row g-2">
+                                    @foreach($groups as $group)
+                                        @php
+                                            $isSelected = in_array((string)$group->id, $group_ids);
+                                            $isDisabled = $group->is_full && !$isSelected;
+                                        @endphp
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="permission-item {{ $isSelected ? 'is-selected' : '' }} {{ $isDisabled ? 'opacity-50' : '' }}"
+                                                   for="grp-{{ $group->id }}"
+                                                   title="{{ $isDisabled ? 'المجموعة ممتلئة' : '' }}">
+                                                <input type="checkbox"
+                                                       wire:model.live="group_ids"
+                                                       value="{{ (string) $group->id }}"
+                                                       id="grp-{{ $group->id }}"
+                                                       class="permission-checkbox"
+                                                    {{ $isSelected ? 'checked' : '' }}
+                                                    {{ $isDisabled ? 'disabled' : '' }}>
+                                                <div class="permission-content">
+                                                    <span class="permission-icon">
+                                                        <i class="ph-duotone ph-users-three"></i>
+                                                    </span>
+                                                    <span class="permission-label">
+                                                        {{ $group->name }}
+                                                        @if($group->max_students > 0)
+                                                            <small class="text-body-secondary d-block">
+                                                                {{ $group->students_count }}/{{ $group->max_students }}
+                                                                @if($group->is_full)
+                                                                    <span class="badge bg-danger text-white ms-1">ممتلئة</span>
+                                                                @endif
+                                                            </small>
+                                                        @endif
+                                                    </span>
+                                                    <span class="permission-check">
+                                                        <i class="ph-duotone ph-check"></i>
+                                                    </span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="alert alert-warning d-flex align-items-center gap-2 mb-0">
+                                    <i class="ph-duotone ph-warning fs-5"></i>
+                                    <span>لا توجد مجموعات متاحة للفرع والمرحلة المختارين.</span>
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 @endif
             </div>
@@ -227,6 +354,7 @@
                         </span>
                     </button>
                 @endif
+
                 <a href="{{ route('teacher.students.index') }}" wire:navigate class="btn btn-light border">
                     <i class="ph-duotone ph-x-circle me-1"></i>إلغاء
                 </a>

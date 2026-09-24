@@ -36,38 +36,52 @@ class CloseDayIndex extends Component
     public function updatedDate(): void
     {
         $this->selectedGroupIds = [];
+        $this->confirmingCloseSelected = false;
+        $this->confirmingCloseAll = false;
     }
 
     public function updatedBranchFilter(): void
     {
         $this->selectedGroupIds = [];
+        $this->confirmingCloseSelected = false;
+        $this->confirmingCloseAll = false;
     }
 
-    /**
-     * Select every visible group (checkbox in table header).
-     */
+
     public function selectAllGroups(): void
     {
+        $service = app(AttendanceService::class);
+        $date = Carbon::parse($this->date);
+
         $this->selectedGroupIds = $this->getGroups()
+            ->filter(function ($group) use ($service, $date) {
+                $isClosed = $service->isGroupClosed($group, $date);
+                $isFinished = $service->groupSchedulesFinishedToday($group, $date);
+                return !$isClosed && $isFinished;
+            })
             ->pluck('id')
-            ->map(fn($id) => (string)$id)
+            ->map(fn($id) => (string) $id)
             ->toArray();
     }
 
-    /**
-     * Deselect every group.
-     */
     public function deselectAllGroups(): void
     {
         $this->selectedGroupIds = [];
     }
 
-    /**
-     * Toggle a single group selection.
-     */
     public function toggleGroupSelection(int $groupId): void
     {
-        $id = (string)$groupId;
+        $service = app(AttendanceService::class);
+        $date = Carbon::parse($this->date);
+
+        $group = Group::find($groupId);
+
+        if ($group && $service->isGroupClosed($group, $date)) {
+            $this->dispatch('show-error-message', message: 'المجموعة مقفلة بالفعل.');
+            return;
+        }
+
+        $id = (string) $groupId;
 
         if (in_array($id, $this->selectedGroupIds)) {
             $this->selectedGroupIds = array_values(
@@ -78,9 +92,6 @@ class CloseDayIndex extends Component
         }
     }
 
-    /**
-     * Open confirmation modal for closing selected groups.
-     */
     public function confirmCloseSelected(): void
     {
         if (empty($this->selectedGroupIds)) {
@@ -89,14 +100,7 @@ class CloseDayIndex extends Component
         }
 
         $this->confirmingCloseSelected = true;
-    }
-
-    /**
-     * Open confirmation modal for closing all groups.
-     */
-    public function confirmCloseAll(): void
-    {
-        $this->confirmingCloseAll = true;
+        $this->confirmingCloseAll = false;
     }
 
     public function cancelClose(): void
@@ -105,33 +109,54 @@ class CloseDayIndex extends Component
         $this->confirmingCloseAll = false;
     }
 
-    /**
-     * Execute close for selected groups.
-     */
+    public function confirmCloseAll(): void
+    {
+        $this->confirmingCloseAll = true;
+        $this->confirmingCloseSelected = false;
+    }
+
     public function closeSelected(AttendanceService $service): void
     {
         $this->confirmingCloseSelected = false;
-        $this->executeClose($service, $this->selectedGroupIds);
+
+        $date = Carbon::parse($this->date);
+
+        $nonClosedIds = collect($this->selectedGroupIds)
+            ->filter(function ($groupId) use ($service, $date) {
+                $group = Group::find($groupId);
+                return $group && !$service->isGroupClosed($group, $date);
+            })
+            ->values()
+            ->toArray();
+
+        if (empty($nonClosedIds)) {
+            $this->dispatch('show-error-message', message: 'كل المجموعات المختارة مقفلة بالفعل.');
+            return;
+        }
+
+        $this->executeClose($service, $nonClosedIds);
     }
 
-    /**
-     * Execute close for all groups in scope.
-     */
     public function closeAllGroups(AttendanceService $service): void
     {
         $this->confirmingCloseAll = false;
 
+        $date = Carbon::parse($this->date);
+
         $ids = $this->getGroups()
+            ->filter(fn($group) => !$service->isGroupClosed($group, $date))
             ->pluck('id')
-            ->map(fn($id) => (string)$id)
+            ->map(fn($id) => (string) $id)
             ->toArray();
+
+        if (empty($ids)) {
+            $this->dispatch('show-error-message', message: 'كل المجموعات مقفلة بالفعل.');
+            return;
+        }
 
         $this->executeClose($service, $ids);
     }
 
-    /**
-     * Shared close logic for both bulk and per-group operations.
-     */
     protected function executeClose(AttendanceService $service, array $groupIds): void
     {
         $user = Auth::guard('teacher')->user();
@@ -154,13 +179,9 @@ class CloseDayIndex extends Component
         foreach ($groupIds as $groupId) {
             $group = Group::find($groupId);
 
-            if (!$group) {
-                continue;
-            }
+            if (!$group) continue;
 
-            if (!$user->hasAccessToBranch((int)$group->branch_id)) {
-                continue;
-            }
+            if (!$user->hasAccessToBranch((int) $group->branch_id)) continue;
 
             $result = $service->closeGroup($group, $date, $user);
 
@@ -175,8 +196,7 @@ class CloseDayIndex extends Component
         $this->selectedGroupIds = [];
 
         if ($closed > 0) {
-            $this->dispatch('show-success-message', message: "تم تقفيل {$closed} مجموعة، وإنشاء {$totalAbsences} سجل غياب."
-            );
+            $this->dispatch('show-success-message', message: "تم تقفيل {$closed} مجموعة، وإنشاء {$totalAbsences} سجل غياب.");
         }
 
         if (!empty($errors)) {
@@ -188,20 +208,16 @@ class CloseDayIndex extends Component
         }
     }
 
-    /**
-     * Groups scoped by the current user + branch filter.
-     */
     protected function getGroups()
     {
         $user = Auth::guard('teacher')->user();
-        $accessibleBranchIds = $user->getAccessibleBranchIds();
+        $date = Carbon::parse($this->date);
 
-        return Group::query()
-            ->with('branch')
-            ->when(!$user->isOwner(), fn($q) => $q->whereIn('branch_id', $accessibleBranchIds))
-            ->when($this->branchFilter !== '', fn($q) => $q->where('branch_id', $this->branchFilter))
-            ->orderBy('name')
-            ->get();
+        return app(AttendanceService::class)->getGroupsWithSchedulesOnDate(
+            $user,
+            $date,
+            $this->branchFilter !== '' ? (int) $this->branchFilter : null
+        );
     }
 
     public function render(AttendanceService $service)
@@ -212,24 +228,42 @@ class CloseDayIndex extends Component
         $date = Carbon::parse($this->date);
         $groups = $this->getGroups();
 
-        $groupsWithStats = $groups->map(function ($group) use ($service, $date) {
-            $group->stats = $service->getGroupStats($group, $date);
+        $pendingGroups   = collect();
+        $completedGroups = collect();
+        $closedGroups    = collect();
+
+        $groupsWithStats = $groups->map(function ($group) use ($service, $date, &$pendingGroups, &$completedGroups, &$closedGroups) {
+            $group->stats       = $service->getGroupStats($group, $date);
+            $group->is_finished = $service->groupSchedulesFinishedToday($group, $date);
+            $group->is_closed   = $service->isGroupClosed($group, $date);
+
+            if ($group->is_closed) {
+                $closedGroups->push($group);
+            } elseif ($group->is_finished) {
+                $completedGroups->push($group);
+            } else {
+                $pendingGroups->push($group);
+            }
+
             return $group;
         });
 
-        $overallTotal = $groupsWithStats->sum(fn($g) => $g->stats['total_students']);
+        $overallTotal   = $groupsWithStats->sum(fn($g) => $g->stats['total_students']);
         $overallPresent = $groupsWithStats->sum(fn($g) => $g->stats['present']);
-        $overallLate = $groupsWithStats->sum(fn($g) => $g->stats['late']);
-        $overallAbsent = $groupsWithStats->sum(fn($g) => $g->stats['absent']);
+        $overallLate    = $groupsWithStats->sum(fn($g) => $g->stats['late']);
+        $overallAbsent  = $groupsWithStats->sum(fn($g) => $g->stats['absent']);
 
         return view('teacher-panel.pages.attendance-close-day.parts.close-day-index', [
-            'groups' => $groupsWithStats,
-            'branches' => Branch::whereIn('id', $accessibleBranchIds)->orderBy('name')->get(),
+            'groups'          => $groupsWithStats,
+            'pendingGroups'   => $pendingGroups,
+            'completedGroups' => $completedGroups,
+            'closedGroups'    => $closedGroups,
+            'branches'        => Branch::whereIn('id', $accessibleBranchIds)->orderBy('name')->get(),
             'overall' => [
-                'total' => $overallTotal,
+                'total'   => $overallTotal,
                 'present' => $overallPresent,
-                'late' => $overallLate,
-                'absent' => $overallAbsent,
+                'late'    => $overallLate,
+                'absent'  => $overallAbsent,
             ],
         ]);
     }

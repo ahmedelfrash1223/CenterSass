@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\Admin\HasIdentityDefaults;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Admin extends Authenticatable
 {
-    use Notifiable, SoftDeletes;
+    use HasIdentityDefaults, Notifiable, SoftDeletes;
 
     protected $guard = 'admin';
 
@@ -28,8 +28,7 @@ class Admin extends Authenticatable
         'remember_token',
     ];
 
-
-    #===================== CASTS ====================>
+    // ===================== CASTS ====================>
     protected function casts(): array
     {
         return [
@@ -38,21 +37,9 @@ class Admin extends Authenticatable
         ];
     }
 
-
-
-    #================== BOOT METHOD ==================>
-    protected static function booted(): void
-    {
-        static::creating(function (Admin $admin) {
-            $admin->uuid ??= (string) Str::uuid();
-            $admin->code ??= 'ADM-' . strtoupper(uniqid());
-        });
-    }
-
-    #=================== RELATIONS ===================>
+    // =================== RELATIONS ===================>
     public function themeSettings(): HasOne
     {
         return $this->hasOne(AdminThemeSetting::class);
     }
-
 }

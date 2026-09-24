@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\GroupSchedule\FormatsDuration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupSchedule extends Model
 {
+    use FormatsDuration;
+
     protected $fillable = [
         'group_id',
         'day',
@@ -36,20 +39,5 @@ class GroupSchedule extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'teacher_id');
-    }
-
-    public function getFormattedHoursAttribute(): string
-    {
-        if (!$this->hours) {
-            return '—';
-        }
-
-        $totalMinutes = (int) round($this->hours * 60);
-        $h = intdiv($totalMinutes, 60);
-        $m = $totalMinutes % 60;
-
-        if ($h > 0 && $m > 0) return "{$h} س {$m} د";
-        if ($h > 0) return "{$h} س";
-        return "{$m} د";
     }
 }

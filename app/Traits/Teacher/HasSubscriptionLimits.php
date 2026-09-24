@@ -8,13 +8,13 @@ trait HasSubscriptionLimits
     {
         $owner = $this->isOwner() ? $this : $this->owner;
 
-        if (!$owner) {
+        if (! $owner) {
             return null;
         }
 
         $subscription = $owner->activeSubscription;
 
-        if (!$subscription) {
+        if (! $subscription) {
             return null;
         }
 
@@ -22,7 +22,7 @@ trait HasSubscriptionLimits
             ->where('feature_key', $featureKey)
             ->first();
 
-        if (!$feature) {
+        if (! $feature) {
             return null;
         }
 
@@ -39,7 +39,7 @@ trait HasSubscriptionLimits
     {
         $owner = $this->isOwner() ? $this : $this->owner;
 
-        if (!$owner) {
+        if (! $owner) {
             return false;
         }
 
@@ -50,7 +50,7 @@ trait HasSubscriptionLimits
     {
         $owner = $this->isOwner() ? $this : $this->owner;
 
-        if (!$owner || !$owner->hasActiveSubscription()) {
+        if (! $owner || ! $owner->hasActiveSubscription()) {
             return [
                 'can' => false,
                 'current' => $currentCount,

@@ -26,6 +26,4 @@ class SubscriptionFeature extends Model
             'subscription_id'
         );
     }
-
-
 }

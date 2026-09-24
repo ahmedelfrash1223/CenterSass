@@ -6,7 +6,7 @@ use App\Enums\Teacher\DiscountTypeEnum;
 use App\Models\Invoice;
 use App\Services\Teacher\DiscountService;
 use Livewire\Component;
-use App\Livewire\TeacherPanel\Concerns\HasPaymentPermissions;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasPaymentPermissions;
 
 class DiscountManager extends Component
 {

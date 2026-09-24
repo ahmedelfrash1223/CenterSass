@@ -4,10 +4,10 @@ namespace App\Livewire\TeacherPanel\Pages\Invoice\Parts;
 
 use App\Models\Invoice;
 use Livewire\Component;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceActions;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceCalculation;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceEditing;
-use App\Livewire\TeacherPanel\Concerns\HasPaymentPermissions;
+use App\Livewire\TeacherPanel\Concerns\Invoice\HasInvoiceActions;
+use App\Livewire\TeacherPanel\Concerns\Invoice\HasInvoiceCalculation;
+use App\Livewire\TeacherPanel\Concerns\Invoice\HasInvoiceEditing;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasPaymentPermissions;
 
 class InvoiceActions extends Component
 {

@@ -3,7 +3,7 @@
 namespace App\Livewire\TeacherPanel\Pages\Staff\Parts;
 
 use App\Enums\Teacher\TeacherPermissionEnum;
-use App\Livewire\TeacherPanel\Concerns\HasStaffScheduleView;
+use App\Livewire\TeacherPanel\Concerns\Shared\HasStaffScheduleView;
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;

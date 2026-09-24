@@ -7,11 +7,11 @@ use App\Enums\Teacher\PaymentMethodEnum;
 use App\Services\Teacher\PaymentService;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use App\Livewire\TeacherPanel\Concerns\HasPaymentPermissions;
-use App\Livewire\TeacherPanel\Concerns\HasStudentSelection;
-use App\Livewire\TeacherPanel\Concerns\HasPaymentSelection;
-use App\Livewire\TeacherPanel\Concerns\HasItemDiscount;
-use App\Livewire\TeacherPanel\Concerns\RecordsStudentPayment;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasPaymentPermissions;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasStudentSelection;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasPaymentSelection;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasItemDiscount;
+use App\Livewire\TeacherPanel\Concerns\Payment\RecordsStudentPayment;
 
 class StudentPaymentCard extends Component
 {

@@ -5,9 +5,9 @@ namespace App\Livewire\TeacherPanel\Pages\Invoice\Parts;
 use App\Models\Invoice;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceManagement;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceReceipt;
-use App\Livewire\TeacherPanel\Concerns\HasPaymentPermissions;
+use App\Livewire\TeacherPanel\Concerns\Invoice\HasInvoiceManagement;
+use App\Livewire\TeacherPanel\Concerns\Invoice\HasInvoiceReceipt;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasPaymentPermissions;
 
 class InvoiceShow extends Component
 {

@@ -3,14 +3,14 @@
 namespace App\Traits\Teacher;
 
 use App\Enums\Teacher\TeacherPermissionEnum;
+use App\Models\TeacherPermission;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasPermissions
 {
-
     public function permissions(): HasMany
     {
-        return $this->hasMany(\App\Models\TeacherPermission::class, 'teacher_id');
+        return $this->hasMany(TeacherPermission::class, 'teacher_id');
     }
 
     public function hasPermission(string|TeacherPermissionEnum $permission): bool
@@ -31,13 +31,13 @@ trait HasPermissions
     public function hasAllPermissions(array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if (!$this->hasPermission($permission)) {
+            if (! $this->hasPermission($permission)) {
                 return false;
             }
         }
+
         return true;
     }
-
 
     public function hasAnyPermission(array $permissions): bool
     {
@@ -46,9 +46,9 @@ trait HasPermissions
                 return true;
             }
         }
+
         return false;
     }
-
 
     public function getAllPermissions(): array
     {
@@ -58,7 +58,6 @@ trait HasPermissions
 
         return $this->permissions()->pluck('permission')->toArray();
     }
-
 
     public function givePermission(string|TeacherPermissionEnum $permission): void
     {
@@ -94,7 +93,6 @@ trait HasPermissions
             ]);
         }
     }
-
 
     public function syncDefaultPermissions(): void
     {

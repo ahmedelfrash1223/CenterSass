@@ -16,21 +16,22 @@ class Attendance extends Model
         'created_by',
         'attendance_date',
         'check_in_time',
+        'check_out_time',
         'status',
-        'notes',
         'is_auto_closed',
         'closed_at',
+        'notes',
     ];
 
     protected $casts = [
         'attendance_date' => 'date',
-        'is_auto_closed' => 'boolean',
-        'closed_at' => 'datetime',
+        'check_in_time'   => 'datetime:H:i',
+        'check_out_time'  => 'datetime:H:i',
+        'closed_at'       => 'datetime',
+        'is_auto_closed'  => 'boolean',
     ];
 
-    // =============================================
-    // RELATIONS
-    // =============================================
+    // ============ Relations ============
 
     public function student(): BelongsTo
     {
@@ -62,29 +63,38 @@ class Attendance extends Model
         return $this->belongsTo(Teacher::class, 'created_by');
     }
 
-    // =============================================
-    // HELPERS
-    // =============================================
-
-    public function getStatusColorAttribute(): string
-    {
-        return match ($this->status) {
-            'present' => 'success',
-            'late' => 'warning',
-            'absent' => 'danger',
-            'excused' => 'info',
-            default => 'secondary',
-        };
-    }
+    // ============ Accessors ============
 
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
             'present' => 'حاضر',
-            'late' => 'متأخر',
-            'absent' => 'غائب',
+            'late'    => 'متأخر',
+            'absent'  => 'غايب',
             'excused' => 'بعذر',
-            default => $this->status,
+            default   => $this->status,
+        };
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            'present' => 'success',
+            'late'    => 'warning',
+            'absent'  => 'danger',
+            'excused' => 'info',
+            default   => 'secondary',
+        };
+    }
+
+    public function getStatusIconAttribute(): string
+    {
+        return match ($this->status) {
+            'present' => 'ph-check-circle',
+            'late'    => 'ph-clock',
+            'absent'  => 'ph-x-circle',
+            'excused' => 'ph-info',
+            default   => 'ph-circle',
         };
     }
 }

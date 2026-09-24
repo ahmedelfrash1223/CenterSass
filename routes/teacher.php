@@ -130,4 +130,12 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
         Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
     });
 
+    // ============================================
+    // 📌 Timetable
+    // ============================================
+    Route::middleware('teacher.permission:' . TeacherPermissionEnum::TIMETABLE_VIEW->value)->group(function () {
+        Route::view('timetable', 'teacher-panel.pages.timetable.index')
+            ->name('timetable.index');
+    });
+
 });

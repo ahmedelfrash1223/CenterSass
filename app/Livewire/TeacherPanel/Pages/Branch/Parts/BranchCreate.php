@@ -5,7 +5,7 @@ namespace App\Livewire\TeacherPanel\Pages\Branch\Parts;
 use App\Enums\Admin\PackageFeatureKeyEnum;
 use App\Enums\Teacher\TeacherPermissionEnum;
 use App\Http\Requests\TeacherPanel\StoreBranchRequest;
-use App\Livewire\TeacherPanel\Concerns\HasSubscriptionLimitCheck;
+use App\Livewire\TeacherPanel\Concerns\Shared\HasSubscriptionLimitCheck;
 use App\Models\Branch;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;

@@ -48,12 +48,12 @@
                                         تفاصيل الاشتراكات
                                         <span class="badge bg-primary bg-opacity-10 text-primary ms-2 fs-6 fw-normal">
                                             <i class="ph-duotone ph-shield-check me-1"></i>
-                                            {{ Auth::guard('teacher')->user()->name ?? 'مدرس' }}
+                                            {{ auth('teacher')->user()->name ?? 'مدرس' }}
                                         </span>
                                     </h1>
                                     <p class="text-muted small mb-0 mt-1">
                                         <i class="ph-duotone ph-dot-outline me-1"></i>
-                                        {{ Auth::guard('teacher')->user()->email ?? '' }}
+                                        {{ auth('teacher')->user()->email ?? '' }}
                                     </p>
                                 </div>
                             </div>

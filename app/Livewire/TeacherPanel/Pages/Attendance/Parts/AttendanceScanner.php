@@ -6,8 +6,8 @@ use App\Enums\Teacher\TeacherPermissionEnum;
 use App\Models\Attendance;
 use App\Models\Group;
 use App\Models\Student;
-use App\Livewire\TeacherPanel\Concerns\HasAttendanceScanning;
-use App\Livewire\TeacherPanel\Concerns\HasManualAttendance;
+use App\Livewire\TeacherPanel\Concerns\Attendance\HasAttendanceScanning;
+use App\Livewire\TeacherPanel\Concerns\Attendance\HasManualAttendance;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use App\Enums\Admin\SubscriptionRequestStatusEnum;
+use App\Traits\SubscriptionRequest\HasStatusPresentation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SubscriptionRequest extends Model
 {
+    use HasStatusPresentation;
+
     protected $fillable = [
         'teacher_id',
         'current_subscription_id',
@@ -46,25 +48,5 @@ class SubscriptionRequest extends Model
     public function processedBy(): BelongsTo
     {
         return $this->belongsTo(Admin::class, 'processed_by');
-    }
-
-    // =============================================
-    // 📌 ACCESSORS
-    // =============================================
-    public function getStatusLabelAttribute(): string
-    {
-        return SubscriptionRequestStatusEnum::tryFrom($this->status)?->label() ?? 'غير معروف';
-    }
-
-    public function getStatusColorAttribute(): string
-    {
-        return SubscriptionRequestStatusEnum::tryFrom($this->status)?->color() ?? 'secondary';
-    }
-
-    public function getStatusBadgeAttribute(): string
-    {
-        $color = $this->status_color;
-        $label = $this->status_label;
-        return "<span class='badge bg-{$color}-bg-opacity-10 text-{$color}'>{$label}</span>";
     }
 }

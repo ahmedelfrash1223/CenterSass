@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PackageFeature extends Model
 {
     protected $fillable = ['package_id', 'package_feature_key', 'value'];
+
     protected $casts = ['package_feature_key' => PackageFeatureKeyEnum::class, 'value' => 'array'];
 
     public function package(): BelongsTo

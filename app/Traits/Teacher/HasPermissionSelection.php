@@ -7,8 +7,8 @@ use App\Enums\Teacher\TeacherPermissionEnum;
 trait HasPermissionSelection
 {
     public array $permissions = [];
-    public array $groupedPermissions = [];
 
+    public array $groupedPermissions = [];
 
     public function initializePermissions(): void
     {
@@ -17,18 +17,15 @@ trait HasPermissionSelection
         }
     }
 
-
     public function getSelectedCountProperty(): int
     {
-        return count(array_filter($this->permissions, fn($v) => $v === true));
+        return count(array_filter($this->permissions, fn ($v) => $v === true));
     }
-
 
     public function togglePermission(string $permission): void
     {
-        $this->permissions[$permission] = !($this->permissions[$permission] ?? false);
+        $this->permissions[$permission] = ! ($this->permissions[$permission] ?? false);
     }
-
 
     public function toggleGroup(string $groupName): void
     {
@@ -38,17 +35,16 @@ trait HasPermissionSelection
 
         $allSelected = true;
         foreach ($groupPermissions as $key) {
-            if (!($this->permissions[$key] ?? false)) {
+            if (! ($this->permissions[$key] ?? false)) {
                 $allSelected = false;
                 break;
             }
         }
 
         foreach ($groupPermissions as $key) {
-            $this->permissions[$key] = !$allSelected;
+            $this->permissions[$key] = ! $allSelected;
         }
     }
-
 
     public function selectAll(): void
     {
@@ -57,7 +53,6 @@ trait HasPermissionSelection
         }
     }
 
-
     public function deselectAll(): void
     {
         foreach ($this->permissions as $key => $value) {
@@ -65,11 +60,10 @@ trait HasPermissionSelection
         }
     }
 
-
     public function getSelectedPermissions(): array
     {
         return collect($this->permissions)
-            ->filter(fn($value) => $value === true)
+            ->filter(fn ($value) => $value === true)
             ->keys()
             ->toArray();
     }

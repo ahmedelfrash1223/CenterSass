@@ -57,6 +57,11 @@ enum TeacherPermissionEnum: string
     case ATTENDANCE_CLOSE_DAY = 'attendance.close_day';
 
     // =============================================
+    // 📌 Timetable
+    // =============================================
+    case TIMETABLE_VIEW = 'timetable.view';
+
+    // =============================================
     // 📌 Reports
     // =============================================
     case VIEW_REPORTS = 'reports.view';
@@ -69,10 +74,10 @@ enum TeacherPermissionEnum: string
     // =============================================
     // 📌 Payments & Invoices
     // =============================================
-    case PAYMENT_VIEW = 'payments.view';
-    case PAYMENT_MANAGE = 'payments.manage';
-    case PAYMENT_RECEIPT = 'payments.receipt';
-    case PAYMENT_DELETE = 'payments.delete';
+    case PAYMENT_VIEW     = 'payments.view';
+    case PAYMENT_MANAGE   = 'payments.manage';
+    case PAYMENT_RECEIPT  = 'payments.receipt';
+    case PAYMENT_DELETE   = 'payments.delete';
 
     // =============================================
     // 📌 Helpers
@@ -111,13 +116,15 @@ enum TeacherPermissionEnum: string
             self::ATTENDANCE_MANAGE => 'تسجيل وتعديل الحضور',
             self::ATTENDANCE_CLOSE_DAY => 'تقفيل اليوم',
 
+            self::TIMETABLE_VIEW => 'عرض جدول الأسبوع',
+
             self::VIEW_REPORTS => 'عرض التقارير',
             self::MANAGE_SETTINGS => 'إدارة الإعدادات',
 
-            self::PAYMENT_VIEW => 'عرض المدفوعات',
-            self::PAYMENT_MANAGE => 'تسجيل وتعديل المدفوعات',
+            self::PAYMENT_VIEW    => 'عرض المدفوعات',
+            self::PAYMENT_MANAGE  => 'تسجيل وتعديل المدفوعات',
             self::PAYMENT_RECEIPT => 'طباعة الإيصالات',
-            self::PAYMENT_DELETE => 'حذف وتعديل الفواتير',
+            self::PAYMENT_DELETE  => 'حذف وتعديل الفواتير',
         };
     }
 
@@ -131,6 +138,7 @@ enum TeacherPermissionEnum: string
             self::GROUP_VIEW, self::GROUP_CREATE, self::GROUP_UPDATE, self::GROUP_DELETE => 'المجموعات',
             self::STUDENT_VIEW, self::STUDENT_CREATE, self::STUDENT_UPDATE, self::STUDENT_DELETE => 'الطلاب',
             self::ATTENDANCE_VIEW, self::ATTENDANCE_MANAGE, self::ATTENDANCE_CLOSE_DAY => 'الحضور',
+            self::TIMETABLE_VIEW => 'جدول الأسبوع',
             self::VIEW_REPORTS => 'التقارير',
             self::MANAGE_SETTINGS => 'الإعدادات',
 
@@ -168,13 +176,14 @@ enum TeacherPermissionEnum: string
             self::ATTENDANCE_VIEW => 'ph-eye',
             self::ATTENDANCE_MANAGE => 'ph-scan',
             self::ATTENDANCE_CLOSE_DAY => 'ph-lock',
+            self::TIMETABLE_VIEW => 'ph-calendar-week',
             self::VIEW_REPORTS => 'ph-chart-bar',
             self::MANAGE_SETTINGS => 'ph-gear',
 
-            self::PAYMENT_VIEW => 'ph-eye',
-            self::PAYMENT_MANAGE => 'ph-currency-circle-dollar',
+            self::PAYMENT_VIEW    => 'ph-eye',
+            self::PAYMENT_MANAGE  => 'ph-currency-circle-dollar',
             self::PAYMENT_RECEIPT => 'ph-receipt',
-            self::PAYMENT_DELETE => 'ph-trash',
+            self::PAYMENT_DELETE  => 'ph-trash',
         };
     }
 
@@ -230,6 +239,8 @@ enum TeacherPermissionEnum: string
             self::ATTENDANCE_MANAGE->value,
             self::ATTENDANCE_CLOSE_DAY->value,
 
+            self::TIMETABLE_VIEW->value,
+
             self::VIEW_REPORTS->value,
 
             self::PAYMENT_VIEW->value,
@@ -249,6 +260,8 @@ enum TeacherPermissionEnum: string
 
             self::ATTENDANCE_VIEW->value,
             self::ATTENDANCE_CLOSE_DAY->value,
+
+            self::TIMETABLE_VIEW->value,
 
             self::VIEW_REPORTS->value,
 

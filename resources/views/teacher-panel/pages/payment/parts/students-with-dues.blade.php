@@ -1,12 +1,11 @@
 <div class="mt-4">
 
-
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-body d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h6 class="mb-0 fw-bold">
                 <i class="ph-duotone ph-warning-circle text-danger me-1"></i>
                 مدفعوش حاجة
-                <span class="badge bg-danger-subtle text-danger-emphasis ms-2">
+                <span class="badge bg-danger text-white ms-2">
                     {{ $unpaidStudents->total() }}
                 </span>
             </h6>
@@ -34,10 +33,12 @@
                                 <td class="ps-4 text-body-secondary small">
                                     {{ $unpaidStudents->firstItem() + $loop->index }}
                                 </td>
+
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                                             style="width: 34px; height: 34px; font-size: 14px;">
+                                        <div
+                                            class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                                            style="width: 34px; height: 34px; font-size: 14px;">
                                             {{ mb_substr($student->name, 0, 1) }}
                                         </div>
                                         <span class="fw-semibold">{{ $student->name }}</span>
@@ -77,7 +78,7 @@
             <h6 class="mb-0 fw-bold">
                 <i class="ph-duotone ph-clock text-warning me-1"></i>
                 عليهم باقي
-                <span class="badge bg-warning-subtle text-warning-emphasis ms-2">
+                <span class="badge bg-warning text-dark ms-2">
                     {{ $partialStudents->total() }}
                 </span>
             </h6>
@@ -105,10 +106,13 @@
                                 <td class="ps-4 text-body-secondary small">
                                     {{ $partialStudents->firstItem() + $loop->index }}
                                 </td>
+
+
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                                             style="width: 34px; height: 34px; font-size: 14px;">
+                                        <div
+                                            class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                                            style="width: 34px; height: 34px; font-size: 14px;">
                                             {{ mb_substr($student->name, 0, 1) }}
                                         </div>
                                         <span class="fw-semibold">{{ $student->name }}</span>

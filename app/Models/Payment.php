@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use App\Enums\Teacher\PaymentMethodEnum;
+use App\Traits\Payment\HasPaymentMethodPresentation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Payment extends Model
 {
+    use HasPaymentMethodPresentation;
+
     protected $fillable = [
         'receipt_number', 'invoice_id', 'student_id', 'teacher_id',
         'amount', 'payment_method', 'reference', 'paid_at', 'paid_time',
@@ -16,8 +18,8 @@ class Payment extends Model
     ];
 
     protected $casts = [
-        'amount'    => 'decimal:2',
-        'paid_at'   => 'date',
+        'amount' => 'decimal:2',
+        'paid_at' => 'date',
         'paid_time' => 'datetime:H:i',
     ];
 
@@ -45,16 +47,5 @@ class Payment extends Model
     public function allocations(): HasMany
     {
         return $this->hasMany(PaymentAllocation::class);
-    }
-
-    // ============ Accessors ============
-    public function getPaymentMethodLabelAttribute(): string
-    {
-        return PaymentMethodEnum::tryFrom($this->payment_method)?->label() ?? $this->payment_method;
-    }
-
-    public function getPaymentMethodIconAttribute(): string
-    {
-        return PaymentMethodEnum::tryFrom($this->payment_method)?->icon() ?? 'ph-money';
     }
 }

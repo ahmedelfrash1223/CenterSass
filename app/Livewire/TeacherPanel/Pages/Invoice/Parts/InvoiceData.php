@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceActions;
-use App\Livewire\TeacherPanel\Concerns\HasInvoiceQuery;
-use App\Livewire\TeacherPanel\Concerns\HasMonthFilter;
-use App\Livewire\TeacherPanel\Concerns\HasPaymentPermissions;
+use App\Livewire\TeacherPanel\Concerns\Invoice\HasInvoiceActions;
+use App\Livewire\TeacherPanel\Concerns\Invoice\HasInvoiceQuery;
+use App\Livewire\TeacherPanel\Concerns\Shared\HasMonthFilter;
+use App\Livewire\TeacherPanel\Concerns\Payment\HasPaymentPermissions;
 
 class InvoiceData extends Component
 {
