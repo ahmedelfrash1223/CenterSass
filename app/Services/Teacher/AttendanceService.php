@@ -95,6 +95,10 @@ class AttendanceService
 
                 $closedSchedules++;
             }
+
+            $group->update([
+                'last_closed_date' => $date->toDateString(),
+            ]);
         });
 
         return [
@@ -231,24 +235,10 @@ class AttendanceService
     }
 
 
+
     public function isGroupClosed(Group $group, Carbon $date): bool
     {
-        $today = $date->format('l');
-
-        $scheduleIds = GroupSchedule::where('group_id', $group->id)
-            ->where('day', $today)
-            ->pluck('id');
-
-        if ($scheduleIds->isEmpty()) {
-            return false;
-        }
-
-        $closedScheduleIds = Attendance::whereIn('schedule_id', $scheduleIds)
-            ->where('attendance_date', $date->toDateString())
-            ->where('is_auto_closed', 1)
-            ->pluck('schedule_id')
-            ->unique();
-
-        return $closedScheduleIds->count() >= $scheduleIds->count();
+        return $group->last_closed_date !== null
+            && $group->last_closed_date->isSameDay($date);
     }
 }

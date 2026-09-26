@@ -30,6 +30,7 @@ class Group extends Model
         'pricing_amount',
         'pricing_config',
         'has_pricing',
+        'last_closed_date',
     ];
 
     protected $casts = [
@@ -39,6 +40,7 @@ class Group extends Model
         'pricing_config' => 'array',
         'pricing_amount' => 'decimal:2',
         'has_pricing' => 'boolean',
+        'last_closed_date' => 'date',
     ];
 
     // =============================================

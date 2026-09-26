@@ -136,6 +136,13 @@ class CloseDayShow extends Component
             ->delete();
 
         if ($deleted > 0) {
+            if (
+                $this->group->last_closed_date
+                && $this->group->last_closed_date->isSameDay(Carbon::parse($this->date))
+            ) {
+                $this->group->update(['last_closed_date' => null]);
+            }
+
             $this->dispatch('show-success-message', message: "تم فتح الحصة، وحذف {$deleted} سجل غياب.");
             $this->refreshIsClosed();
         } else {
