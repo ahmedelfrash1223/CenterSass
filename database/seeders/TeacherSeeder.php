@@ -21,7 +21,7 @@ class TeacherSeeder extends Seeder
             'username' => 'admin_teacher',
             'name' => 'Demo Admin Teacher',
             'email' => 'owner@example.com',
-            'password' => Hash::make('P@ssw0rd'),
+            'password' => Hash::make('12345678'),
             'phone' => '0123456789',
             'role' => TeacherRoleEnum::OWNER->value,
             'is_active' => 1,

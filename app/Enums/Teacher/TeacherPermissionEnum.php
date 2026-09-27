@@ -5,12 +5,12 @@ namespace App\Enums\Teacher;
 enum TeacherPermissionEnum: string
 {
     // =============================================
-    // 📌 Subscription
+    // Subscription
     // =============================================
     case MANAGE_SUBSCRIPTION = 'manage_subscription';
 
     // =============================================
-    // 📌 Staff
+    // Staff
     // =============================================
     case STAFF_VIEW = 'staff.view';
     case STAFF_CREATE = 'staff.create';
@@ -18,7 +18,7 @@ enum TeacherPermissionEnum: string
     case STAFF_DELETE = 'staff.delete';
 
     // =============================================
-    // 📌 Branches
+    // Branches
     // =============================================
     case BRANCH_VIEW = 'branches.view';
     case BRANCH_CREATE = 'branches.create';
@@ -26,7 +26,7 @@ enum TeacherPermissionEnum: string
     case BRANCH_DELETE = 'branches.delete';
 
     // =============================================
-    // 📌 Subjects
+    // Subjects
     // =============================================
     case SUBJECT_VIEW = 'subjects.view';
     case SUBJECT_CREATE = 'subjects.create';
@@ -34,7 +34,7 @@ enum TeacherPermissionEnum: string
     case SUBJECT_DELETE = 'subjects.delete';
 
     // =============================================
-    // 📌 Groups
+    // Groups
     // =============================================
     case GROUP_VIEW = 'groups.view';
     case GROUP_CREATE = 'groups.create';
@@ -42,7 +42,7 @@ enum TeacherPermissionEnum: string
     case GROUP_DELETE = 'groups.delete';
 
     // =============================================
-    // 📌 Students
+    // Students
     // =============================================
     case STUDENT_VIEW = 'students.view';
     case STUDENT_CREATE = 'students.create';
@@ -50,37 +50,47 @@ enum TeacherPermissionEnum: string
     case STUDENT_DELETE = 'students.delete';
 
     // =============================================
-    // 📌 Attendance
+    // Attendance
     // =============================================
     case ATTENDANCE_VIEW = 'attendance.view';
     case ATTENDANCE_MANAGE = 'attendance.manage';
     case ATTENDANCE_CLOSE_DAY = 'attendance.close_day';
 
     // =============================================
-    // 📌 Timetable
+    // Timetable
     // =============================================
     case TIMETABLE_VIEW = 'timetable.view';
 
     // =============================================
-    // 📌 Reports
+    // Reports
     // =============================================
     case VIEW_REPORTS = 'reports.view';
 
     // =============================================
-    // 📌 Settings
+    // Settings
     // =============================================
     case MANAGE_SETTINGS = 'settings.manage';
 
     // =============================================
-    // 📌 Payments & Invoices
+    // Payments & Invoices
     // =============================================
-    case PAYMENT_VIEW     = 'payments.view';
-    case PAYMENT_MANAGE   = 'payments.manage';
-    case PAYMENT_RECEIPT  = 'payments.receipt';
-    case PAYMENT_DELETE   = 'payments.delete';
+    case PAYMENT_VIEW = 'payments.view';
+    case PAYMENT_MANAGE = 'payments.manage';
+    case PAYMENT_RECEIPT = 'payments.receipt';
+    case PAYMENT_DELETE = 'payments.delete';
 
     // =============================================
-    // 📌 Helpers
+    // Exams
+    // =============================================
+    case EXAM_VIEW = 'exams.view';
+    case EXAM_CREATE = 'exams.create';
+    case EXAM_UPDATE = 'exams.update';
+    case EXAM_DELETE = 'exams.delete';
+    case EXAM_PUBLISH = 'exams.publish';
+    case EXAM_MANAGE_QUESTIONS = 'exams.manage_questions';
+
+    // =============================================
+    // Labels
     // =============================================
     public function label(): string
     {
@@ -121,85 +131,148 @@ enum TeacherPermissionEnum: string
             self::VIEW_REPORTS => 'عرض التقارير',
             self::MANAGE_SETTINGS => 'إدارة الإعدادات',
 
-            self::PAYMENT_VIEW    => 'عرض المدفوعات',
-            self::PAYMENT_MANAGE  => 'تسجيل وتعديل المدفوعات',
+            self::PAYMENT_VIEW => 'عرض المدفوعات',
+            self::PAYMENT_MANAGE => 'تسجيل وتعديل المدفوعات',
             self::PAYMENT_RECEIPT => 'طباعة الإيصالات',
-            self::PAYMENT_DELETE  => 'حذف وتعديل الفواتير',
+            self::PAYMENT_DELETE => 'حذف وتعديل الفواتير',
+
+            self::EXAM_VIEW => 'عرض الامتحانات',
+            self::EXAM_CREATE => 'إضافة امتحان',
+            self::EXAM_UPDATE => 'تعديل امتحان',
+            self::EXAM_DELETE => 'حذف امتحان',
+            self::EXAM_PUBLISH => 'نشر الامتحانات',
+            self::EXAM_MANAGE_QUESTIONS => 'إدارة أسئلة الامتحانات',
         };
     }
 
+    // =============================================
+    // Permission Groups
+    // =============================================
     public function group(): string
     {
         return match ($this) {
             self::MANAGE_SUBSCRIPTION => 'الاشتراك',
-            self::STAFF_VIEW, self::STAFF_CREATE, self::STAFF_UPDATE, self::STAFF_DELETE => 'الفريق',
-            self::BRANCH_VIEW, self::BRANCH_CREATE, self::BRANCH_UPDATE, self::BRANCH_DELETE => 'الفروع',
-            self::SUBJECT_VIEW, self::SUBJECT_CREATE, self::SUBJECT_UPDATE, self::SUBJECT_DELETE => 'المواد',
-            self::GROUP_VIEW, self::GROUP_CREATE, self::GROUP_UPDATE, self::GROUP_DELETE => 'المجموعات',
-            self::STUDENT_VIEW, self::STUDENT_CREATE, self::STUDENT_UPDATE, self::STUDENT_DELETE => 'الطلاب',
-            self::ATTENDANCE_VIEW, self::ATTENDANCE_MANAGE, self::ATTENDANCE_CLOSE_DAY => 'الحضور',
+
+            self::STAFF_VIEW,
+            self::STAFF_CREATE,
+            self::STAFF_UPDATE,
+            self::STAFF_DELETE => 'الفريق',
+
+            self::BRANCH_VIEW,
+            self::BRANCH_CREATE,
+            self::BRANCH_UPDATE,
+            self::BRANCH_DELETE => 'الفروع',
+
+            self::SUBJECT_VIEW,
+            self::SUBJECT_CREATE,
+            self::SUBJECT_UPDATE,
+            self::SUBJECT_DELETE => 'المواد',
+
+            self::GROUP_VIEW,
+            self::GROUP_CREATE,
+            self::GROUP_UPDATE,
+            self::GROUP_DELETE => 'المجموعات',
+
+            self::STUDENT_VIEW,
+            self::STUDENT_CREATE,
+            self::STUDENT_UPDATE,
+            self::STUDENT_DELETE => 'الطلاب',
+
+            self::ATTENDANCE_VIEW,
+            self::ATTENDANCE_MANAGE,
+            self::ATTENDANCE_CLOSE_DAY => 'الحضور',
+
             self::TIMETABLE_VIEW => 'جدول الأسبوع',
+
             self::VIEW_REPORTS => 'التقارير',
+
             self::MANAGE_SETTINGS => 'الإعدادات',
 
             self::PAYMENT_VIEW,
             self::PAYMENT_MANAGE,
             self::PAYMENT_RECEIPT,
             self::PAYMENT_DELETE => 'المالية',
+
+            self::EXAM_VIEW,
+            self::EXAM_CREATE,
+            self::EXAM_UPDATE,
+            self::EXAM_DELETE,
+            self::EXAM_PUBLISH,
+            self::EXAM_MANAGE_QUESTIONS => 'الامتحانات',
         };
     }
 
+    // =============================================
+    // Icons
+    // =============================================
     public function icon(): string
     {
         return match ($this) {
             self::MANAGE_SUBSCRIPTION => 'ph-crown',
-            self::STAFF_VIEW => 'ph-eye',
-            self::STAFF_CREATE => 'ph-user-plus',
-            self::STAFF_UPDATE => 'ph-pencil-simple',
-            self::STAFF_DELETE => 'ph-trash',
-            self::BRANCH_VIEW => 'ph-eye',
-            self::BRANCH_CREATE => 'ph-plus-circle',
-            self::BRANCH_UPDATE => 'ph-pencil-simple',
-            self::BRANCH_DELETE => 'ph-trash',
-            self::SUBJECT_VIEW => 'ph-eye',
-            self::SUBJECT_CREATE => 'ph-plus-circle',
-            self::SUBJECT_UPDATE => 'ph-pencil-simple',
-            self::SUBJECT_DELETE => 'ph-trash',
-            self::GROUP_VIEW => 'ph-eye',
-            self::GROUP_CREATE => 'ph-plus-circle',
-            self::GROUP_UPDATE => 'ph-pencil-simple',
-            self::GROUP_DELETE => 'ph-trash',
-            self::STUDENT_VIEW => 'ph-eye',
-            self::STUDENT_CREATE => 'ph-plus-circle',
-            self::STUDENT_UPDATE => 'ph-pencil-simple',
-            self::STUDENT_DELETE => 'ph-trash',
-            self::ATTENDANCE_VIEW => 'ph-eye',
+
+            self::STAFF_VIEW,
+            self::BRANCH_VIEW,
+            self::SUBJECT_VIEW,
+            self::GROUP_VIEW,
+            self::STUDENT_VIEW,
+            self::ATTENDANCE_VIEW,
+            self::EXAM_VIEW => 'ph-eye',
+
+            self::STAFF_CREATE,
+            self::BRANCH_CREATE,
+            self::SUBJECT_CREATE,
+            self::GROUP_CREATE,
+            self::STUDENT_CREATE,
+            self::EXAM_CREATE => 'ph-plus-circle',
+
+            self::STAFF_UPDATE,
+            self::BRANCH_UPDATE,
+            self::SUBJECT_UPDATE,
+            self::GROUP_UPDATE,
+            self::STUDENT_UPDATE,
+            self::EXAM_UPDATE => 'ph-pencil-simple',
+
+            self::STAFF_DELETE,
+            self::BRANCH_DELETE,
+            self::SUBJECT_DELETE,
+            self::GROUP_DELETE,
+            self::STUDENT_DELETE,
+            self::EXAM_DELETE,
+            self::PAYMENT_DELETE => 'ph-trash',
+
             self::ATTENDANCE_MANAGE => 'ph-scan',
             self::ATTENDANCE_CLOSE_DAY => 'ph-lock',
             self::TIMETABLE_VIEW => 'ph-calendar-week',
             self::VIEW_REPORTS => 'ph-chart-bar',
             self::MANAGE_SETTINGS => 'ph-gear',
 
-            self::PAYMENT_VIEW    => 'ph-eye',
-            self::PAYMENT_MANAGE  => 'ph-currency-circle-dollar',
+            self::PAYMENT_VIEW => 'ph-eye',
+            self::PAYMENT_MANAGE => 'ph-currency-circle-dollar',
             self::PAYMENT_RECEIPT => 'ph-receipt',
-            self::PAYMENT_DELETE  => 'ph-trash',
+
+            self::EXAM_PUBLISH => 'ph-paper-plane-tilt',
+            self::EXAM_MANAGE_QUESTIONS => 'ph-list-checks',
         };
     }
 
+    // =============================================
+    // Options
+    // =============================================
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn(self $case) => [$case->value => $case->label()])
+            ->mapWithKeys(fn (self $case) => [$case->value => $case->label()])
             ->toArray();
     }
 
     public static function grouped(): array
     {
         $result = [];
+
         foreach (self::cases() as $case) {
             $result[$case->group()][] = $case;
         }
+
         return $result;
     }
 
@@ -209,7 +282,7 @@ enum TeacherPermissionEnum: string
     }
 
     // =============================================
-    // 📌 Default Permissions for each Role
+    // Default Permissions
     // =============================================
     public static function forOwner(): array
     {
@@ -240,13 +313,17 @@ enum TeacherPermissionEnum: string
             self::ATTENDANCE_CLOSE_DAY->value,
 
             self::TIMETABLE_VIEW->value,
-
             self::VIEW_REPORTS->value,
 
             self::PAYMENT_VIEW->value,
             self::PAYMENT_MANAGE->value,
             self::PAYMENT_RECEIPT->value,
             self::PAYMENT_DELETE->value,
+
+            self::EXAM_VIEW->value,
+            self::EXAM_CREATE->value,
+            self::EXAM_UPDATE->value,
+            self::EXAM_MANAGE_QUESTIONS->value,
         ];
     }
 
@@ -262,10 +339,10 @@ enum TeacherPermissionEnum: string
             self::ATTENDANCE_CLOSE_DAY->value,
 
             self::TIMETABLE_VIEW->value,
-
             self::VIEW_REPORTS->value,
-
             self::PAYMENT_VIEW->value,
+
+            self::EXAM_VIEW->value,
         ];
     }
 

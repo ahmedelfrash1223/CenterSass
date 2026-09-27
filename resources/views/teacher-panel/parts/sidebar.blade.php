@@ -7,7 +7,8 @@
     <div class="navbar-wrapper">
         <div class="m-header">
             <a href="{{ route('teacher.dashboard') }}" class="b-brand text-primary">
-                <img style="max-height: 95px;" src="{{ asset('assets/teacherPanel/images/logo.png') }}" alt="logo image"/>
+                <img style="max-height: 95px;" src="{{ asset('assets/teacherPanel/images/logo.png') }}"
+                     alt="logo image"/>
             </a>
         </div>
         <div class="navbar-content">
@@ -129,6 +130,18 @@
                                 <i class="ph-duotone ph-currency-circle-dollar"></i>
                             </span>
                             <span class="pc-mtext">المدفوعات</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Exams Page --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::EXAM_VIEW))
+                    <li class="pc-item @yield('exams-active')">
+                        <a wire:navigate href="{{ route('teacher.exams.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-exam"></i>
+                            </span>
+                            <span class="pc-mtext">الامتحانات</span>
                         </a>
                     </li>
                 @endif
