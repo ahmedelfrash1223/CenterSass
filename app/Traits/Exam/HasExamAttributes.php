@@ -4,7 +4,7 @@ namespace App\Traits\Exam;
 
 trait HasExamAttributes
 {
-//    protected $guarded = [];
+    protected $guarded = [];
 
     protected $casts = [
         'starts_at' => 'datetime',

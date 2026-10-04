@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Exam extends Model
 {
-    use HasExamAttributes;
+//    use HasExamAttributes;
 
     public function teacher(): BelongsTo
     {
