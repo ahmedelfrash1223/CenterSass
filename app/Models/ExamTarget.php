@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ExamTarget extends Model
 {
-    use HasExamTargetAttributes;
+//    use HasExamTargetAttributes;
 
     public function exam(): BelongsTo
     {
