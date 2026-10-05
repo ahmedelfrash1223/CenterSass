@@ -10,6 +10,24 @@ class Exam extends Model
 {
 //    use HasExamAttributes;
 
+    #-----------------------------------------------------FILLABLE
+    protected $fillable = [
+        'teacher_id',
+        'created_by',
+        'title',
+        'description',
+        'instructions',
+        'duration',
+        'status',
+        'starts_at',
+        'ends_at',
+        'shuffle_questions',
+        'shuffle_options',
+        'show_result',
+        'total_marks',
+    ];
+
+    #-----------------------------------------------------RELATIONSHIPS
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'teacher_id');
