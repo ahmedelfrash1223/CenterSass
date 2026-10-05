@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('password');
             $table->integer('is_active')->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
