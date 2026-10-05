@@ -10,6 +10,17 @@ class ExamTarget extends Model
 {
 //    use HasExamTargetAttributes;
 
+    #-----------------------------------------------------FILLABLE
+    protected $fillable = [
+        'exam_id',
+        'branch_id',
+        'grade',
+        'teacher_subject_id',
+        'group_id',
+        'created_by'
+    ];
+
+    #-----------------------------------------------------RELATIONSHIPS
     public function exam(): BelongsTo
     {
         return $this->belongsTo(Exam::class);
