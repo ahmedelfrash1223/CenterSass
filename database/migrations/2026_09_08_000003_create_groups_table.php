@@ -18,9 +18,14 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->unsignedInteger('max_students')->default(0);
             $table->string('status', 20)->default('active');
+            $table->string('pricing_type', 30)->default('fixed_monthly');
+            $table->decimal('pricing_amount', 10, 2)->default(0);
+            $table->json('pricing_config')->nullable();
+            $table->boolean('has_pricing')->default(true);
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->timestamps();
+
             $table->unique(['teacher_id', 'name']);
             $table->index(['teacher_id', 'branch_id', 'status']);
         });

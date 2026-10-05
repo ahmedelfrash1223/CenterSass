@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('day', 20); // Saturday, Sunday, Monday, etc.
             $table->time('start_time');
             $table->time('end_time');
+            $table->decimal('hours', 3, 1)->default(1.0); // Duration in hours (e.g. 1.5, 2.0, 0.5)
             $table->foreignId('subject_id')->constrained('teacher_subjects')->cascadeOnDelete();
             $table->foreignId('teacher_id')->nullable()->constrained('teachers')->nullOnDelete();
             $table->timestamps();

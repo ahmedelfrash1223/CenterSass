@@ -28,8 +28,9 @@ return new class extends Migration
             $table->date('attendance_date');
             $table->time('check_in_time')->nullable();
             $table->string('status', 20)->default('present'); // present, late, absent, excused
+            $table->boolean('is_auto_closed')->default(false);
+            $table->timestamp('closed_at')->nullable();
             $table->text('notes')->nullable();
-
             $table->timestamps();
 
             // Prevent duplicate attendance per student/schedule/day
