@@ -19,16 +19,16 @@
                 <div class="card-body">
                     <h3 class="h6 mb-4">بيانات الحساب</h3>
                     <form wire:submit.prevent="save">
-                        @foreach(['name' => 'الاسم', 'username' => 'اسم المستخدم', 'email' => 'البريد الإلكتروني', 'phone' => 'رقم الهاتف'] as $field => $label)
+                        @foreach(['name' => 'الاسم', 'username' => 'اسم المستخدم', 'email' => 'البريد الإلكتروني'] as $field => $label)
                             <div class="student-profile-row" wire:key="student-field-{{ $field }}">
                                 <label for="profile-{{ $field }}" class="form-label mb-0">{{ $label }}</label>
                                 @if($editing === $field)
                                     <div class="flex-grow-1">
                                         <input id="profile-{{ $field }}"
-                                               type="{{ $field === 'email' ? 'email' : ($field === 'phone' ? 'tel' : 'text') }}"
+                                               type="{{ $field === 'email' ? 'email' : 'text' }}"
                                                wire:model="{{ $field }}"
                                                class="form-control @error($field) is-invalid @enderror"
-                                               maxlength="{{ $field === 'phone' ? '20' : '191' }}"
+                                               maxlength="191"
                                                aria-describedby="profile-error-{{ $field }}">
                                         <div id="profile-error-{{ $field }}">
                                             @error($field)

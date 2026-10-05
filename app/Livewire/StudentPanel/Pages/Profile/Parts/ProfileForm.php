@@ -20,8 +20,6 @@ class ProfileForm extends Component
 
     public string $email = '';
 
-    public string $phone = '';
-
     public string $current_password = '';
 
     public string $new_password = '';
@@ -47,14 +45,13 @@ class ProfileForm extends Component
         $this->name = $student->name;
         $this->username = $student->username;
         $this->email = $student->email;
-        $this->phone = $student->phone ?? '';
     }
 
     public function startEditing(string $field): void
     {
         $this->authenticatedStudent();
 
-        if (! in_array($field, ['name', 'username', 'email', 'phone'], true)) {
+        if (! in_array($field, ['name', 'username', 'email'], true)) {
             return;
         }
 
@@ -77,7 +74,6 @@ class ProfileForm extends Component
             'name' => ['required', 'string', 'min:2', 'max:191'],
             'username' => ['required', 'string', 'min:3', 'max:191', Rule::unique('students', 'username')->ignore($student)],
             'email' => ['required', 'email', 'max:191', Rule::unique('students', 'email')->ignore($student)],
-            'phone' => ['nullable', 'string', 'max:20', Rule::unique('students', 'phone')->ignore($student)],
         ], [
             'required' => 'هذا الحقل مطلوب.',
             'min' => 'هذا الحقل أقصر من الحد المسموح.',
@@ -85,14 +81,12 @@ class ProfileForm extends Component
             'email.email' => 'البريد الإلكتروني غير صالح.',
             'username.unique' => 'اسم المستخدم مستخدم بالفعل.',
             'email.unique' => 'البريد الإلكتروني مستخدم بالفعل.',
-            'phone.unique' => 'رقم الهاتف مستخدم بالفعل.',
         ]);
 
         $student->update([
             'name' => $this->name,
             'username' => $this->username,
             'email' => $this->email,
-            'phone' => $this->phone ?: null,
         ]);
 
         $this->loadStudentData();
