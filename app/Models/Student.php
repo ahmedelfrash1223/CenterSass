@@ -5,15 +5,19 @@ namespace App\Models;
 use App\Traits\Student\GeneratesBarcode;
 use App\Traits\Student\HasStudentPresentation;
 use App\Traits\Teacher\HasCreator;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Student extends Model
+class Student extends Authenticatable
 {
     use GeneratesBarcode, HasCreator, HasStudentPresentation;
+
+    protected $guard = 'student';
+
+    protected $rememberTokenName = '';
 
     protected $fillable = [
         'code',
@@ -54,7 +58,6 @@ class Student extends Model
     {
         return $this->belongsTo(Branch::class);
     }
-
 
     public function profile(): HasOne
     {
