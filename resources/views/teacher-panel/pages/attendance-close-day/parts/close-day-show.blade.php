@@ -3,7 +3,6 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <div class="row g-3 align-items-end">
-
                 {{-- Date --}}
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold text-body-secondary">
@@ -15,31 +14,21 @@
                 {{-- Actions --}}
                 <div class="col-md-9">
                     <div class="d-flex gap-2 justify-content-end align-items-center flex-wrap">
-
-                        <a href="{{ route('teacher.attendance.close-day.index') }}"
-                           wire:navigate
-                           class="btn btn-light border">
-                            <i class="ph-duotone ph-arrow-right me-1"></i>
-                            رجوع
+                        <a href="{{ route('teacher.attendance.close-day.index') }}" wire:navigate class="btn btn-light border">
+                            <i class="ph-duotone ph-arrow-right me-1"></i>رجوع
                         </a>
 
                         @if($isClosed)
                             <button type="button" class="btn btn-secondary" disabled>
-                                <i class="ph-duotone ph-lock me-1"></i>
-                                المجموعة مقفلة
+                                <i class="ph-duotone ph-lock me-1"></i>المجموعة مقفلة
                             </button>
                         @else
-                            <button type="button"
-                                    wire:click="confirmCloseGroup"
-                                    class="btn btn-warning">
-                                <i class="ph-duotone ph-lock-key me-1"></i>
-                                تقفيل المجموعة
+                            <button type="button" wire:click="confirmCloseGroup" class="btn btn-warning">
+                                <i class="ph-duotone ph-lock-key me-1"></i>تقفيل المجموعة
                             </button>
                         @endif
-
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -59,6 +48,7 @@
         </div>
     @endif
 
+    {{-- Confirm Close Group --}}
     @if($confirmingClose)
         <div class="alert alert-warning d-flex align-items-center gap-3 mb-3">
             <i class="ph-duotone ph-warning-circle fs-3"></i>
@@ -67,8 +57,7 @@
                 <p class="small mb-0">سيتم تسجيل غياب لكل الطلاب اللي لم يحضروا.</p>
             </div>
             <div class="d-flex gap-2">
-                <button type="button" wire:click="closeGroup" wire:loading.attr="disabled"
-                        class="btn btn-sm btn-warning">
+                <button type="button" wire:click="closeGroup" wire:loading.attr="disabled" class="btn btn-sm btn-warning">
                     <span wire:loading.remove wire:target="closeGroup">
                         <i class="ph-duotone ph-lock me-1"></i>تأكيد
                     </span>
@@ -76,23 +65,21 @@
                         <span class="spinner-border spinner-border-sm"></span>
                     </span>
                 </button>
-                <button type="button" wire:click="cancelClose" class="btn btn-sm btn-outline-secondary">
-                    إلغاء
-                </button>
+                <button type="button" wire:click="cancelClose" class="btn btn-sm btn-outline-secondary">إلغاء</button>
             </div>
         </div>
     @endif
 
+    {{-- Confirm Reopen Schedule --}}
     @if($confirmingReopenId)
         <div class="alert alert-warning d-flex align-items-center gap-3 mb-3">
             <i class="ph-duotone ph-lock-open fs-3"></i>
             <div class="flex-grow-1">
                 <strong>فتح الحصة؟</strong>
-                <p class="small mb-0">سيتم حذف كل سجلات الغياب التلقائية. هذا الإجراء لا يمكن التراجع عنه.</p>
+                <p class="small mb-0">سيتم حذف سجلات الغياب التلقائية الخاصة بهذه الحصة.</p>
             </div>
             <div class="d-flex gap-2">
-                <button type="button" wire:click="reopenSchedule({{ $confirmingReopenId }})"
-                        wire:loading.attr="disabled" class="btn btn-sm btn-warning">
+                <button type="button" wire:click="reopenSchedule({{ $confirmingReopenId }})" wire:loading.attr="disabled" class="btn btn-sm btn-warning">
                     <span wire:loading.remove wire:target="reopenSchedule">
                         <i class="ph-duotone ph-lock-open me-1"></i>تأكيد
                     </span>
@@ -100,9 +87,53 @@
                         <span class="spinner-border spinner-border-sm"></span>
                     </span>
                 </button>
-                <button type="button" wire:click="cancelClose" class="btn btn-sm btn-outline-secondary">
-                    إلغاء
-                </button>
+                <button type="button" wire:click="cancelClose" class="btn btn-sm btn-outline-secondary">إلغاء</button>
+            </div>
+        </div>
+    @endif
+
+    {{-- Cancel Schedule Form --}}
+    @if($cancellingScheduleId)
+        <div class="card border-warning shadow-sm mb-4">
+            <div class="card-header bg-warning-subtle d-flex align-items-center gap-2">
+                <i class="ph-duotone ph-calendar-x fs-4 text-warning-emphasis"></i>
+                <h6 class="mb-0 fw-bold">إلغاء الحصة</h6>
+            </div>
+            <div class="card-body">
+                <form wire:submit="cancelSchedule">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label fw-semibold">سبب الإلغاء <span class="text-danger">*</span></label>
+                            <select wire:model="cancellationReason" class="form-select">
+                                <option value="">اختر سبب الإلغاء</option>
+                                @foreach($cancellationReasons as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('cancellationReason')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label fw-semibold">ملاحظات إضافية <span class="text-body-secondary">(اختياري)</span></label>
+                            <textarea wire:model="cancellationNotes" class="form-control" rows="2" maxlength="1000" placeholder="اكتب تفاصيل إضافية عن سبب الإلغاء..."></textarea>
+                            @error('cancellationNotes')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <button type="button" wire:click="cancelClose" class="btn btn-light border">إلغاء العملية</button>
+                        <button type="submit" class="btn btn-warning" wire:loading.attr="disabled" wire:target="cancelSchedule">
+                            <span wire:loading.remove wire:target="cancelSchedule">
+                                <i class="ph-duotone ph-calendar-x me-1"></i>تأكيد إلغاء الحصة
+                            </span>
+                            <span wire:loading wire:target="cancelSchedule">
+                                <span class="spinner-border spinner-border-sm me-1"></span>جارٍ الإلغاء...
+                            </span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     @endif
@@ -112,8 +143,7 @@
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary"
-                         style="width: 48px; height: 48px; flex-shrink: 0;">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary" style="width: 48px; height: 48px; flex-shrink: 0;">
                         <i class="ph-duotone ph-student fs-4"></i>
                     </div>
                     <div>
@@ -123,12 +153,10 @@
                 </div>
             </div>
         </div>
-
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-success-subtle text-success"
-                         style="width: 48px; height: 48px; flex-shrink: 0;">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-success-subtle text-success" style="width: 48px; height: 48px; flex-shrink: 0;">
                         <i class="ph-duotone ph-check-circle fs-4"></i>
                     </div>
                     <div>
@@ -138,12 +166,10 @@
                 </div>
             </div>
         </div>
-
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-warning-subtle text-warning"
-                         style="width: 48px; height: 48px; flex-shrink: 0;">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-warning-subtle text-warning" style="width: 48px; height: 48px; flex-shrink: 0;">
                         <i class="ph-duotone ph-clock fs-4"></i>
                     </div>
                     <div>
@@ -153,12 +179,10 @@
                 </div>
             </div>
         </div>
-
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-danger-subtle text-danger"
-                         style="width: 48px; height: 48px; flex-shrink: 0;">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-danger-subtle text-danger" style="width: 48px; height: 48px; flex-shrink: 0;">
                         <i class="ph-duotone ph-x-circle fs-4"></i>
                     </div>
                     <div>
@@ -178,9 +202,7 @@
                     <i class="ph-duotone ph-calendar-check fs-4 text-primary"></i>
                     <h6 class="mb-0 fw-bold">
                         حصص اليوم
-                        <span class="badge bg-primary text-white ms-2">
-                            {{ $stats['schedule_count'] }}
-                        </span>
+                        <span class="badge bg-primary text-white ms-2">{{ $stats['schedule_count'] }}</span>
                     </h6>
                 </div>
             </div>
@@ -188,65 +210,80 @@
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">الحصة</th>
-                            <th>الوقت</th>
-                            <th class="text-center">حضور</th>
-                            <th class="text-center">تأخير</th>
-                            <th class="text-center">غياب</th>
-                            <th class="text-center">لم يُسجَّل</th>
-                            <th class="text-center">الحالة</th>
-                            <th class="text-center">إجراءات</th>
-                        </tr>
+                            <tr>
+                                <th class="ps-4">الحصة</th>
+                                <th>الوقت</th>
+                                <th class="text-center">حضور</th>
+                                <th class="text-center">تأخير</th>
+                                <th class="text-center">غياب</th>
+                                <th class="text-center">لم يُسجَّل</th>
+                                <th class="text-center">الحالة</th>
+                                <th class="text-center">إجراءات</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @foreach($stats['schedules'] as $row)
-                            <tr wire:key="schedule-{{ $row['schedule']->id }}">
-                                <td class="ps-4">
-                                    <span class="fw-semibold">
-                                        {{ $row['schedule']->subject?->subject_label ?? 'حصة' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <small class="text-body-secondary">
-                                        {{ $row['schedule']->start_time->format('H:i') }} -
-                                        {{ $row['schedule']->end_time->format('H:i') }}
-                                    </small>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-success text-white">{{ $row['present'] }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-warning text-dark">{{ $row['late'] }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-danger text-white">{{ $row['absent'] }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ $row['not_recorded'] }}</span>
-                                </td>
-                                <td class="text-center">
-                                    @if($row['is_closed'])
-                                        <span class="badge bg-success-subtle text-success-emphasis">
-                                            <i class="ph-duotone ph-lock me-1"></i>مقفلة
-                                        </span>
-                                    @else
-                                        <span class="badge bg-secondary-subtle text-secondary-emphasis">
-                                            مفتوحة
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if($row['is_closed'])
-                                        <button type="button"
-                                                wire:click="confirmReopenSchedule({{ $row['schedule']->id }})"
-                                                class="btn btn-sm btn-outline-warning">
-                                            <i class="ph-duotone ph-lock-open me-1"></i>فتح
-                                        </button>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
+                            @foreach($stats['schedules'] as $row)
+                                <tr wire:key="schedule-{{ $row['schedule']->id }}">
+                                    <td class="ps-4">
+                                        <span class="fw-semibold">{{ $row['schedule']->subject?->subject_label ?? 'حصة' }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-body-secondary">
+                                            {{ $row['schedule']->start_time->format('H:i') }} - {{ $row['schedule']->end_time->format('H:i') }}
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success text-white">{{ $row['present'] }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning text-dark">{{ $row['late'] }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-danger text-white">{{ $row['absent'] }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ $row['not_recorded'] }}</span>
+                                    </td>
+
+                                    {{-- Schedule Status --}}
+                                    <td class="text-center">
+                                        @if($row['is_cancelled'])
+                                            <span class="badge bg-danger-subtle text-danger-emphasis">
+                                                <i class="ph-duotone ph-calendar-x me-1"></i>ملغاة
+                                            </span>
+                                            <div class="small text-body-secondary mt-1">
+                                                {{ $row['schedule']->cancellation_reason?->label() ?? '—' }}
+                                            </div>
+                                            @if($row['schedule']->cancellation_notes)
+                                                <div class="small text-body-secondary mt-1">{{ $row['schedule']->cancellation_notes }}</div>
+                                            @endif
+                                        @elseif($row['is_closed'])
+                                            <span class="badge bg-success-subtle text-success-emphasis">
+                                                <i class="ph-duotone ph-lock me-1"></i>مقفلة
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary-subtle text-secondary-emphasis">مفتوحة</span>
+                                        @endif
+                                    </td>
+
+                                    {{-- Schedule Actions --}}
+                                    <td class="text-center">
+                                        @if($row['is_cancelled'])
+                                            <button type="button" wire:click="restoreCancelledSchedule({{ $row['schedule']->id }})" wire:loading.attr="disabled" class="btn btn-sm btn-outline-success" @if($isClosed) disabled @endif>
+                                                <i class="ph-duotone ph-arrow-counter-clockwise me-1"></i>إعادة الحصة
+                                            </button>
+                                        @elseif($row['is_closed'])
+                                            <button type="button" wire:click="confirmReopenSchedule({{ $row['schedule']->id }})" class="btn btn-sm btn-outline-warning" @if($isClosed) disabled @endif>
+                                                <i class="ph-duotone ph-lock-open me-1"></i>فتح
+                                            </button>
+                                        @else
+                                            <button type="button" wire:click="startCancelSchedule({{ $row['schedule']->id }})" class="btn btn-sm btn-outline-danger" @if($isClosed) disabled @endif>
+                                                <i class="ph-duotone ph-calendar-x me-1"></i>إلغاء الحصة
+                                            </button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -261,89 +298,84 @@
                 <i class="ph-duotone ph-student fs-4 text-primary"></i>
                 <h6 class="mb-0 fw-bold">قائمة الطلاب</h6>
             </div>
-            <span class="badge bg-primary text-white">
-                {{ $students->count() }}
-            </span>
+            <span class="badge bg-primary text-white">{{ $students->count() }}</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                    <tr>
-                        <th class="ps-4" style="width: 60px;">#</th>
-                        <th>الطالب</th>
-                        <th>الحالة اليوم</th>
-                        <th>التفاصيل</th>
-                    </tr>
+                        <tr>
+                            <th class="ps-4" style="width: 60px;">#</th>
+                            <th>الطالب</th>
+                            <th>الحالة اليوم</th>
+                            <th>التفاصيل</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @forelse($students as $index => $student)
-                        @php
-                            $studentAttendances = $attendances->get($student->id, collect());
-                            $hasPresent = $studentAttendances->where('status', 'present')->isNotEmpty();
-                            $hasLate = $studentAttendances->where('status', 'late')->isNotEmpty();
-                            $hasAbsent = $studentAttendances->where('status', 'absent')->isNotEmpty();
-                        @endphp
-                        <tr wire:key="student-{{ $student->id }}">
-                            <td class="ps-4">
-                                <span class="text-body-secondary fw-semibold">{{ $index + 1 }}</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                                         style="width: 34px; height: 34px; font-size: 14px;">
-                                        {{ mb_substr($student->name, 0, 1) }}
+                        @forelse($students as $index => $student)
+                            @php
+                                $studentAttendances = $attendances->get($student->id, collect());
+                                $hasPresent = $studentAttendances->where('status', 'present')->isNotEmpty();
+                                $hasLate = $studentAttendances->where('status', 'late')->isNotEmpty();
+                                $hasAbsent = $studentAttendances->where('status', 'absent')->isNotEmpty();
+                            @endphp
+                            <tr wire:key="student-{{ $student->id }}">
+                                <td class="ps-4">
+                                    <span class="text-body-secondary fw-semibold">{{ $index + 1 }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 34px; height: 34px; font-size: 14px;">
+                                            {{ mb_substr($student->name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <span class="fw-semibold d-block small">{{ $student->name }}</span>
+                                            <small class="text-body-secondary">{{ $student->code }}</small>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <span class="fw-semibold d-block small">{{ $student->name }}</span>
-                                        <small class="text-body-secondary">{{ $student->code }}</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                @if($hasPresent)
-                                    <span class="badge bg-success-subtle text-success-emphasis">
-                                        <i class="ph-duotone ph-check-circle me-1"></i>حاضر
-                                    </span>
-                                @elseif($hasLate)
-                                    <span class="badge bg-warning-subtle text-warning-emphasis">
-                                        <i class="ph-duotone ph-clock me-1"></i>متأخر
-                                    </span>
-                                @elseif($hasAbsent)
-                                    <span class="badge bg-danger-subtle text-danger-emphasis">
-                                        <i class="ph-duotone ph-x-circle me-1"></i>غايب
-                                    </span>
-                                @else
-                                    <span class="badge bg-secondary-subtle text-secondary-emphasis">
-                                        لم يُسجَّل
-                                    </span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($studentAttendances->isNotEmpty())
-                                    <div class="d-flex flex-wrap gap-1">
-                                        @foreach($studentAttendances as $att)
-                                            <span class="badge bg-{{ $att->status_color }}-subtle text-{{ $att->status_color }}-emphasis small">
-                                                {{ $att->schedule?->subject?->subject_label ?? 'حصة' }}
-                                                @if($att->check_in_time)
-                                                    - {{ $att->check_in_time }}
-                                                @endif
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <small class="text-body-secondary">—</small>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-5">
-                                <i class="ph-duotone ph-users fs-1 d-block mb-2 text-body-secondary"></i>
-                                <h6 class="mb-1">لا يوجد طلاب نشطون</h6>
-                            </td>
-                        </tr>
-                    @endforelse
+                                </td>
+                                <td>
+                                    @if($hasPresent)
+                                        <span class="badge bg-success-subtle text-success-emphasis">
+                                            <i class="ph-duotone ph-check-circle me-1"></i>حاضر
+                                        </span>
+                                    @elseif($hasLate)
+                                        <span class="badge bg-warning-subtle text-warning-emphasis">
+                                            <i class="ph-duotone ph-clock me-1"></i>متأخر
+                                        </span>
+                                    @elseif($hasAbsent)
+                                        <span class="badge bg-danger-subtle text-danger-emphasis">
+                                            <i class="ph-duotone ph-x-circle me-1"></i>غايب
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis">لم يُسجَّل</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($studentAttendances->isNotEmpty())
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach($studentAttendances as $att)
+                                                <span class="badge bg-{{ $att->status_color }}-subtle text-{{ $att->status_color }}-emphasis small">
+                                                    {{ $att->schedule?->subject?->subject_label ?? 'حصة' }}
+                                                    @if($att->check_in_time)
+                                                        - {{ $att->check_in_time }}
+                                                    @endif
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <small class="text-body-secondary">—</small>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <i class="ph-duotone ph-users fs-1 d-block mb-2 text-body-secondary"></i>
+                                    <h6 class="mb-1">لا يوجد طلاب نشطون</h6>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

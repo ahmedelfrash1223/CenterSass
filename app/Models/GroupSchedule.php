@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Teacher\ScheduleCancellationReasonEnum;
 use App\Traits\GroupSchedule\FormatsDuration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,12 +19,20 @@ class GroupSchedule extends Model
         'subject_id',
         'teacher_id',
         'hours',
+        'is_cancelled',
+        'cancellation_reason',
+        'cancellation_notes',
+        'cancelled_at',
+        'cancelled_by',
     ];
 
     protected $casts = [
         'hours' => 'decimal:1',
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
+        'is_cancelled' => 'boolean',
+        'cancellation_reason' => ScheduleCancellationReasonEnum::class,
+        'cancelled_at' => 'datetime',
     ];
 
     public function group(): BelongsTo
@@ -39,5 +48,10 @@ class GroupSchedule extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'teacher_id');
+    }
+
+    public function canceller(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'cancelled_by');
     }
 }
