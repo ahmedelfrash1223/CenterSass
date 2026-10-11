@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Teacher\TeacherPermissionEnum;
+use App\Http\Controllers\TeacherPanel\AssignmentController;
 use App\Http\Controllers\TeacherPanel\AttendanceCloseDayController;
 use App\Http\Controllers\TeacherPanel\AttendanceController;
 use App\Http\Controllers\TeacherPanel\BookingController;
@@ -180,6 +181,22 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
 
     Route::middleware('teacher.permission:'.TeacherPermissionEnum::BOOKING_UPDATE->value)->group(function () {
         Route::get('bookings/{booking}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
+    });
+
+    // =============================================
+    // Assignments (المتابعة)
+    // =============================================
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::ASSIGNMENT_CREATE->value)->group(function () {
+        Route::get('assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');
+    });
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::ASSIGNMENT_VIEW->value)->group(function () {
+        Route::get('assignments', [AssignmentController::class, 'index'])->name('assignments.index');
+        Route::get('assignments/{assignment}', [AssignmentController::class, 'show'])->name('assignments.show');
+    });
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::ASSIGNMENT_UPDATE->value)->group(function () {
+        Route::get('assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
     });
 
 });

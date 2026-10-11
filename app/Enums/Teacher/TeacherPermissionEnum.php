@@ -99,6 +99,15 @@ enum TeacherPermissionEnum: string
     case BOOKING_CONFIRM = 'bookings.confirm';
 
     // =============================================
+    // Assignments
+    // =============================================
+    case ASSIGNMENT_VIEW = 'assignments.view';
+    case ASSIGNMENT_CREATE = 'assignments.create';
+    case ASSIGNMENT_UPDATE = 'assignments.update';
+    case ASSIGNMENT_DELETE = 'assignments.delete';
+    case ASSIGNMENT_GRADE = 'assignments.grade';
+
+    // =============================================
     // Labels
     // =============================================
     public function label(): string
@@ -157,6 +166,12 @@ enum TeacherPermissionEnum: string
             self::BOOKING_UPDATE => 'تعديل حجز',
             self::BOOKING_DELETE => 'حذف حجز',
             self::BOOKING_CONFIRM => 'تأكيد الحجز',
+
+            self::ASSIGNMENT_VIEW => 'عرض المتابعة',
+            self::ASSIGNMENT_CREATE => 'إضافة متابعة',
+            self::ASSIGNMENT_UPDATE => 'تعديل متابعة',
+            self::ASSIGNMENT_DELETE => 'حذف متابعة',
+            self::ASSIGNMENT_GRADE => 'تقييم الطلاب',
         };
     }
 
@@ -220,6 +235,12 @@ enum TeacherPermissionEnum: string
             self::BOOKING_UPDATE,
             self::BOOKING_DELETE,
             self::BOOKING_CONFIRM => 'الحجوزات',
+
+            self::ASSIGNMENT_VIEW,
+            self::ASSIGNMENT_CREATE,
+            self::ASSIGNMENT_UPDATE,
+            self::ASSIGNMENT_DELETE,
+            self::ASSIGNMENT_GRADE => 'المتابعة',
         };
     }
 
@@ -279,6 +300,12 @@ enum TeacherPermissionEnum: string
             self::BOOKING_UPDATE => 'ph-pencil-simple',
             self::BOOKING_DELETE => 'ph-trash',
             self::BOOKING_CONFIRM => 'ph-check-circle',
+
+            self::ASSIGNMENT_VIEW => 'ph-eye',
+            self::ASSIGNMENT_CREATE => 'ph-plus-circle',
+            self::ASSIGNMENT_UPDATE => 'ph-pencil-simple',
+            self::ASSIGNMENT_DELETE => 'ph-trash',
+            self::ASSIGNMENT_GRADE => 'ph-check-circle',
         };
     }
 
@@ -356,6 +383,11 @@ enum TeacherPermissionEnum: string
             self::BOOKING_CREATE->value,
             self::BOOKING_UPDATE->value,
             self::BOOKING_CONFIRM->value,
+
+            self::ASSIGNMENT_VIEW->value,
+            self::ASSIGNMENT_CREATE->value,
+            self::ASSIGNMENT_UPDATE->value,
+            self::ASSIGNMENT_GRADE->value,
         ];
     }
 
@@ -378,6 +410,7 @@ enum TeacherPermissionEnum: string
 
             self::BOOKING_VIEW->value,
             self::BOOKING_CREATE->value,
+            self::ASSIGNMENT_VIEW->value,
         ];
     }
 

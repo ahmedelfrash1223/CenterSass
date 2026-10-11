@@ -84,4 +84,9 @@ class Group extends Model
     {
         return $this->hasMany(InvoiceItem::class);
     }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class);
+    }
 }

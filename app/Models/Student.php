@@ -89,4 +89,16 @@ class Student extends Authenticatable
     {
         return $this->hasMany(Booking::class, 'confirmed_student_id');
     }
+
+    public function assignments(): BelongsToMany
+    {
+        return $this->belongsToMany(Assignment::class, 'assignment_student')
+            ->withPivot(['score', 'grade', 'notes', 'graded_by', 'graded_at'])
+            ->withTimestamps();
+    }
+
+    public function assignmentGrades(): HasMany
+    {
+        return $this->hasMany(AssignmentStudent::class);
+    }
 }

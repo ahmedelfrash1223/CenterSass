@@ -36,17 +36,7 @@
                     </li>
                 @endif
 
-                {{-- Bookings Page --}}
-                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::BOOKING_VIEW))
-                    <li class="pc-item @yield('bookings-active')">
-                        <a wire:navigate href="{{ route('teacher.bookings.index') }}" class="pc-link">
-                            <span class="pc-micon">
-                                <i class="ph-duotone ph-clipboard-text"></i>
-                            </span>
-                            <span class="pc-mtext">الحجوزات</span>
-                        </a>
-                    </li>
-                @endif
+
 
                 {{-- Branches Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::BRANCH_VIEW))
@@ -56,6 +46,18 @@
                                 <i class="ph-duotone ph-map-pin-line"></i>
                             </span>
                             <span class="pc-mtext">الأفرع</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Bookings Page --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::BOOKING_VIEW))
+                    <li class="pc-item @yield('bookings-active')">
+                        <a wire:navigate href="{{ route('teacher.bookings.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-clipboard-text"></i>
+                            </span>
+                            <span class="pc-mtext">الحجوزات</span>
                         </a>
                     </li>
                 @endif
@@ -130,6 +132,18 @@
                                 <i class="ph-duotone ph-lock"></i>
                             </span>
                             <span class="pc-mtext">تقفيل اليوم</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Assignments Page --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::ASSIGNMENT_VIEW))
+                    <li class="pc-item @yield('assignments-active')">
+                        <a wire:navigate href="{{ route('teacher.assignments.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-check-square"></i>
+                            </span>
+                            <span class="pc-mtext">المتابعة</span>
                         </a>
                     </li>
                 @endif
