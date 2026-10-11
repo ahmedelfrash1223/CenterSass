@@ -11,38 +11,47 @@ use App\Models\Student;
 use App\Models\StudentProfile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class StudentUpdate extends Component
 {
-    use HasStudentGroupValidation;
     use HasStudentGroupSync;
+    use HasStudentGroupValidation;
     use LoadsStudentFormData;
 
     public Student $student;
 
     public string $name = '';
-    public string $username = '';
-    public string $email = '';
+
     public string $phone = '';
-    public string $password = '';
-    public string $password_confirmation = '';
+
     public string $grade = '';
+
     public string $branch_id = '';
+
     public int $is_active = 1;
+
     public array $group_ids = [];
 
     public string $guardian_name = '';
+
     public string $guardian_phone = '';
+
     public string $guardian_relation = '';
+
     public string $school_name = '';
+
     public string $address = '';
+
     public string $city = '';
+
     public string $notes = '';
 
     public bool $sectionBasic = true;
+
     public bool $sectionProfile = false;
+
     public bool $sectionGroups = true;
 
     public function mount(Student $student): void
@@ -56,7 +65,7 @@ class StudentUpdate extends Component
 
         abort_unless($student->teacher_id === $user->getOwnerId(), 404);
 
-        if (!$user->isOwner()) {
+        if (! $user->isOwner()) {
             abort_unless(
                 in_array($student->branch_id, $user->getAccessibleBranchIds()),
                 404
@@ -67,8 +76,6 @@ class StudentUpdate extends Component
 
         $this->student = $student;
         $this->name = $student->name;
-        $this->username = $student->username;
-        $this->email = $student->email;
         $this->phone = $student->phone ?? '';
         $this->grade = $student->grade ?? '';
         $this->branch_id = (string) ($student->branch_id ?? '');
@@ -76,7 +83,7 @@ class StudentUpdate extends Component
 
         $this->group_ids = $student->activeGroups()
             ->pluck('groups.id')
-            ->map(fn($id) => (string) $id)
+            ->map(fn ($id) => (string) $id)
             ->toArray();
 
         if ($student->profile) {
@@ -96,15 +103,13 @@ class StudentUpdate extends Component
 
     public function toggleSection(string $section): void
     {
-        $this->{$section} = !$this->{$section};
+        $this->{$section} = ! $this->{$section};
     }
-
 
     public function updatedGrade(): void
     {
         $this->group_ids = [];
     }
-
 
     public function updatedBranchId(): void
     {
@@ -122,57 +127,52 @@ class StudentUpdate extends Component
 
         abort_unless($this->student->teacher_id === $user->getOwnerId(), 404);
 
-        if (!$user->isOwner()) {
+        if (! $user->isOwner()) {
             abort_unless(
                 in_array($this->student->branch_id, $user->getAccessibleBranchIds()),
                 404
             );
         }
 
-        $request = new UpdateStudentRequest();
+        $request = new UpdateStudentRequest;
         $request->merge(['student_id' => $this->student->id]);
 
         try {
             $this->validate($request->rules(), $request->messages());
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->openSectionsWithErrors();
             throw $e;
         }
 
-        if (!$user->hasAccessToBranch((int) $this->branch_id)) {
+        if (! $user->hasAccessToBranch((int) $this->branch_id)) {
             $this->addError('branch_id', 'الفرع غير متاح لك.');
             $this->sectionBasic = true;
+
             return;
         }
 
-        if (!$this->ensureGroupsAuthorized($this->group_ids)) {
+        if (! $this->ensureGroupsAuthorized($this->group_ids)) {
             $this->sectionGroups = true;
+
             return;
         }
 
         $capacityErrors = $this->validateGroupCapacity($this->student->id);
-        if (!empty($capacityErrors)) {
+        if (! empty($capacityErrors)) {
             $this->sectionGroups = true;
             $this->failWithCapacityErrors($capacityErrors);
+
             return;
         }
 
-        DB::transaction(function () use ($user) {
-            $data = [
-                'name'      => $this->name,
-                'username'  => $this->username,
-                'email'     => $this->email,
-                'phone'     => $this->phone ?: null,
-                'grade'     => $this->grade,
+        DB::transaction(function () {
+            $this->student->update([
+                'name' => $this->name,
+                'phone' => $this->phone ?: null,
+                'grade' => $this->grade,
                 'branch_id' => $this->branch_id,
                 'is_active' => (int) $this->is_active,
-            ];
-
-            if (!empty($this->password)) {
-                $data['password'] = Hash::make($this->password);
-            }
-
-            $this->student->update($data);
+            ]);
 
             $this->saveProfile($this->student);
             $this->syncStudentGroups($this->student, $this->group_ids);
@@ -187,13 +187,13 @@ class StudentUpdate extends Component
         StudentProfile::updateOrCreate(
             ['student_id' => $student->id],
             [
-                'guardian_name'     => $this->guardian_name ?: null,
-                'guardian_phone'    => $this->guardian_phone ?: null,
+                'guardian_name' => $this->guardian_name ?: null,
+                'guardian_phone' => $this->guardian_phone ?: null,
                 'guardian_relation' => $this->guardian_relation ?: null,
-                'school_name'       => $this->school_name ?: null,
-                'address'           => $this->address ?: null,
-                'city'              => $this->city ?: null,
-                'notes'             => $this->notes ?: null,
+                'school_name' => $this->school_name ?: null,
+                'address' => $this->address ?: null,
+                'city' => $this->city ?: null,
+                'notes' => $this->notes ?: null,
             ]
         );
     }
@@ -203,9 +203,9 @@ class StudentUpdate extends Component
         $errorFields = array_keys($this->getErrorBag()->toArray());
 
         $sectionMap = [
-            'sectionBasic'   => ['name', 'username', 'email', 'phone', 'password', 'password_confirmation', 'grade', 'branch_id', 'is_active'],
+            'sectionBasic' => ['name', 'phone', 'grade', 'branch_id', 'is_active'],
             'sectionProfile' => ['guardian_name', 'guardian_phone', 'guardian_relation', 'school_name', 'address', 'city', 'notes'],
-            'sectionGroups'  => ['group_ids'],
+            'sectionGroups' => ['group_ids'],
         ];
 
         foreach ($errorFields as $field) {

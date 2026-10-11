@@ -90,6 +90,15 @@ enum TeacherPermissionEnum: string
     case EXAM_MANAGE_QUESTIONS = 'exams.manage_questions';
 
     // =============================================
+    // Bookings
+    // =============================================
+    case BOOKING_VIEW = 'bookings.view';
+    case BOOKING_CREATE = 'bookings.create';
+    case BOOKING_UPDATE = 'bookings.update';
+    case BOOKING_DELETE = 'bookings.delete';
+    case BOOKING_CONFIRM = 'bookings.confirm';
+
+    // =============================================
     // Labels
     // =============================================
     public function label(): string
@@ -142,6 +151,12 @@ enum TeacherPermissionEnum: string
             self::EXAM_DELETE => 'حذف امتحان',
             self::EXAM_PUBLISH => 'نشر الامتحانات',
             self::EXAM_MANAGE_QUESTIONS => 'إدارة أسئلة الامتحانات',
+
+            self::BOOKING_VIEW => 'عرض الحجوزات',
+            self::BOOKING_CREATE => 'إضافة حجز',
+            self::BOOKING_UPDATE => 'تعديل حجز',
+            self::BOOKING_DELETE => 'حذف حجز',
+            self::BOOKING_CONFIRM => 'تأكيد الحجز',
         };
     }
 
@@ -199,6 +214,12 @@ enum TeacherPermissionEnum: string
             self::EXAM_DELETE,
             self::EXAM_PUBLISH,
             self::EXAM_MANAGE_QUESTIONS => 'الامتحانات',
+
+            self::BOOKING_VIEW,
+            self::BOOKING_CREATE,
+            self::BOOKING_UPDATE,
+            self::BOOKING_DELETE,
+            self::BOOKING_CONFIRM => 'الحجوزات',
         };
     }
 
@@ -252,6 +273,12 @@ enum TeacherPermissionEnum: string
 
             self::EXAM_PUBLISH => 'ph-paper-plane-tilt',
             self::EXAM_MANAGE_QUESTIONS => 'ph-list-checks',
+
+            self::BOOKING_VIEW => 'ph-eye',
+            self::BOOKING_CREATE => 'ph-plus-circle',
+            self::BOOKING_UPDATE => 'ph-pencil-simple',
+            self::BOOKING_DELETE => 'ph-trash',
+            self::BOOKING_CONFIRM => 'ph-check-circle',
         };
     }
 
@@ -324,6 +351,11 @@ enum TeacherPermissionEnum: string
             self::EXAM_CREATE->value,
             self::EXAM_UPDATE->value,
             self::EXAM_MANAGE_QUESTIONS->value,
+
+            self::BOOKING_VIEW->value,
+            self::BOOKING_CREATE->value,
+            self::BOOKING_UPDATE->value,
+            self::BOOKING_CONFIRM->value,
         ];
     }
 
@@ -343,6 +375,9 @@ enum TeacherPermissionEnum: string
             self::PAYMENT_VIEW->value,
 
             self::EXAM_VIEW->value,
+
+            self::BOOKING_VIEW->value,
+            self::BOOKING_CREATE->value,
         ];
     }
 

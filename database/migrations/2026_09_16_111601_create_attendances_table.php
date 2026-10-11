@@ -30,8 +30,6 @@ return new class extends Migration
             $table->string('status', 20)->default('present'); // present, late, absent, excused
             $table->boolean('is_auto_closed')->default(false);
             $table->timestamp('closed_at')->nullable();
-            $table->boolean('is_auto_closed')->default(false);
-            $table->timestamp('closed_at')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
 

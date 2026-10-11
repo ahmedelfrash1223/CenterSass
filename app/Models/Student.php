@@ -23,11 +23,8 @@ class Student extends Authenticatable
         'code',
         'barcode_digits',
         'uuid',
-        'username',
         'name',
-        'email',
         'phone',
-        'password',
         'grade',
         'branch_id',
         'is_active',
@@ -35,12 +32,9 @@ class Student extends Authenticatable
         'teacher_id',
     ];
 
-    protected $hidden = ['password'];
-
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
             'is_active' => 'integer',
         ];
     }
@@ -89,5 +83,10 @@ class Student extends Authenticatable
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'confirmed_student_id');
     }
 }

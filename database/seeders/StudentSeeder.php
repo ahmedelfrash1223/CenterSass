@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class StudentSeeder extends Seeder
@@ -16,12 +15,9 @@ class StudentSeeder extends Seeder
 
         Student::create([
             'teacher_id' => $teacher->id,
-            'uuid' => (string)Str::uuid(),
-            'code' => 'STD-' . strtoupper(Str::random(8)),
-            'username' => 'student',
+            'uuid' => (string) Str::uuid(),
+            'code' => 'STD-'.strtoupper(Str::random(8)),
             'name' => 'Demo Student',
-            'email' => 'student@example.com',
-            'password' => Hash::make('password'),
             'is_active' => 1,
         ]);
     }

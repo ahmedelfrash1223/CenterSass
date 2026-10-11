@@ -53,12 +53,8 @@
             </h6>
         </div>
         <div class="card-body p-4">
-            <x-card-code
-                :barcode="$student->barcode_value"
-                :qr="$student->qr_value"
-                :barcodeHeight="65"
-                title="الباركود"
-            />
+            <x-card-code :barcode="$student->barcode_value" :qr="$student->qr_value" :barcodeHeight="65"
+                title="الباركود" />
         </div>
     </div>
 
@@ -78,19 +74,11 @@
                             <span class="fw-semibold">{{ $student->name }}</span>
                         </div>
                         <div class="col-sm-6">
-                            <small class="text-muted d-block mb-1">اسم المستخدم</small>
-                            <span class="fw-semibold">{{ $student->username }}</span>
-                        </div>
-                        <div class="col-sm-6">
-                            <small class="text-muted d-block mb-1">البريد الإلكتروني</small>
-                            <a href="mailto:{{ $student->email }}"
-                               class="text-decoration-none small">{{ $student->email }}</a>
-                        </div>
-                        <div class="col-sm-6">
                             <small class="text-muted d-block mb-1">الهاتف</small>
                             @if($student->phone)
-                                <a href="tel:{{ $student->phone }}"
-                                   class="text-decoration-none small">{{ $student->phone }}</a>
+                                <a href="tel:{{ $student->phone }}" class="text-decoration-none small">
+                                    {{ $student->phone }}
+                                </a>
                             @else
                                 <span class="text-muted">غير محدد</span>
                             @endif
@@ -194,47 +182,47 @@
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead>
-                                <tr>
-                                    <th class="ps-4" style="width: 60px;">#</th>
-                                    <th>المجموعة</th>
-                                    <th>المرحلة</th>
-                                    <th>تاريخ الانضمام</th>
-                                    <th>الحالة</th>
-                                </tr>
+                                    <tr>
+                                        <th class="ps-4" style="width: 60px;">#</th>
+                                        <th>المجموعة</th>
+                                        <th>المرحلة</th>
+                                        <th>تاريخ الانضمام</th>
+                                        <th>الحالة</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($student->groups as $index => $group)
-                                    <tr wire:key="group-{{ $group->id }}">
-                                        <td class="ps-4">
-                                            <span class="text-muted fw-semibold">{{ $index + 1 }}</span>
-                                        </td>
-                                        <td><span class="fw-semibold">{{ $group->name }}</span></td>
-                                        <td>
-                                            @if($group->grade)
-                                                <span class="badge bg-info bg-opacity-10 text-info">
-                                                    {{ \App\Enums\Teacher\GradeEnum::tryFrom($group->grade)?->label() ?? $group->grade }}
+                                    @foreach($student->groups as $index => $group)
+                                        <tr wire:key="group-{{ $group->id }}">
+                                            <td class="ps-4">
+                                                <span class="text-muted fw-semibold">{{ $index + 1 }}</span>
+                                            </td>
+                                            <td><span class="fw-semibold">{{ $group->name }}</span></td>
+                                            <td>
+                                                @if($group->grade)
+                                                    <span class="badge bg-info bg-opacity-10 text-info">
+                                                        {{ \App\Enums\Teacher\GradeEnum::tryFrom($group->grade)?->label() ?? $group->grade }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-muted">—</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span class="text-muted small">
+                                                    <i class="ph-duotone ph-calendar me-1"></i>
+                                                    {{ $group->pivot->joined_at ? \Carbon\Carbon::parse($group->pivot->joined_at)->format('Y-m-d') : '—' }}
                                                 </span>
-                                            @else
-                                                <span class="text-muted">—</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <span class="text-muted small">
-                                                <i class="ph-duotone ph-calendar me-1"></i>
-                                                {{ $group->pivot->joined_at ? \Carbon\Carbon::parse($group->pivot->joined_at)->format('Y-m-d') : '—' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            @if($group->pivot->status === 'active')
-                                                <span class="badge bg-success bg-opacity-10 text-success">نشط</span>
-                                            @else
-                                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                                    {{ $group->pivot->status }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                            </td>
+                                            <td>
+                                                @if($group->pivot->status === 'active')
+                                                    <span class="badge bg-success bg-opacity-10 text-success">نشط</span>
+                                                @else
+                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                                        {{ $group->pivot->status }}
+                                                    </span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

@@ -3,8 +3,8 @@
 namespace App\Http\Requests\TeacherPanel;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class StoreStudentRequest extends FormRequest
 {
@@ -20,16 +20,7 @@ class StoreStudentRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'username' => [
-                'required', 'string', 'max:255', 'alpha_dash',
-                Rule::unique('students', 'username'),
-            ],
-            'email' => [
-                'required', 'email', 'max:255',
-                Rule::unique('students', 'email'),
-            ],
             'phone' => ['nullable', 'string', 'max:20'],
-            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
             'grade' => ['required', 'string'],
             'branch_id' => [
                 'required',
@@ -40,6 +31,14 @@ class StoreStudentRequest extends FormRequest
             'group_ids.*' => [
                 Rule::exists('groups', 'id')->where('teacher_id', $currentTeacher->getOwnerId()),
             ],
+
+            'guardian_name' => ['nullable', 'string', 'max:255'],
+            'guardian_phone' => ['nullable', 'string', 'max:20'],
+            'guardian_relation' => ['nullable', 'string', 'max:30'],
+            'school_name' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'notes' => ['nullable', 'string', 'max:2000'],
         ];
     }
 
@@ -47,13 +46,6 @@ class StoreStudentRequest extends FormRequest
     {
         return [
             'name.required' => 'اسم الطالب مطلوب.',
-            'username.required' => 'اسم المستخدم مطلوب.',
-            'username.unique' => 'اسم المستخدم مستخدم بالفعل.',
-            'username.alpha_dash' => 'اسم المستخدم يقبل أحرف وأرقام و - و _ فقط.',
-            'email.required' => 'البريد الإلكتروني مطلوب.',
-            'email.unique' => 'البريد الإلكتروني مستخدم بالفعل.',
-            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
-            'password.min' => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.',
             'grade.required' => 'المرحلة الدراسية مطلوبة.',
             'branch_id.required' => 'الفرع مطلوب.',
             'branch_id.in' => 'الفرع غير متاح لك.',

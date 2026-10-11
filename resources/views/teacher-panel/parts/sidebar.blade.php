@@ -1,5 +1,5 @@
 @php
-    use  Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Auth;
     $user = Auth::guard('teacher')->user();
 @endphp
 
@@ -8,7 +8,7 @@
         <div class="m-header">
             <a href="{{ route('teacher.dashboard') }}" class="b-brand text-primary">
                 <img style="max-height: 95px;" src="{{ asset('assets/teacherPanel/images/logo.png') }}"
-                     alt="logo image"/>
+                    alt="logo image" />
             </a>
         </div>
         <div class="navbar-content">
@@ -32,6 +32,18 @@
                                 <i class="ph-duotone ph-calendar"></i>
                             </span>
                             <span class="pc-mtext">جدول الأسبوع</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Bookings Page --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::BOOKING_VIEW))
+                    <li class="pc-item @yield('bookings-active')">
+                        <a wire:navigate href="{{ route('teacher.bookings.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-clipboard-text"></i>
+                            </span>
+                            <span class="pc-mtext">الحجوزات</span>
                         </a>
                     </li>
                 @endif
@@ -174,7 +186,8 @@
                                             <span
                                                 class="badge bg-{{ auth('teacher')->user()->role->color() }} bg-opacity-10 text-{{ Auth::guard('teacher')->user()->role->color() }}"
                                                 style="font-size: 10px;">
-                                                <i class="ph-duotone {{ Auth::guard('teacher')->user()->role->icon() }} me-1"></i>
+                                                <i
+                                                    class="ph-duotone {{ Auth::guard('teacher')->user()->role->icon() }} me-1"></i>
                                                 {{ auth('teacher')->user()->role->label() }}
                                             </span>
                                         </div>
