@@ -108,6 +108,21 @@ enum TeacherPermissionEnum: string
     case ASSIGNMENT_GRADE = 'assignments.grade';
 
     // =============================================
+    // Card Requests
+    // =============================================
+    case CARD_REQUEST_VIEW = 'card_requests.view';
+    case CARD_REQUEST_CREATE = 'card_requests.create';
+    case CARD_REQUEST_DELETE = 'card_requests.delete';
+
+    // =============================================
+    // Support Tickets
+    // =============================================
+    case SUPPORT_VIEW = 'support.view';
+    case SUPPORT_CREATE = 'support.create';
+    case SUPPORT_REPLY = 'support.reply';
+    case SUPPORT_CLOSE = 'support.close';
+
+    // =============================================
     // Labels
     // =============================================
     public function label(): string
@@ -172,6 +187,15 @@ enum TeacherPermissionEnum: string
             self::ASSIGNMENT_UPDATE => 'تعديل متابعة',
             self::ASSIGNMENT_DELETE => 'حذف متابعة',
             self::ASSIGNMENT_GRADE => 'تقييم الطلاب',
+
+            self::CARD_REQUEST_VIEW => 'عرض طلبات الكروت',
+            self::CARD_REQUEST_CREATE => 'طلب كروت',
+            self::CARD_REQUEST_DELETE => 'إلغاء طلب كروت',
+
+            self::SUPPORT_VIEW => 'عرض تذاكر الدعم',
+            self::SUPPORT_CREATE => 'إنشاء تذكرة دعم',
+            self::SUPPORT_REPLY => 'الرد على تذاكر الدعم',
+            self::SUPPORT_CLOSE => 'إغلاق تذاكر الدعم',
         };
     }
 
@@ -241,6 +265,15 @@ enum TeacherPermissionEnum: string
             self::ASSIGNMENT_UPDATE,
             self::ASSIGNMENT_DELETE,
             self::ASSIGNMENT_GRADE => 'المتابعة',
+
+            self::CARD_REQUEST_VIEW,
+            self::CARD_REQUEST_CREATE,
+            self::CARD_REQUEST_DELETE => 'طلبات الكروت',
+
+            self::SUPPORT_VIEW,
+            self::SUPPORT_CREATE,
+            self::SUPPORT_REPLY,
+            self::SUPPORT_CLOSE => 'الدعم الفني',
         };
     }
 
@@ -306,6 +339,15 @@ enum TeacherPermissionEnum: string
             self::ASSIGNMENT_UPDATE => 'ph-pencil-simple',
             self::ASSIGNMENT_DELETE => 'ph-trash',
             self::ASSIGNMENT_GRADE => 'ph-check-circle',
+
+            self::CARD_REQUEST_VIEW => 'ph-eye',
+            self::CARD_REQUEST_CREATE => 'ph-identification-card',
+            self::CARD_REQUEST_DELETE => 'ph-trash',
+
+            self::SUPPORT_VIEW => 'ph-eye',
+            self::SUPPORT_CREATE => 'ph-plus-circle',
+            self::SUPPORT_REPLY => 'ph-chat-circle',
+            self::SUPPORT_CLOSE => 'ph-lock',
         };
     }
 
@@ -388,6 +430,12 @@ enum TeacherPermissionEnum: string
             self::ASSIGNMENT_CREATE->value,
             self::ASSIGNMENT_UPDATE->value,
             self::ASSIGNMENT_GRADE->value,
+
+            self::CARD_REQUEST_VIEW->value,
+
+            self::SUPPORT_VIEW->value,
+            self::SUPPORT_CREATE->value,
+            self::SUPPORT_REPLY->value,
         ];
     }
 

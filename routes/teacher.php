@@ -6,6 +6,7 @@ use App\Http\Controllers\TeacherPanel\AttendanceCloseDayController;
 use App\Http\Controllers\TeacherPanel\AttendanceController;
 use App\Http\Controllers\TeacherPanel\BookingController;
 use App\Http\Controllers\TeacherPanel\BranchController;
+use App\Http\Controllers\TeacherPanel\CardRequestController;
 use App\Http\Controllers\TeacherPanel\ExamController;
 use App\Http\Controllers\TeacherPanel\GroupController;
 use App\Http\Controllers\TeacherPanel\InvoiceController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\TeacherPanel\PaymentController;
 use App\Http\Controllers\TeacherPanel\StaffController;
 use App\Http\Controllers\TeacherPanel\StudentController;
 use App\Http\Controllers\TeacherPanel\SubjectController;
+use App\Http\Controllers\TeacherPanel\SupportTicketController;
 use Illuminate\Support\Facades\Route;
 
 // =============================================
@@ -197,6 +199,33 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
 
     Route::middleware('teacher.permission:'.TeacherPermissionEnum::ASSIGNMENT_UPDATE->value)->group(function () {
         Route::get('assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
+    });
+
+    // =============================================
+    // Card Requests
+    // =============================================
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::CARD_REQUEST_CREATE->value)->group(function () {
+        Route::get('card-requests/create', [CardRequestController::class, 'create'])
+            ->name('card-requests.create');
+    });
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::CARD_REQUEST_VIEW->value)->group(function () {
+        Route::get('card-requests', [CardRequestController::class, 'index'])
+            ->name('card-requests.index');
+        Route::get('card-requests/{cardRequest}', [CardRequestController::class, 'show'])
+            ->name('card-requests.show');
+    });
+
+    // =============================================
+    // Support
+    // =============================================
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::SUPPORT_CREATE->value)->group(function () {
+        Route::get('support/create', [SupportTicketController::class, 'create'])->name('support.create');
+    });
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::SUPPORT_VIEW->value)->group(function () {
+        Route::get('support', [SupportTicketController::class, 'index'])->name('support.index');
+        Route::get('support/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
     });
 
 });

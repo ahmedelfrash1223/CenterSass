@@ -1,6 +1,14 @@
 @php
     use Illuminate\Support\Facades\Auth;
     $user = Auth::guard('teacher')->user();
+
+    $unreadSupport = $user
+        ? \App\Models\SupportTicketMessage::query()
+            ->whereNull('read_at')
+            ->where('sender_type', 'admin')
+            ->whereHas('ticket', fn($q) => $q->where('teacher_id', $user->getOwnerId()))
+            ->count()
+        : 0;
 @endphp
 
 <nav class="pc-sidebar">
@@ -160,6 +168,18 @@
                     </li>
                 @endif
 
+                {{-- Card Requests --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::CARD_REQUEST_VIEW))
+                    <li class="pc-item @yield('card-requests-active')">
+                        <a wire:navigate href="{{ route('teacher.card-requests.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-identification-card"></i>
+                            </span>
+                            <span class="pc-mtext">طلبات الكروت</span>
+                        </a>
+                    </li>
+                @endif
+
                 {{-- Exams Page --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::EXAM_VIEW))
                     <li class="pc-item @yield('exams-active')">
@@ -168,6 +188,31 @@
                                 <i class="ph-duotone ph-exam"></i>
                             </span>
                             <span class="pc-mtext">الامتحانات</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Support --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::SUPPORT_VIEW))
+                    <li class="pc-item @yield('support-active')">
+                        <a wire:navigate href="{{ route('teacher.support.index') }}" class="pc-link">
+                            <span class="pc-micon position-relative">
+                                <i class="ph-duotone ph-lifebuoy"></i>
+                                @livewire('teacher-panel.parts.sidebar-support-badge')
+                            </span>
+                            <span class="pc-mtext">
+                                الدعم الفني
+                                @php
+                                    $unreadCount = \App\Models\SupportTicketMessage::query()
+                                        ->whereNull('read_at')
+                                        ->where('sender_type', 'admin')
+                                        ->whereHas('ticket', fn($q) => $q->where('teacher_id', auth('teacher')->user()->getOwnerId()))
+                                        ->count();
+                                @endphp
+                                @if($unreadCount > 0)
+                                    <span class="badge bg-danger text-white ms-auto">{{ $unreadCount }}</span>
+                                @endif
+                            </span>
                         </a>
                     </li>
                 @endif
