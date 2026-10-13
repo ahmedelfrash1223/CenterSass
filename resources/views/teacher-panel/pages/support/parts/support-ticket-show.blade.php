@@ -1,142 +1,214 @@
 <div>
-    {{-- Header --}}
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card">
         <div class="card-body">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                <div>
-                    <h5 class="mb-2">{{ $ticket->subject }}</h5>
-                    <div class="d-flex flex-wrap gap-2">
-                        <span class="badge bg-{{ $ticket->status->color() }} {{ $ticket->status->textColor() }}">
-                            <i class="ph-duotone {{ $ticket->status->icon() }} me-1"></i>
-                            {{ $ticket->status->label() }}
-                        </span>
-                        <span class="badge bg-{{ $ticket->priority->color() }} {{ $ticket->priority->textColor() }}">
-                            {{ $ticket->priority->label() }}
-                        </span>
-                        <span class="badge bg-secondary text-white">
-                            <i class="ph-duotone {{ $ticket->category->icon() }} me-1"></i>
-                            {{ $ticket->category->label() }}
-                        </span>
-                        <span class="badge bg-primary text-white">
-                            {{ $ticket->reference }}
-                        </span>
-                    </div>
-                </div>
+            <div class="chat-wrapper">
+                <div class="chat-content">
 
-                <div class="d-flex gap-2">
-                    @if($canClose && !$ticket->isClosed())
-                        <button type="button" wire:click="closeTicket" wire:loading.attr="disabled"
-                            class="btn btn-outline-danger">
-                            <span wire:loading.remove wire:target="closeTicket">
-                                <i class="ph-duotone ph-lock me-1"></i>إغلاق التذكرة
+                    {{-- ============================
+                    Chat Header
+                    ============================ --}}
+                    <div class="d-flex align-items-center mb-3">
+                        <ul class="list-inline me-auto mb-0">
+                            <li class="list-inline-item">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="chat-avtar">
+                                            <img class="rounded-circle img-fluid wid-40"
+                                                src="{{ asset('assets/teacherPanel/images/favicon.png') }}"
+                                                alt="Classio" />
+                                            <i class="chat-badge bg-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 mx-3 d-none d-sm-inline-block">
+                                        <h6 class="mb-0">فريق دعم Classio</h6>
+                                        <span class="text-sm text-muted">{{ $ticket->reference }}</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <ul class="list-inline ms-auto mb-0">
+                            @if($canClose && !$ticket->isClosed())
+                                <li class="list-inline-item">
+                                    <button type="button" wire:click="closeTicket" wire:loading.attr="disabled"
+                                        class="avtar avtar-s btn-link-secondary border-0 bg-transparent"
+                                        title="إغلاق التذكرة">
+                                        <span wire:loading.remove wire:target="closeTicket">
+                                            <i class="ti ti-lock f-18"></i>
+                                        </span>
+                                        <span wire:loading wire:target="closeTicket">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </span>
+                                    </button>
+                                </li>
+                            @endif
+
+                            <li class="list-inline-item">
+                                <a href="{{ route('teacher.support.index') }}" wire:navigate
+                                    class="avtar avtar-s btn-link-secondary" title="رجوع">
+                                    <i class="ti ti-arrow-right f-18"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {{-- ============================
+                    Chat Message Board
+                    ============================ --}}
+                    <div class="card bg-body shadow-none mb-0">
+                        <div class="chat-message" id="cl-chat-scroll" wire:poll.5s>
+                            <div class="card-body">
+
+                                {{-- Date Separator --}}
+                                <div class="text-center mb-3">
+                                    <span class="text-muted small">
+                                        {{ $ticket->created_at?->translatedFormat('l، d F Y') }}
+                                    </span>
+                                </div>
+
+                                @foreach($messages as $message)
+                                    @php $isMine = $message->isFromTeacher(); @endphp
+
+                                    @if($isMine)
+                                        {{-- ============================
+                                        Message OUT (المدرس)
+                                        ============================ --}}
+                                        <div class="message-out" wire:key="msg-{{ $message->id }}">
+                                            <div class="d-flex align-items-end flex-column">
+                                                <p class="mb-1 text-muted">
+                                                    <small>{{ $message->created_at?->format('h:i A') }}</small>
+                                                </p>
+                                                <div class="message d-flex align-items-end flex-column">
+                                                    <div class="d-flex align-items-center mb-1 chat-msg">
+                                                        <div class="flex-grow-1 ms-3">
+                                                            <div class="msg-content bg-primary">
+                                                                <p class="mb-0">{!! nl2br(e($message->body)) !!}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        {{-- ============================
+                                        Message IN (فريق الدعم)
+                                        ============================ --}}
+                                        <div class="message-in" wire:key="msg-{{ $message->id }}">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0">
+                                                    <div class="chat-avtar">
+                                                        <img class="rounded-circle img-fluid wid-40"
+                                                            src="{{ asset('assets/teacherPanel/images/favicon.png') }}"
+                                                            alt="Classio" />
+                                                        <i class="chat-badge bg-success"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1 mx-3">
+                                                    <div class="d-flex align-items-start flex-column">
+                                                        <p class="mb-1 text-muted">
+                                                            Classio
+                                                            <small>{{ $message->created_at?->format('h:i A') }}</small>
+                                                        </p>
+                                                        <div class="message d-flex align-items-start flex-column">
+                                                            <div class="d-flex align-items-center mb-1 chat-msg">
+                                                                <div class="flex-grow-1 me-3">
+                                                                    <div class="msg-content card mb-0">
+                                                                        <p class="mb-0">{!! nl2br(e($message->body)) !!}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+
+                                {{-- Typing --}}
+                                <div wire:loading.delay.shortest wire:target="sendMessage" class="message-out"
+                                    style="display: none;">
+                                    <div class="d-flex align-items-end flex-column">
+                                        <div class="message d-flex align-items-end flex-column">
+                                            <div class="d-flex align-items-center mb-1 chat-msg">
+                                                <div class="flex-grow-1 ms-3">
+                                                    <div class="msg-content bg-primary">
+                                                        <p class="mb-0">
+                                                            <span class="typing-dot"></span>
+                                                            <span class="typing-dot"></span>
+                                                            <span class="typing-dot"></span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ============================
+                    Chat Footer
+                    ============================ --}}
+                    @if(!$ticket->isClosed())
+                        <div class="card-footer border-top pt-2 px-3 pb-0">
+                            <div class="input-group align-items-center">
+                                <input type="text" wire:model.defer="newMessage" wire:keydown.enter.prevent="sendMessage"
+                                    class="form-control shadow-none border-0 bg-transparent"
+                                    placeholder="اكتب رسالتك....." />
+
+                                <ul class="list-inline ms-auto mb-0">
+                                    <li class="list-inline-item">
+                                        <button type="button" wire:click="sendMessage" wire:loading.attr="disabled"
+                                            wire:target="sendMessage"
+                                            class="avtar avtar-s rounded-circlen btn btn-primary border-0">
+                                            <span wire:loading.remove wire:target="sendMessage">
+                                                <i class="ti ti-send f-18"></i>
+                                            </span>
+                                            <span wire:loading wire:target="sendMessage">
+                                                <span class="spinner-border spinner-border-sm"></span>
+                                            </span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-footer border-top text-center py-3">
+                            <span class="text-muted small">
+                                <i class="ti ti-lock me-1"></i>
+                                هذه التذكرة مغلقة ولا يمكن الرد عليها
                             </span>
-                            <span wire:loading wire:target="closeTicket">
-                                <span class="spinner-border spinner-border-sm me-1"></span>
-                            </span>
-                        </button>
+                        </div>
                     @endif
 
-                    <a href="{{ route('teacher.support.index') }}" wire:navigate class="btn btn-outline-secondary">
-                        <i class="ph-duotone ph-arrow-right me-1"></i>رجوع
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    @livewire('teacher-panel.parts.flash-message', [
-        'successKey' => 'support-success',
-        'errorKey' => 'support-error',
-    ])
 
-    {{-- Chat --}}
-    <div class="card border-0 shadow-sm support-chat-card">
-        <div class="card-body support-chat-body" id="support-chat-body">
-
-            {{-- رسالة البداية (التذكرة نفسها) --}}
-            @foreach($messages as $message)
-                @php $isMine = $message->isFromTeacher(); @endphp
-                <div class="chat-message {{ $isMine ? 'chat-mine' : 'chat-theirs' }}" wire:key="msg-{{ $message->id }}">
-                    <div class="chat-avatar {{ $isMine ? 'chat-avatar-mine' : 'chat-avatar-theirs' }}">
-                        @if($isMine)
-                            <i class="ph-duotone ph-user"></i>
-                        @else
-                            <i class="ph-duotone ph-headset"></i>
-                        @endif
-                    </div>
-                    <div class="chat-bubble {{ $isMine ? 'chat-bubble-mine' : 'chat-bubble-theirs' }}">
-                        <div class="chat-sender">
-                            {{ $isMine ? 'أنت' : 'فريق الدعم' }}
-                        </div>
-                        <div class="chat-text">
-                            {!! nl2br(e($message->body)) !!}
-                        </div>
-                        <div class="chat-time">
-                            <i class="ph-duotone ph-clock me-1"></i>
-                            {{ $message->created_at?->format('Y-m-d h:i A') }}
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-
-            {{-- Loading عند الإرسال --}}
-            <div wire:loading wire:target="sendMessage" class="chat-message chat-mine">
-                <div class="chat-avatar chat-avatar-mine">
-                    <i class="ph-duotone ph-user"></i>
-                </div>
-                <div class="chat-bubble chat-bubble-mine chat-bubble-typing">
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                </div>
-            </div>
-        </div>
-
-        {{-- Input --}}
-        @if(!$ticket->isClosed())
-            <div class="card-footer bg-transparent border-top p-3">
-                @error('newMessage')
-                    <div class="alert alert-danger small mb-2 py-2">{{ $message }}</div>
-                @enderror
-
-                <form wire:submit.prevent="sendMessage" class="d-flex align-items-end gap-2">
-                    <textarea wire:model.defer="newMessage" rows="1" class="form-control support-chat-input"
-                        placeholder="اكتب رسالتك هنا..." wire:keydown.enter.prevent="sendMessage"></textarea>
-
-                    <button type="submit" class="btn btn-primary support-chat-send" wire:loading.attr="disabled"
-                        wire:target="sendMessage">
-                        <span wire:loading.remove wire:target="sendMessage">
-                            <i class="ph-duotone ph-paper-plane-tilt"></i>
-                        </span>
-                        <span wire:loading wire:target="sendMessage">
-                            <span class="spinner-border spinner-border-sm"></span>
-                        </span>
-                    </button>
-                </form>
-                <small class="text-body-secondary d-block mt-2">
-                    <i class="ph-duotone ph-info me-1"></i>
-                    اضغط Enter للإرسال
-                </small>
-            </div>
-        @else
-            <div class="card-footer bg-transparent border-top p-3 text-center">
-                <div class="alert alert-secondary d-flex align-items-center justify-content-center gap-2 mb-0">
-                    <i class="ph-duotone ph-lock fs-5"></i>
-                    <span>هذه التذكرة مغلقة ولا يمكن الرد عليها.</span>
-                </div>
-            </div>
-        @endif
-    </div>
-
-    {{-- Auto scroll --}}
     @script
     <script>
-        function scrollChatToBottom() {
-            const el = document.getElementById('support-chat-body');
+        function scrollChatBottom() {
+            const el = document.getElementById('cl-chat-scroll');
             if (el) el.scrollTop = el.scrollHeight;
         }
-        scrollChatToBottom();
-        Livewire.hook('morph.updated', () => setTimeout(scrollChatToBottom, 100));
+
+        // scroll بعد أول mount
+        setTimeout(scrollChatBottom, 150);
+
+        // scroll بعد أي تحديث Livewire
+        Livewire.hook('morph.updated', () => {
+            setTimeout(scrollChatBottom, 100);
+        });
+
+        // scroll بعد إرسال رسالة
+        $wire.on('message-sent', () => {
+            setTimeout(scrollChatBottom, 150);
+        });
     </script>
     @endscript
 </div>
