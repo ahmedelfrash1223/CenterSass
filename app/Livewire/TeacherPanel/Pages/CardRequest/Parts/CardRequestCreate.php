@@ -7,6 +7,7 @@ use App\Enums\Teacher\GradeEnum;
 use App\Enums\Teacher\TeacherPermissionEnum;
 use App\Models\Branch;
 use App\Models\CardRequest;
+use App\Models\CardRequestItem;
 use App\Models\Group;
 use App\Models\Student;
 use App\Models\TeacherSubject;
@@ -22,15 +23,17 @@ class CardRequestCreate extends Component
 
     public string $groupSearch = '';
 
-    /** @var array<int> */
-    public array $selectedStudentIds = [];
+    public string $unit_price = '0';
 
-    /** @var array<int, bool> */
-    public array $openGroups = [];
+    public array $selectedGroupIds = [];
+
+    public array $selectedStudentIds = [];
 
     public string $notes = '';
 
     public bool $confirming = false;
+
+    public array $studentsWithExistingCards = [];
 
     public function mount(): void
     {
@@ -41,6 +44,10 @@ class CardRequestCreate extends Component
             403
         );
     }
+
+    // ============================================
+    // Data
+    // ============================================
 
     protected function accessibleBranches()
     {
@@ -101,39 +108,84 @@ class CardRequestCreate extends Component
 
     protected function studentsInGroup(Group $group)
     {
-        $query = $group->students()
+        return $group->students()
             ->wherePivot('status', 'active')
-            ->orderBy('name');
-
-        return $query->get();
+            ->orderBy('name')
+            ->get();
     }
 
-    // =============================================
-    // Actions
-    // =============================================
+    public function allStudentsFromSelectedGroups()
+    {
+        if (empty($this->selectedGroupIds)) {
+            return collect();
+        }
+
+        $groups = Group::whereIn('id', $this->selectedGroupIds)->get();
+
+        $studentIds = collect();
+        foreach ($groups as $group) {
+            $studentIds = $studentIds->merge(
+                $group->students()->wherePivot('status', 'active')->pluck('students.id')
+            );
+        }
+
+        $studentIds = $studentIds->unique()->values();
+
+        return Student::whereIn('id', $studentIds)
+            ->orderBy('name')
+            ->get();
+    }
+
+    // ============================================
+    // Filters
+    // ============================================
 
     public function updatedBranchFilter(): void
     {
         $this->gradeFilter = '';
+        $this->selectedGroupIds = [];
         $this->selectedStudentIds = [];
-        $this->openGroups = [];
     }
 
     public function updatedGradeFilter(): void
     {
+        $this->selectedGroupIds = [];
         $this->selectedStudentIds = [];
-        $this->openGroups = [];
     }
 
     public function updatedGroupSearch(): void
     {
+        $this->selectedGroupIds = [];
         $this->selectedStudentIds = [];
-        $this->openGroups = [];
     }
+
+    // ============================================
+    // Selection
+    // ============================================
 
     public function toggleGroup(int $groupId): void
     {
-        $this->openGroups[$groupId] = ! ($this->openGroups[$groupId] ?? false);
+        if (in_array($groupId, $this->selectedGroupIds)) {
+            $this->selectedGroupIds = array_values(
+                array_diff($this->selectedGroupIds, [$groupId])
+            );
+        } else {
+            $this->selectedGroupIds[] = $groupId;
+        }
+
+        $this->rebuildSelectedStudents();
+    }
+
+    protected function rebuildSelectedStudents(): void
+    {
+        if (empty($this->selectedGroupIds)) {
+            $this->selectedStudentIds = [];
+
+            return;
+        }
+
+        $students = $this->allStudentsFromSelectedGroups();
+        $this->selectedStudentIds = $students->pluck('id')->map(fn ($id) => (int) $id)->toArray();
     }
 
     public function toggleStudent(int $studentId): void
@@ -147,38 +199,26 @@ class CardRequestCreate extends Component
         }
     }
 
-    public function selectWholeGroup(int $groupId): void
+    public function selectAllStudents(): void
     {
-        $group = $this->filteredGroups()->firstWhere('id', $groupId);
-        if (! $group) {
-            return;
-        }
-
-        $ids = $this->studentsInGroup($group)->pluck('id')->map(fn ($id) => (int) $id)->toArray();
-
-        $this->selectedStudentIds = array_values(array_unique(
-            array_merge($this->selectedStudentIds, $ids)
-        ));
+        $students = $this->allStudentsFromSelectedGroups();
+        $this->selectedStudentIds = $students->pluck('id')->map(fn ($id) => (int) $id)->toArray();
     }
 
-    public function deselectWholeGroup(int $groupId): void
+    public function deselectAllStudents(): void
     {
-        $group = $this->filteredGroups()->firstWhere('id', $groupId);
-        if (! $group) {
-            return;
-        }
-
-        $ids = $this->studentsInGroup($group)->pluck('id')->map(fn ($id) => (int) $id)->toArray();
-
-        $this->selectedStudentIds = array_values(
-            array_diff($this->selectedStudentIds, $ids)
-        );
+        $this->selectedStudentIds = [];
     }
 
     public function clearAll(): void
     {
+        $this->selectedGroupIds = [];
         $this->selectedStudentIds = [];
     }
+
+    // ============================================
+    // Confirm & Save
+    // ============================================
 
     public function confirm(): void
     {
@@ -188,12 +228,28 @@ class CardRequestCreate extends Component
             return;
         }
 
+        if ((float) $this->unit_price <= 0) {
+            $this->dispatch('show-error-message', message: 'أدخل سعر الكارت.');
+
+            return;
+        }
+
+        $this->studentsWithExistingCards = CardRequestItem::whereIn('student_id', $this->selectedStudentIds)
+            ->whereHas('cardRequest', function ($q) {
+                $q->where('teacher_id', Auth::guard('teacher')->user()->getOwnerId())
+                    ->whereNotIn('status', [CardRequestStatusEnum::REJECTED->value]);
+            })
+            ->pluck('student_id')
+            ->unique()
+            ->toArray();
+
         $this->confirming = true;
     }
 
     public function cancelConfirm(): void
     {
         $this->confirming = false;
+        $this->studentsWithExistingCards = [];
     }
 
     public function save(): void
@@ -203,6 +259,12 @@ class CardRequestCreate extends Component
 
         if (empty($this->selectedStudentIds)) {
             $this->dispatch('show-error-message', message: 'اختر طالب واحد على الأقل.');
+
+            return;
+        }
+
+        if ((float) $this->unit_price <= 0) {
+            $this->dispatch('show-error-message', message: 'أدخل سعر الكارت.');
 
             return;
         }
@@ -228,17 +290,26 @@ class CardRequestCreate extends Component
             }
         }
 
-        DB::transaction(function () use ($user, $ownerId, $students) {
+        $unitPrice = (float) $this->unit_price;
+        $totalPrice = $unitPrice * $students->count();
+
+        DB::transaction(function () use ($user, $ownerId, $students, $unitPrice, $totalPrice) {
             $request = CardRequest::create([
                 'teacher_id' => $ownerId,
                 'created_by' => $user->id,
                 'status' => CardRequestStatusEnum::PENDING->value,
                 'cards_count' => $students->count(),
+                'unit_price' => $unitPrice,
+                'total_price' => $totalPrice,
+                'paid_amount' => 0,
+                'paid_cards_count' => 0,
                 'notes' => $this->notes ?: null,
             ]);
 
             foreach ($students as $student) {
-                $firstGroup = $student->activeGroups()->first();
+                $firstGroup = $student->activeGroups()
+                    ->whereIn('groups.id', $this->selectedGroupIds)
+                    ->first() ?? $student->activeGroups()->first();
 
                 $request->items()->create([
                     'student_id' => $student->id,
@@ -247,6 +318,8 @@ class CardRequestCreate extends Component
                     'grade' => $student->grade,
                     'branch_id' => $student->branch_id,
                     'group_id' => $firstGroup?->id,
+                    'card_price' => $unitPrice,
+                    'is_paid' => false,
                 ]);
             }
         });
@@ -266,10 +339,13 @@ class CardRequestCreate extends Component
             ];
         });
 
+        $allStudents = $this->allStudentsFromSelectedGroups();
+
         return view('teacher-panel.pages.card-request.parts.card-request-create', [
             'branches' => $this->accessibleBranches(),
             'grades' => $this->gradesWithSubjects(),
             'groups' => $groupsData,
+            'allStudents' => $allStudents,
         ]);
     }
 }

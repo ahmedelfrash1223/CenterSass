@@ -112,6 +112,7 @@ enum TeacherPermissionEnum: string
     // =============================================
     case CARD_REQUEST_VIEW = 'card_requests.view';
     case CARD_REQUEST_CREATE = 'card_requests.create';
+    case CARD_REQUEST_UPDATE = 'card_requests.update';
     case CARD_REQUEST_DELETE = 'card_requests.delete';
 
     // =============================================
@@ -198,6 +199,7 @@ enum TeacherPermissionEnum: string
 
             self::CARD_REQUEST_VIEW => 'عرض طلبات الكروت',
             self::CARD_REQUEST_CREATE => 'طلب كروت',
+            self::CARD_REQUEST_UPDATE => 'تعديل طلبات الكروت',
             self::CARD_REQUEST_DELETE => 'إلغاء طلب كروت',
 
             self::SUPPORT_VIEW => 'عرض تذاكر الدعم',
@@ -281,6 +283,7 @@ enum TeacherPermissionEnum: string
 
             self::CARD_REQUEST_VIEW,
             self::CARD_REQUEST_CREATE,
+            self::CARD_REQUEST_UPDATE,
             self::CARD_REQUEST_DELETE => 'طلبات الكروت',
 
             self::SUPPORT_VIEW,
@@ -360,6 +363,7 @@ enum TeacherPermissionEnum: string
 
             self::CARD_REQUEST_VIEW => 'ph-eye',
             self::CARD_REQUEST_CREATE => 'ph-identification-card',
+            self::CARD_REQUEST_UPDATE => 'ph-pencil-simple',
             self::CARD_REQUEST_DELETE => 'ph-trash',
 
             self::SUPPORT_VIEW => 'ph-eye',

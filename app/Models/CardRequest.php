@@ -19,6 +19,10 @@ class CardRequest extends Model
         'created_by',
         'status',
         'cards_count',
+        'unit_price',
+        'total_price',
+        'paid_amount',
+        'paid_cards_count',
         'notes',
         'admin_notes',
         'approved_at',
@@ -32,6 +36,9 @@ class CardRequest extends Model
     {
         return [
             'status' => CardRequestStatusEnum::class,
+            'unit_price' => 'decimal:2',
+            'total_price' => 'decimal:2',
+            'paid_amount' => 'decimal:2',
             'approved_at' => 'datetime',
             'completed_at' => 'datetime',
             'shipped_at' => 'datetime',
@@ -70,5 +77,15 @@ class CardRequest extends Model
             CardRequestStatusEnum::PENDING,
             CardRequestStatusEnum::APPROVED,
         ]);
+    }
+
+    public function isFullyPaid(): bool
+    {
+        return $this->paid_amount >= $this->total_price;
+    }
+
+    public function remainingAmount(): float
+    {
+        return max(0, (float) $this->total_price - (float) $this->paid_amount);
     }
 }

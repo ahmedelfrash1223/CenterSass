@@ -15,7 +15,21 @@ class CardRequestItem extends Model
         'grade',
         'branch_id',
         'group_id',
+        'card_price',
+        'is_paid',
+        'paid_at',
+        'paid_by',
+        'revenue_id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'card_price' => 'decimal:2',
+            'is_paid' => 'boolean',
+            'paid_at' => 'datetime',
+        ];
+    }
 
     public function cardRequest(): BelongsTo
     {
@@ -35,5 +49,10 @@ class CardRequestItem extends Model
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function paidBy(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'paid_by');
     }
 }

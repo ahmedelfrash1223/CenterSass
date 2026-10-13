@@ -453,10 +453,14 @@ class GroupCreate extends Component
         $user = Auth::guard('teacher')->user();
 
         return $this->subjectsForTeacherAndGrade($teacherId, $this->grade, $user->getOwnerId())
-            ->map(fn ($s) => [
-                'id' => $s->id,
-                'label' => SubjectEnum::tryFrom($s->subject)?->label() ?? $s->subject,
-            ])
+            ->map(function ($s) {
+                $enum = SubjectEnum::tryFrom($s->subject);
+
+                return [
+                    'id' => $s->id,
+                    'label' => $enum?->label() ?? $s->subject,
+                ];
+            })
             ->toArray();
     }
 

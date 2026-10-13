@@ -3,19 +3,21 @@
 namespace App\Livewire\TeacherPanel\Pages\Timetable\Parts;
 
 use App\Enums\Teacher\TeacherPermissionEnum;
+use App\Livewire\TeacherPanel\Concerns\Timetable\DeterminesScheduleStatus;
+use App\Livewire\TeacherPanel\Concerns\Timetable\FormatsTimetableDays;
+use App\Livewire\TeacherPanel\Concerns\Timetable\LoadsTimetable;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use App\Livewire\TeacherPanel\Concerns\Timetable\LoadsTimetable;
-use App\Livewire\TeacherPanel\Concerns\Timetable\FormatsTimetableDays;
-use App\Livewire\TeacherPanel\Concerns\Timetable\DeterminesScheduleStatus;
 
 class TimetablePage extends Component
 {
-    use LoadsTimetable;
-    use FormatsTimetableDays;
     use DeterminesScheduleStatus;
+    use FormatsTimetableDays;
+    use LoadsTimetable;
 
     public bool $canViewGroups = false;
+
+    public bool $isRegularTeacher = false;
 
     public function mount(): void
     {
@@ -27,6 +29,7 @@ class TimetablePage extends Component
         );
 
         $this->canViewGroups = $user->hasPermission(TeacherPermissionEnum::GROUP_VIEW);
+        $this->isRegularTeacher = $this->computeIsRegularTeacher();
 
         $savedDay = session('teacher.timetable.selected_day');
         $today = $this->getTodayName();
@@ -41,6 +44,23 @@ class TimetablePage extends Component
         $this->loadTimetable();
     }
 
+    protected function computeIsRegularTeacher(): bool
+    {
+        $user = Auth::guard('teacher')->user();
+
+        if (! $user) {
+            return false;
+        }
+        if ($user->isOwner()) {
+            return false;
+        }
+        if ($user->hasPermission(TeacherPermissionEnum::GROUP_VIEW)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function render()
     {
         $days = $this->arabicDays();
@@ -48,10 +68,14 @@ class TimetablePage extends Component
         $isToday = $this->isSelectedDayToday();
 
         return view('teacher-panel.pages.timetable.parts.timetable-page', [
-            'days'      => $days,
-            'today'     => $today,
-            'isToday'   => $isToday,
+            'days' => $days,
+            'today' => $today,
+            'isToday' => $isToday,
             'schedules' => $this->getDisplayedSchedulesProperty(),
+            'branches' => $this->branchesForFilter,
+            'gradesForView' => $this->gradesForView,
+            'groupsForView' => $this->groupsForView,
+            'selectedGroupSchedules' => $this->getDisplayedGroupSchedulesProperty(),
         ]);
     }
 }

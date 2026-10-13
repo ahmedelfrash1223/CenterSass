@@ -2,47 +2,67 @@
 
 namespace App\Livewire\TeacherPanel\Pages\Group\Parts;
 
+use App\Enums\Teacher\SubjectEnum;
 use App\Http\Requests\TeacherPanel\UpdateGroupRequest;
 use App\Livewire\TeacherPanel\Concerns\Shared\HasGroupScheduleManagement;
 use App\Livewire\TeacherPanel\Concerns\Shared\LoadsGroupFormData;
 use App\Models\Group;
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class GroupUpdate extends Component
 {
-    use LoadsGroupFormData;
     use HasGroupScheduleManagement;
+    use LoadsGroupFormData;
 
     public Group $group;
+
     public string $name = '';
+
     public string $branch_id = '';
+
     public string $grade = '';
+
     public string $description = '';
+
     public int $max_students = 0;
+
     public string $status = 'active';
+
     public string $start_date = '';
+
     public string $end_date = '';
 
     public array $schedules = [];
 
     public bool $has_pricing = true;
+
     public string $pricing_type = 'fixed_monthly';
+
     public string $pricing_amount = '0';
 
-    public bool $sectionBasic   = true;
+    public bool $sectionBasic = true;
+
     public bool $sectionSchedule = true;
+
     public bool $sectionPricing = true;
 
     public bool $showDuplicateConfirm = false;
+
     public ?int $duplicateNewIndex = null;
+
     public ?int $duplicateExistingIndex = null;
+
     public bool $allowDuplicateOnNextSave = false;
 
     public array $availableTeachers = [];
+
     public array $hourOptions = [];
+
     public array $minuteOptions = [];
+
     public array $days = [];
 
     public function mount(Group $group): void
@@ -51,7 +71,7 @@ class GroupUpdate extends Component
 
         abort_unless($group->teacher_id === $user->getOwnerId(), 404);
 
-        if (!$user->isOwner()) {
+        if (! $user->isOwner()) {
             abort_unless(in_array($group->branch_id, $user->getAccessibleBranchIds()), 404);
         }
 
@@ -79,14 +99,14 @@ class GroupUpdate extends Component
             [$eH, $eM] = $end ? explode(':', $end) : ['', '00'];
 
             return [
-                'id'         => $schedule->id,
-                'day'        => $schedule->day,
+                'id' => $schedule->id,
+                'day' => $schedule->day,
                 'start_hour' => $sH,
-                'start_min'  => $sM,
-                'end_hour'   => $eH,
-                'end_min'    => $eM,
+                'start_min' => $sM,
+                'end_hour' => $eH,
+                'end_min' => $eM,
                 'start_time' => $start,
-                'end_time'   => $end,
+                'end_time' => $end,
                 'subject_id' => (string) $schedule->subject_id,
                 'teacher_id' => (string) $schedule->teacher_id,
             ];
@@ -94,19 +114,19 @@ class GroupUpdate extends Component
 
         $grouped = [];
         foreach ($rawSchedules as $s) {
-            $key = $s['teacher_id'] . '|' . $s['subject_id'] . '|' . $s['start_time'] . '|' . $s['end_time'];
+            $key = $s['teacher_id'].'|'.$s['subject_id'].'|'.$s['start_time'].'|'.$s['end_time'];
 
-            if (!isset($grouped[$key])) {
+            if (! isset($grouped[$key])) {
                 $grouped[$key] = [
-                    'uid'        => uniqid('sch_'),
-                    'days'       => [],
-                    'ids'        => [],
+                    'uid' => uniqid('sch_'),
+                    'days' => [],
+                    'ids' => [],
                     'start_hour' => $s['start_hour'] ?: '',
-                    'start_min'  => $s['start_min'] ?: '00',
-                    'end_hour'   => $s['end_hour'] ?: '',
-                    'end_min'    => $s['end_min'] ?: '00',
+                    'start_min' => $s['start_min'] ?: '00',
+                    'end_hour' => $s['end_hour'] ?: '',
+                    'end_min' => $s['end_min'] ?: '00',
                     'start_time' => $s['start_time'],
-                    'end_time'   => $s['end_time'],
+                    'end_time' => $s['end_time'],
                     'subject_id' => $s['subject_id'],
                     'teacher_id' => $s['teacher_id'],
                 ];
@@ -125,7 +145,7 @@ class GroupUpdate extends Component
         $this->allowDuplicateOnNextSave = false;
 
         $this->availableTeachers = $this->teachersForGrade($this->grade, $user->getOwnerId())
-            ->map(fn($t) => ['id' => $t->id, 'name' => $t->name])
+            ->map(fn ($t) => ['id' => $t->id, 'name' => $t->name])
             ->toArray();
 
         $this->hourOptions = $this->hourOptions();
@@ -136,32 +156,32 @@ class GroupUpdate extends Component
     protected function daysList(): array
     {
         return [
-            'Saturday'  => 'السبت',
-            'Sunday'    => 'الأحد',
-            'Monday'    => 'الإثنين',
-            'Tuesday'   => 'الثلاثاء',
+            'Saturday' => 'السبت',
+            'Sunday' => 'الأحد',
+            'Monday' => 'الإثنين',
+            'Tuesday' => 'الثلاثاء',
             'Wednesday' => 'الأربعاء',
-            'Thursday'  => 'الخميس',
-            'Friday'    => 'الجمعة',
+            'Thursday' => 'الخميس',
+            'Friday' => 'الجمعة',
         ];
     }
 
     public function toggleSection(string $section): void
     {
-        $this->{$section} = !$this->{$section};
+        $this->{$section} = ! $this->{$section};
     }
 
     public function addScheduleRow(): void
     {
         $this->schedules[] = [
-            'uid'        => uniqid('sch_'),
-            'days'       => [],
+            'uid' => uniqid('sch_'),
+            'days' => [],
             'start_hour' => '',
-            'start_min'  => '00',
-            'end_hour'   => '',
-            'end_min'    => '00',
+            'start_min' => '00',
+            'end_hour' => '',
+            'end_min' => '00',
             'start_time' => '',
-            'end_time'   => '',
+            'end_time' => '',
             'subject_id' => '',
             'teacher_id' => '',
         ];
@@ -169,7 +189,9 @@ class GroupUpdate extends Component
 
     public function duplicateScheduleRow(int $index): void
     {
-        if (!isset($this->schedules[$index])) return;
+        if (! isset($this->schedules[$index])) {
+            return;
+        }
 
         $original = $this->schedules[$index];
 
@@ -182,7 +204,9 @@ class GroupUpdate extends Component
 
     public function removeScheduleRow($index): void
     {
-        if (!isset($this->schedules[$index])) return;
+        if (! isset($this->schedules[$index])) {
+            return;
+        }
 
         unset($this->schedules[$index]);
         $this->schedules = array_values($this->schedules);
@@ -190,7 +214,9 @@ class GroupUpdate extends Component
 
     public function reorderSchedules(int $oldIndex, int $newIndex): void
     {
-        if (!isset($this->schedules[$oldIndex])) return;
+        if (! isset($this->schedules[$oldIndex])) {
+            return;
+        }
 
         $moved = $this->schedules[$oldIndex];
         unset($this->schedules[$oldIndex]);
@@ -201,13 +227,17 @@ class GroupUpdate extends Component
 
     public function selectAllDays(int $index): void
     {
-        if (!isset($this->schedules[$index])) return;
+        if (! isset($this->schedules[$index])) {
+            return;
+        }
         $this->schedules[$index]['days'] = array_keys($this->days);
     }
 
     public function deselectAllDays(int $index): void
     {
-        if (!isset($this->schedules[$index])) return;
+        if (! isset($this->schedules[$index])) {
+            return;
+        }
         $this->schedules[$index]['days'] = [];
     }
 
@@ -215,7 +245,7 @@ class GroupUpdate extends Component
     {
         $user = Auth::guard('teacher')->user();
         $this->availableTeachers = $this->teachersForGrade($this->grade, $user->getOwnerId())
-            ->map(fn($t) => ['id' => $t->id, 'name' => $t->name])
+            ->map(fn ($t) => ['id' => $t->id, 'name' => $t->name])
             ->toArray();
 
         foreach ($this->schedules as $i => $schedule) {
@@ -228,9 +258,11 @@ class GroupUpdate extends Component
     {
         $parts = explode('.', $key);
         $field = end($parts);
-        $index = (int)($parts[0] ?? -1);
+        $index = (int) ($parts[0] ?? -1);
 
-        if ($index < 0 || !isset($this->schedules[$index])) return;
+        if ($index < 0 || ! isset($this->schedules[$index])) {
+            return;
+        }
 
         if ($field === 'teacher_id') {
             $this->schedules[$index]['subject_id'] = '';
@@ -250,10 +282,14 @@ class GroupUpdate extends Component
             );
         }
 
-        if (!in_array($field, ['days', 'subject_id', 'teacher_id'])) return;
+        if (! in_array($field, ['days', 'subject_id', 'teacher_id'])) {
+            return;
+        }
 
         $schedule = $this->schedules[$index];
-        if (empty($schedule['days']) || empty($schedule['subject_id'])) return;
+        if (empty($schedule['days']) || empty($schedule['subject_id'])) {
+            return;
+        }
 
         $existingIndex = $this->findDuplicateScheduleIndex($this->schedules, $index);
 
@@ -266,8 +302,11 @@ class GroupUpdate extends Component
 
     protected function buildTime(string $hour, string $min): string
     {
-        if ($hour === '') return '';
+        if ($hour === '') {
+            return '';
+        }
         $min = $min !== '' ? $min : '00';
+
         return "{$hour}:{$min}";
     }
 
@@ -307,18 +346,23 @@ class GroupUpdate extends Component
                 $errors["schedules.{$index}.end_time"] = empty($schedule['start_time']) || empty($schedule['end_time'])
                     ? 'يجب إدخال وقت البداية والنهاية.'
                     : 'وقت النهاية يجب أن يكون بعد وقت البداية.';
+
                 continue;
             }
 
-            if ($minutes < 15) $errors["schedules.{$index}.end_time"] = 'مدة الحصة يجب أن تكون 15 دقيقة على الأقل.';
-            if ($minutes > 480) $errors["schedules.{$index}.end_time"] = 'مدة الحصة لا يمكن أن تتجاوز 8 ساعات.';
+            if ($minutes < 15) {
+                $errors["schedules.{$index}.end_time"] = 'مدة الحصة يجب أن تكون 15 دقيقة على الأقل.';
+            }
+            if ($minutes > 480) {
+                $errors["schedules.{$index}.end_time"] = 'مدة الحصة لا يمكن أن تتجاوز 8 ساعات.';
+            }
 
             if (empty($days)) {
                 $errors["schedules.{$index}.days"] = 'اختر يوم واحد على الأقل.';
             }
         }
 
-        if (!$this->allowDuplicateOnNextSave) {
+        if (! $this->allowDuplicateOnNextSave) {
             $duplicates = $this->findAllDuplicateSchedules($this->schedules);
 
             foreach ($duplicates as $duplicate) {
@@ -327,12 +371,13 @@ class GroupUpdate extends Component
             }
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             foreach ($errors as $key => $message) {
                 $this->addError($key, $message);
             }
             $this->sectionSchedule = true;
             $this->dispatch('show-error-message', message: 'فيه أخطاء في المواعيد. راجع الجدول.');
+
             return false;
         }
 
@@ -344,9 +389,9 @@ class GroupUpdate extends Component
         $errorFields = array_keys($this->getErrorBag()->toArray());
 
         $sectionMap = [
-            'sectionBasic'    => ['name', 'branch_id', 'grade', 'description', 'max_students', 'status', 'start_date', 'end_date'],
+            'sectionBasic' => ['name', 'branch_id', 'grade', 'description', 'max_students', 'status', 'start_date', 'end_date'],
             'sectionSchedule' => ['schedules'],
-            'sectionPricing'  => ['pricing_type', 'pricing_amount', 'has_pricing'],
+            'sectionPricing' => ['pricing_type', 'pricing_amount', 'has_pricing'],
         ];
 
         foreach ($errorFields as $field) {
@@ -365,49 +410,53 @@ class GroupUpdate extends Component
 
         abort_unless($this->group->teacher_id === $user->getOwnerId(), 404);
 
-        if (!$user->isOwner()) {
+        if (! $user->isOwner()) {
             abort_unless(in_array($this->group->branch_id, $user->getAccessibleBranchIds()), 404);
         }
 
-        $request = new UpdateGroupRequest();
+        $request = new UpdateGroupRequest;
 
         try {
             $this->validate($request->rules(), $request->messages());
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->openSectionsWithErrors();
             throw $e;
         }
 
-        if (!$this->validateScheduleTimes()) return;
+        if (! $this->validateScheduleTimes()) {
+            return;
+        }
 
-        if (!$user->hasAccessToBranch((int) $this->branch_id)) {
+        if (! $user->hasAccessToBranch((int) $this->branch_id)) {
             $this->addError('branch_id', 'الفرع غير متاح لك.');
             $this->sectionBasic = true;
+
             return;
         }
 
         foreach ($this->schedules as $index => $schedule) {
-            if (!empty($schedule['teacher_id'])) {
+            if (! empty($schedule['teacher_id'])) {
                 $scheduleTeacher = Teacher::find($schedule['teacher_id']);
-                if (!$scheduleTeacher || !$user->hasAccessToTeacher($scheduleTeacher)) {
+                if (! $scheduleTeacher || ! $user->hasAccessToTeacher($scheduleTeacher)) {
                     $this->addError("schedules.{$index}.teacher_id", 'المدرس غير متاح لك.');
                     $this->sectionSchedule = true;
+
                     return;
                 }
             }
         }
 
         $this->group->update([
-            'name'           => $this->name,
-            'branch_id'      => $this->branch_id,
-            'grade'          => $this->grade,
-            'description'    => $this->description ?: null,
-            'max_students'   => $this->max_students,
-            'status'         => $this->status,
-            'start_date'     => $this->start_date ?: null,
-            'end_date'       => $this->end_date ?: null,
-            'has_pricing'    => $this->has_pricing,
-            'pricing_type'   => $this->pricing_type,
+            'name' => $this->name,
+            'branch_id' => $this->branch_id,
+            'grade' => $this->grade,
+            'description' => $this->description ?: null,
+            'max_students' => $this->max_students,
+            'status' => $this->status,
+            'start_date' => $this->start_date ?: null,
+            'end_date' => $this->end_date ?: null,
+            'has_pricing' => $this->has_pricing,
+            'pricing_type' => $this->pricing_type,
             'pricing_amount' => (float) $this->pricing_amount,
         ]);
 
@@ -421,10 +470,10 @@ class GroupUpdate extends Component
                 $hours = $minutes !== null ? round($minutes / 60, 1) : 1.0;
 
                 $this->group->schedules()->create([
-                    'day'        => $schedule['day'],
+                    'day' => $schedule['day'],
                     'start_time' => $schedule['start_time'],
-                    'end_time'   => $schedule['end_time'],
-                    'hours'      => $hours,
+                    'end_time' => $schedule['end_time'],
+                    'hours' => $hours,
                     'subject_id' => $schedule['subject_id'],
                     'teacher_id' => $schedule['teacher_id'],
                 ]);
@@ -439,12 +488,21 @@ class GroupUpdate extends Component
 
     public function subjectsForTeacher(int $teacherId): array
     {
-        if (!$teacherId || !$this->grade) return [];
+        if (! $teacherId || ! $this->grade) {
+            return [];
+        }
 
         $user = Auth::guard('teacher')->user();
 
         return $this->subjectsForTeacherAndGrade($teacherId, $this->grade, $user->getOwnerId())
-            ->map(fn($s) => ['id' => $s->id, 'label' => $s->subject_label])
+            ->map(function ($s) {
+                $enum = SubjectEnum::tryFrom($s->subject);
+
+                return [
+                    'id' => $s->id,
+                    'label' => $enum?->label() ?? $s->subject,
+                ];
+            })
             ->toArray();
     }
 
