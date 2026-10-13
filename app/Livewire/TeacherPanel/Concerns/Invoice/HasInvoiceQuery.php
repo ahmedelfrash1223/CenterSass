@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait HasInvoiceQuery
 {
-
     protected function baseInvoiceQuery(): Builder
     {
         $user = $this->currentUser();
@@ -19,7 +18,7 @@ trait HasInvoiceQuery
             ->where('teacher_id', $ownerId)
             ->whereNull('cancelled_at');
 
-        if (!$user->isOwner()) {
+        if (! $user->isOwner()) {
             empty($branchIds)
                 ? $query->whereRaw('1 = 0')
                 : $query->whereIn('branch_id', $branchIds);
@@ -27,7 +26,6 @@ trait HasInvoiceQuery
 
         return $query;
     }
-
 
     protected function applyMonthFilter(Builder $query): Builder
     {
@@ -60,7 +58,6 @@ trait HasInvoiceQuery
                 });
         });
     }
-
 
     protected function applyStatusFilter(Builder $query, string $status): Builder
     {

@@ -11,6 +11,7 @@ use App\Http\Controllers\TeacherPanel\ExamController;
 use App\Http\Controllers\TeacherPanel\GroupController;
 use App\Http\Controllers\TeacherPanel\InvoiceController;
 use App\Http\Controllers\TeacherPanel\PaymentController;
+use App\Http\Controllers\TeacherPanel\RevenueController;
 use App\Http\Controllers\TeacherPanel\StaffController;
 use App\Http\Controllers\TeacherPanel\StudentController;
 use App\Http\Controllers\TeacherPanel\SubjectController;
@@ -226,6 +227,13 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
     Route::middleware('teacher.permission:'.TeacherPermissionEnum::SUPPORT_VIEW->value)->group(function () {
         Route::get('support', [SupportTicketController::class, 'index'])->name('support.index');
         Route::get('support/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
+    });
+
+    // =============================================
+    // Revenues
+    // =============================================
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::REVENUE_VIEW->value)->group(function () {
+        Route::get('revenues', [RevenueController::class, 'index'])->name('revenues.index');
     });
 
 });

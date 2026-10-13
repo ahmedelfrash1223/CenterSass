@@ -48,4 +48,27 @@ class Payment extends Model
     {
         return $this->hasMany(PaymentAllocation::class);
     }
+
+    // ============ Helpers ============
+
+    public static function generateReceiptNumber(): string
+    {
+        $year = now()->format('Y');
+        $month = now()->format('m');
+
+        $lastPayment = static::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->orderByDesc('id')
+            ->first();
+
+        $nextNumber = 1;
+
+        if ($lastPayment && $lastPayment->receipt_number) {
+            $parts = explode('-', $lastPayment->receipt_number);
+            $lastSeq = (int) end($parts);
+            $nextNumber = $lastSeq + 1;
+        }
+
+        return sprintf('RCP-%s%s-%05d', $year, $month, $nextNumber);
+    }
 }

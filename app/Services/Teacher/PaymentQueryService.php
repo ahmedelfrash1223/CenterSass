@@ -25,8 +25,10 @@ class PaymentQueryService
             ->with(['branch', 'activeGroups'])
             ->withCount(['activeGroups as groups_count']);
 
-        if (!$user->isOwner()) {
-            $builder->whereIn('branch_id', $accessibleBranches);
+        if (! $user->isOwner()) {
+            empty($accessibleBranches)
+                ? $builder->whereRaw('1 = 0')
+                : $builder->whereIn('branch_id', $accessibleBranches);
         }
 
         $query = trim($query);
@@ -65,6 +67,10 @@ class PaymentQueryService
             return [];
         }
 
+        if (! $user->isOwner() && ! in_array($student->branch_id, $user->getAccessibleBranchIds())) {
+            return [];
+        }
+
         $date = $month
             ? Carbon::createFromFormat('Y-m', $month)
             : Carbon::now();
@@ -74,7 +80,7 @@ class PaymentQueryService
 
         $invoice = $this->invoiceService->ensureForStudent($student, $periodStart, $periodEnd, $user);
 
-        if (!$invoice) {
+        if (! $invoice) {
             return [];
         }
 
@@ -96,15 +102,15 @@ class PaymentQueryService
                 $amount = (float) $item->total;
 
                 $result[] = [
-                    'group'         => $group,
-                    'invoice'       => $invoice,
-                    'item'          => $item,
-                    'item_id'       => $item->id,
-                    'amount'        => $amount,
-                    'paid'          => $paid,
-                    'remaining'     => $remaining,
+                    'group' => $group,
+                    'invoice' => $invoice,
+                    'item' => $item,
+                    'item_id' => $item->id,
+                    'amount' => $amount,
+                    'paid' => $paid,
+                    'remaining' => $remaining,
                     'is_fully_paid' => $remaining <= 0,
-                    'status'        => $remaining <= 0
+                    'status' => $remaining <= 0
                         ? 'paid'
                         : ($paid > 0 ? 'partial' : 'unpaid'),
                 ];
@@ -152,8 +158,10 @@ class PaymentQueryService
             ->with(['branch', 'activeGroups'])
             ->withCount(['activeGroups as groups_count']);
 
-        if (!$user->isOwner()) {
-            $builder->whereIn('branch_id', $accessibleBranches);
+        if (! $user->isOwner()) {
+            empty($accessibleBranches)
+                ? $builder->whereRaw('1 = 0')
+                : $builder->whereIn('branch_id', $accessibleBranches);
         }
 
         return $builder->orderBy('name');
@@ -184,8 +192,10 @@ class PaymentQueryService
             ->with(['branch', 'activeGroups'])
             ->withCount(['activeGroups as groups_count']);
 
-        if (!$user->isOwner()) {
-            $builder->whereIn('branch_id', $accessibleBranches);
+        if (! $user->isOwner()) {
+            empty($accessibleBranches)
+                ? $builder->whereRaw('1 = 0')
+                : $builder->whereIn('branch_id', $accessibleBranches);
         }
 
         return $builder->orderBy('name');

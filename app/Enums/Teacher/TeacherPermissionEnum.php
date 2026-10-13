@@ -123,6 +123,14 @@ enum TeacherPermissionEnum: string
     case SUPPORT_CLOSE = 'support.close';
 
     // =============================================
+    // Revenues
+    // =============================================
+    case REVENUE_VIEW = 'revenues.view';
+    case REVENUE_CREATE = 'revenues.create';
+    case REVENUE_UPDATE = 'revenues.update';
+    case REVENUE_DELETE = 'revenues.delete';
+
+    // =============================================
     // Labels
     // =============================================
     public function label(): string
@@ -196,6 +204,11 @@ enum TeacherPermissionEnum: string
             self::SUPPORT_CREATE => 'إنشاء تذكرة دعم',
             self::SUPPORT_REPLY => 'الرد على تذاكر الدعم',
             self::SUPPORT_CLOSE => 'إغلاق تذاكر الدعم',
+
+            self::REVENUE_VIEW => 'عرض الإيرادات',
+            self::REVENUE_CREATE => 'إضافة إيراد',
+            self::REVENUE_UPDATE => 'تعديل إيراد',
+            self::REVENUE_DELETE => 'حذف إيراد',
         };
     }
 
@@ -274,6 +287,11 @@ enum TeacherPermissionEnum: string
             self::SUPPORT_CREATE,
             self::SUPPORT_REPLY,
             self::SUPPORT_CLOSE => 'الدعم الفني',
+
+            self::REVENUE_VIEW,
+            self::REVENUE_CREATE,
+            self::REVENUE_UPDATE,
+            self::REVENUE_DELETE => 'الإيرادات',
         };
     }
 
@@ -348,6 +366,11 @@ enum TeacherPermissionEnum: string
             self::SUPPORT_CREATE => 'ph-plus-circle',
             self::SUPPORT_REPLY => 'ph-chat-circle',
             self::SUPPORT_CLOSE => 'ph-lock',
+
+            self::REVENUE_VIEW => 'ph-eye',
+            self::REVENUE_CREATE => 'ph-plus-circle',
+            self::REVENUE_UPDATE => 'ph-pencil-simple',
+            self::REVENUE_DELETE => 'ph-trash',
         };
     }
 
@@ -436,6 +459,9 @@ enum TeacherPermissionEnum: string
             self::SUPPORT_VIEW->value,
             self::SUPPORT_CREATE->value,
             self::SUPPORT_REPLY->value,
+
+            self::REVENUE_VIEW->value,
+            self::REVENUE_CREATE->value,
         ];
     }
 
@@ -459,6 +485,8 @@ enum TeacherPermissionEnum: string
             self::BOOKING_VIEW->value,
             self::BOOKING_CREATE->value,
             self::ASSIGNMENT_VIEW->value,
+
+            self::REVENUE_VIEW->value,
         ];
     }
 

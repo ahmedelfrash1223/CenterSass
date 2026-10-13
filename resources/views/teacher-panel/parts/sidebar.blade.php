@@ -168,6 +168,18 @@
                     </li>
                 @endif
 
+                {{-- Revenues --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::REVENUE_VIEW))
+                    <li class="pc-item @yield('revenues-active')">
+                        <a wire:navigate href="{{ route('teacher.revenues.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-chart-line-up"></i>
+                            </span>
+                            <span class="pc-mtext">الإيرادات</span>
+                        </a>
+                    </li>
+                @endif
+
                 {{-- Card Requests --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::CARD_REQUEST_VIEW))
                     <li class="pc-item @yield('card-requests-active')">

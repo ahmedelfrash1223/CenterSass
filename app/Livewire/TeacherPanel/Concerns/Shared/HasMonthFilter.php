@@ -8,12 +8,10 @@ trait HasMonthFilter
 {
     public string $monthFilter = '';
 
-
     protected function monthSessionKey(): string
     {
-        return 'teacher.{$this->monthContext}.selected_month';
+        return "teacher.{$this->monthContext()}.selected_month";
     }
-
 
     protected function monthContext(): string
     {
@@ -24,7 +22,7 @@ trait HasMonthFilter
 
     protected function initializeMonthFilter(): void
     {
-        $key = "teacher.{$this->monthContext()}.selected_month";
+        $key = $this->monthSessionKey();
         $this->monthFilter = session($key, now()->format('Y-m'));
     }
 
