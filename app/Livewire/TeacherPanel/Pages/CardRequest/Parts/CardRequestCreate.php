@@ -43,6 +43,15 @@ class CardRequestCreate extends Component
             $user->hasPermission(TeacherPermissionEnum::CARD_REQUEST_CREATE),
             403
         );
+
+        $lastRequest = CardRequest::where('teacher_id', $user->getOwnerId())
+            ->where('unit_price', '>', 0)
+            ->latest('id')
+            ->first();
+
+        $this->unit_price = $lastRequest
+            ? (string) $lastRequest->unit_price
+            : '0';
     }
 
     // ============================================
