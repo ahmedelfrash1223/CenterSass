@@ -22,9 +22,13 @@
                         $isNow = $currentSchedules->contains('id', $schedule->id);
                         $isPast = $schedule->end_time->format('H:i') < now()->format('H:i');
                         $isUpcoming = !$isNow && !$isPast;
+
+                        $subjectLabel = \App\Enums\Teacher\SubjectEnum::tryFrom($schedule->subject?->subject)?->label()
+                            ?? $schedule->subject?->subject_label
+                            ?? 'مادة';
                     @endphp
                     <div class="schedule-item {{ $isNow ? 'is-now' : ($isPast ? 'is-past' : 'is-upcoming') }}"
-                         wire:key="schedule-{{ $schedule->id }}">
+                        wire:key="schedule-{{ $schedule->id }}">
                         <div class="schedule-time">
                             <div class="fw-bold">{{ $schedule->start_time->format('H:i') }}</div>
                             <small class="text-muted">{{ $schedule->end_time->format('H:i') }}</small>
@@ -33,7 +37,7 @@
                         <div class="schedule-content">
                             <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
                                 <h6 class="mb-0 fw-semibold">
-                                    {{ $schedule->subject?->subject_label ?? 'مادة' }}
+                                    {{ $subjectLabel }}
                                 </h6>
                                 @if($isNow)
                                     <span class="badge bg-danger bg-opacity-10 text-danger">
@@ -65,14 +69,12 @@
 
                         <div class="schedule-action">
                             @if($canViewGroups)
-                                <a href="{{ route('teacher.groups.show', $schedule->group_id) }}"
-                                   wire:navigate
-                                   class="btn btn-sm btn-light border">
+                                <a href="{{ route('teacher.groups.show', $schedule->group_id) }}" wire:navigate
+                                    class="btn btn-sm btn-light border">
                                     <i class="ph-duotone ph-arrow-left"></i>
                                 </a>
                             @else
-                                <span class="btn btn-sm btn-light border disabled"
-                                      title="ليس لديك صلاحية">
+                                <span class="btn btn-sm btn-light border disabled" title="ليس لديك صلاحية">
                                     <i class="ph-duotone ph-arrow-left"></i>
                                 </span>
                             @endif

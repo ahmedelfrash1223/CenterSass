@@ -9,10 +9,8 @@
             </span>
 
             @if($currentSchedules->count() > 3)
-                <button type="button"
-                        wire:click="toggleShowAll"
-                        wire:loading.attr="disabled"
-                        class="btn btn-sm btn-light border">
+                <button type="button" wire:click="toggleShowAll" wire:loading.attr="disabled"
+                    class="btn btn-sm btn-light border">
                     @if($showAllSchedules)
                         <i class="ph-duotone ph-eye-slash me-1"></i>
                         عرض أقل
@@ -26,8 +24,13 @@
 
         @foreach($currentSchedules as $index => $schedule)
             @if($index < 3 || $showAllSchedules)
-                <div class="card border-0 shadow-sm mb-3 schedule-current"
-                     wire:key="current-{{ $schedule->id }}">
+                @php
+                    $subjectLabel = \App\Enums\Teacher\SubjectEnum::tryFrom($schedule->subject?->subject)?->label()
+                        ?? $schedule->subject?->subject_label
+                        ?? 'مادة غير محددة';
+                @endphp
+
+                <div class="card border-0 shadow-sm mb-3 schedule-current" wire:key="current-{{ $schedule->id }}">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center gap-3 flex-wrap">
                             <div class="schedule-pulse schedule-pulse-sm">
@@ -47,7 +50,7 @@
                                     </small>
                                 </div>
                                 <h6 class="mb-1 fw-bold">
-                                    {{ $schedule->subject?->subject_label ?? 'مادة غير محددة' }}
+                                    {{ $subjectLabel }}
                                 </h6>
                                 <div class="d-flex gap-3 flex-wrap">
                                     <small class="text-muted">
@@ -65,9 +68,8 @@
                                 </div>
                             </div>
                             @if($canViewGroups)
-                                <a href="{{ route('teacher.groups.show', $schedule->group_id) }}"
-                                   wire:navigate
-                                   class="btn btn-sm btn-primary">
+                                <a href="{{ route('teacher.groups.show', $schedule->group_id) }}" wire:navigate
+                                    class="btn btn-sm btn-primary">
                                     <i class="ph-duotone ph-arrow-left me-1"></i>
                                     عرض
                                 </a>
@@ -80,10 +82,8 @@
 
         @if($currentSchedules->count() > 3 && !$showAllSchedules)
             <div class="text-center mb-3">
-                <button type="button"
-                        wire:click="toggleShowAll"
-                        wire:loading.attr="disabled"
-                        class="btn btn-light border btn-sm">
+                <button type="button" wire:click="toggleShowAll" wire:loading.attr="disabled"
+                    class="btn btn-light border btn-sm">
                     <i class="ph-duotone ph-arrow-down me-1"></i>
                     عرض باقي {{ $currentSchedules->count() - 3 }} حصة
                 </button>
@@ -91,6 +91,12 @@
         @endif
 
     @elseif($nextSchedule)
+
+        @php
+            $nextSubjectLabel = \App\Enums\Teacher\SubjectEnum::tryFrom($nextSchedule->subject?->subject)?->label()
+                ?? $nextSchedule->subject?->subject_label
+                ?? 'مادة غير محددة';
+        @endphp
 
         <div class="card border-0 shadow-sm mb-4 schedule-next">
             <div class="card-body p-4">
@@ -111,7 +117,7 @@
                             </small>
                         </div>
                         <h5 class="mb-1 fw-bold">
-                            {{ $nextSchedule->subject?->subject_label ?? 'مادة غير محددة' }}
+                            {{ $nextSubjectLabel }}
                             <span class="text-muted">-</span>
                             {{ $nextSchedule->subject?->grade_label ?? '' }}
                         </h5>
@@ -131,9 +137,8 @@
                         </div>
                     </div>
                     @if($canViewGroups)
-                        <a href="{{ route('teacher.groups.show', $nextSchedule->group_id) }}"
-                           wire:navigate
-                           class="btn btn-success">
+                        <a href="{{ route('teacher.groups.show', $nextSchedule->group_id) }}" wire:navigate
+                            class="btn btn-success">
                             <i class="ph-duotone ph-arrow-left me-1"></i>
                             عرض المجموعة
                         </a>

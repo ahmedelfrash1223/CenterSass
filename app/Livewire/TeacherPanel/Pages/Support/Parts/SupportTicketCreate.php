@@ -58,11 +58,28 @@ class SupportTicketCreate extends Component
                 'body' => $this->message,
             ]);
 
+            $ticket->messages()->create([
+                'sender_type' => 'admin',
+                'sender_id' => null,
+                'body' => $this->welcomeMessage($user->name),
+            ]);
+
             return $ticket;
         });
 
         session()->flash('support-success', 'تم إنشاء التذكرة بنجاح.');
         $this->redirect(route('teacher.support.show', $ticket->id), navigate: true);
+    }
+
+    protected function welcomeMessage(string $teacherName): string
+    {
+        return "أهلاً بك {$teacherName} 👋
+
+شكراً لتواصلك مع فريق دعم Classio.
+تم استلام تذكرتك بنجاح وسيتم مراجعتها من قبل فريق الدعم والتواصل معك في أقرب وقت ممكن.
+
+نحن هنا لمساعدتك دائماً 🌟
+فريق دعم Classio";
     }
 
     public function render()
