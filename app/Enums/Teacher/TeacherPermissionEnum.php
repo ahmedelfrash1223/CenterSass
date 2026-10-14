@@ -131,6 +131,17 @@ enum TeacherPermissionEnum: string
     case REVENUE_UPDATE = 'revenues.update';
     case REVENUE_DELETE = 'revenues.delete';
 
+    // Payroll
+    case PAYROLL_VIEW = 'payroll.view';
+    case PAYROLL_MANAGE = 'payroll.manage';
+    case PAYROLL_GENERATE = 'payroll.generate';
+    case PAYROLL_MARK_PAID = 'payroll.mark_paid';
+    case PAYROLL_ADD_BONUS = 'payroll.add_bonus';
+    case PAYROLL_ADD_DEDUCTION = 'payroll.add_deduction';
+
+    // Expenses
+    case EXPENSE_VIEW = 'expenses.view';
+
     // =============================================
     // Labels
     // =============================================
@@ -211,6 +222,15 @@ enum TeacherPermissionEnum: string
             self::REVENUE_CREATE => 'إضافة إيراد',
             self::REVENUE_UPDATE => 'تعديل إيراد',
             self::REVENUE_DELETE => 'حذف إيراد',
+
+            self::PAYROLL_VIEW => 'عرض الحسابات',
+            self::PAYROLL_MANAGE => 'إدارة الأجر',
+            self::PAYROLL_GENERATE => 'توليد كشوف',
+            self::PAYROLL_MARK_PAID => 'تسجيل الدفع',
+            self::PAYROLL_ADD_BONUS => 'إضافة بونص',
+            self::PAYROLL_ADD_DEDUCTION => 'إضافة خصم',
+            self::EXPENSE_VIEW => 'عرض المصروفات',
+
         };
     }
 
@@ -295,6 +315,11 @@ enum TeacherPermissionEnum: string
             self::REVENUE_CREATE,
             self::REVENUE_UPDATE,
             self::REVENUE_DELETE => 'الإيرادات',
+
+            self::PAYROLL_VIEW, self::PAYROLL_MANAGE, self::PAYROLL_GENERATE,
+            self::PAYROLL_MARK_PAID, self::PAYROLL_ADD_BONUS, self::PAYROLL_ADD_DEDUCTION => 'حسابات المدرسين',
+
+            self::EXPENSE_VIEW => 'المصروفات',
         };
     }
 
@@ -375,6 +400,14 @@ enum TeacherPermissionEnum: string
             self::REVENUE_CREATE => 'ph-plus-circle',
             self::REVENUE_UPDATE => 'ph-pencil-simple',
             self::REVENUE_DELETE => 'ph-trash',
+
+            self::PAYROLL_VIEW => 'ph-eye',
+            self::PAYROLL_MANAGE => 'ph-gear',
+            self::PAYROLL_GENERATE => 'ph-file-plus',
+            self::PAYROLL_MARK_PAID => 'ph-check-circle',
+            self::PAYROLL_ADD_BONUS => 'ph-gift',
+            self::PAYROLL_ADD_DEDUCTION => 'ph-minus-circle',
+            self::EXPENSE_VIEW => 'ph-eye',
         };
     }
 

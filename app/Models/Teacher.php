@@ -105,7 +105,6 @@ class Teacher extends Authenticatable
         return $this->hasOne(Subscription::class, 'teacher_id');
     }
 
-
     public function activeSubscription(): HasOne
     {
         return $this->subscription()
@@ -148,5 +147,35 @@ class Teacher extends Authenticatable
     public function assignedGrades(): HasMany
     {
         return $this->hasMany(TeacherGrade::class, 'teacher_id');
+    }
+
+    public function payrollSetting()
+    {
+        return $this->hasOne(TeacherPayrollSetting::class, 'teacher_id');
+    }
+
+    public function branchPayrollSettings()
+    {
+        return $this->hasMany(TeacherBranchPayrollSetting::class, 'teacher_id');
+    }
+
+    public function payrolls()
+    {
+        return $this->hasMany(TeacherPayroll::class, 'teacher_id');
+    }
+
+    public function payrollPayments()
+    {
+        return $this->hasMany(TeacherPayrollPayment::class, 'teacher_id');
+    }
+
+    public function expensesAsPayee()
+    {
+        return $this->hasMany(Expense::class, 'teacher_payee_id');
+    }
+
+    public function groupSchedules()
+    {
+        return $this->hasMany(GroupSchedule::class, 'teacher_id');
     }
 }

@@ -180,6 +180,26 @@
                     </li>
                 @endif
 
+                {{-- Payrolls --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::PAYROLL_VIEW))
+                    <li class="pc-item @yield('payrolls-active')">
+                        <a wire:navigate href="{{ route('teacher.payrolls.index') }}" class="pc-link">
+                            <span class="pc-micon"><i class="ph-duotone ph-user-circle-gear"></i></span>
+                            <span class="pc-mtext">حسابات المدرسين</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- Expenses --}}
+                @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::EXPENSE_VIEW))
+                    <li class="pc-item @yield('expenses-active')">
+                        <a wire:navigate href="{{ route('teacher.expenses.index') }}" class="pc-link">
+                            <span class="pc-micon"><i class="ph-duotone ph-arrow-circle-down"></i></span>
+                            <span class="pc-mtext">المصروفات</span>
+                        </a>
+                    </li>
+                @endif
+
                 {{-- Card Requests --}}
                 @if(auth('teacher')->user()->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::CARD_REQUEST_VIEW))
                     <li class="pc-item @yield('card-requests-active')">

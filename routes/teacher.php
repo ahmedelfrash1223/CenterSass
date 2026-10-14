@@ -8,9 +8,11 @@ use App\Http\Controllers\TeacherPanel\BookingController;
 use App\Http\Controllers\TeacherPanel\BranchController;
 use App\Http\Controllers\TeacherPanel\CardRequestController;
 use App\Http\Controllers\TeacherPanel\ExamController;
+use App\Http\Controllers\TeacherPanel\ExpenseController;
 use App\Http\Controllers\TeacherPanel\GroupController;
 use App\Http\Controllers\TeacherPanel\InvoiceController;
 use App\Http\Controllers\TeacherPanel\PaymentController;
+use App\Http\Controllers\TeacherPanel\PayrollController;
 use App\Http\Controllers\TeacherPanel\RevenueController;
 use App\Http\Controllers\TeacherPanel\StaffController;
 use App\Http\Controllers\TeacherPanel\StudentController;
@@ -234,6 +236,31 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
     // =============================================
     Route::middleware('teacher.permission:'.TeacherPermissionEnum::REVENUE_VIEW->value)->group(function () {
         Route::get('revenues', [RevenueController::class, 'index'])->name('revenues.index');
+    });
+
+    // =============================================
+    // Payrolls (حسابات المدرسين)
+    // =============================================
+
+    // generate لازم تكون قبل {payroll}
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::PAYROLL_GENERATE->value)->group(function () {
+        Route::get('payrolls/generate', [PayrollController::class, 'generate'])->name('payrolls.generate');
+    });
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::PAYROLL_MANAGE->value)->group(function () {
+        Route::get('payrolls/settings/{teacher}', [PayrollController::class, 'settings'])->name('payrolls.settings');
+    });
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::PAYROLL_VIEW->value)->group(function () {
+        Route::get('payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
+        Route::get('payrolls/{payroll}', [PayrollController::class, 'show'])->name('payrolls.show');
+    });
+
+    // =============================================
+    // Expenses (المصروفات)
+    // =============================================
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::EXPENSE_VIEW->value)->group(function () {
+        Route::get('expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     });
 
 });
