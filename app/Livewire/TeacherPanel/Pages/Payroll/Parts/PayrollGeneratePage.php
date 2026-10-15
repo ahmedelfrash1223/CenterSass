@@ -63,6 +63,12 @@ class PayrollGeneratePage extends Component
 
         $branchId = $this->branchId !== '' ? (int) $this->branchId : null;
 
+        if (! $user->isOwner() && ($branchId === null || ! in_array($branchId, $user->getAccessibleBranchIds(), true))) {
+            $this->dispatch('show-error-message', message: 'اختر فرعًا متاحًا لك.');
+
+            return;
+        }
+
         $this->results = ['created' => 0, 'skipped' => 0, 'skipped_teachers' => []];
 
         foreach ($this->selectedTeacherIds as $teacherId) {

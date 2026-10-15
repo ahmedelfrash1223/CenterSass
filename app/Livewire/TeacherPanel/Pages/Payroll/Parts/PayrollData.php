@@ -81,23 +81,21 @@ class PayrollData extends Component
         $ownerId = $user->getOwnerId();
         $accessibleBranches = $user->getAccessibleBranchIds();
 
+        // ✅ استخدم whereYear + whereMonth بدل whereDate (أكثر مرونة)
         $date = Carbon::createFromFormat('Y-m', $this->monthFilter);
-        $periodStart = $date->copy()->startOfMonth();
-        $periodEnd = $date->copy()->endOfMonth();
+        $year = $date->year;
+        $month = $date->month;
 
         $query = TeacherPayroll::query()
             ->with(['teacher', 'branch'])
-            ->where('teacher_id', $ownerId)
-            ->whereDate('period_start', $periodStart->toDateString())
-            ->whereDate('period_end', $periodEnd->toDateString());
+            ->whereHas('teacher', fn ($q) => $q->where('id', $ownerId)->orWhere('owner_id', $ownerId))
+            ->whereYear('period_start', $year)
+            ->whereMonth('period_start', $month);
 
         if (! $user->isOwner()) {
             empty($accessibleBranches)
                 ? $query->whereRaw('1 = 0')
-                : $query->where(function ($q) use ($accessibleBranches) {
-                    $q->whereIn('branch_id', $accessibleBranches)
-                        ->orWhereNull('branch_id');
-                });
+                : $query->whereIn('branch_id', $accessibleBranches);
         }
 
         $query->when($this->statusFilter !== '', fn ($q) => $q->where('status', $this->statusFilter));
@@ -107,9 +105,15 @@ class PayrollData extends Component
 
         $payrolls = $query->orderByDesc('created_at')->paginate(15);
 
-        $teachers = Teacher::where(function ($q) use ($ownerId) {
+        $teachersQuery = Teacher::where(function ($q) use ($ownerId) {
             $q->where('id', $ownerId)->orWhere('owner_id', $ownerId);
-        })->orderBy('name')->get();
+        });
+
+        if (! $user->isOwner()) {
+            $teachersQuery->whereHas('branches', fn ($q) => $q->whereIn('branches.id', $accessibleBranches));
+        }
+
+        $teachers = $teachersQuery->orderBy('name')->get();
 
         return view('teacher-panel.pages.payroll.parts.payroll-data', [
             'payrolls' => $payrolls,

@@ -5,7 +5,7 @@
     ])
 
     <div class="row g-4">
-        <div class="col-lg-5">
+        <div class="col-md-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-body">
                     <h6 class="mb-0 fw-bold"><i class="ph-duotone ph-calendar me-1"></i>بيانات التوليد</h6>
@@ -17,9 +17,13 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">الفرع</label>
+                        <label class="form-label">الفرع @if(!auth('teacher')->user()->isOwner())<span class="text-danger">*</span>@endif</label>
                         <select wire:model.live="branchId" class="form-select">
-                            <option value="">كل الفروع</option>
+                            @if(auth('teacher')->user()->isOwner())
+                                <option value="">كل الفروع</option>
+                            @else
+                                <option value="">اختر فرعًا</option>
+                            @endif
                             @foreach($branches as $branch)
                                 <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                             @endforeach
@@ -54,7 +58,7 @@
             </div>
         </div>
 
-        <div class="col-lg-7">
+        <div class="col-md-7">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-body d-flex justify-content-between align-items-center">
                     <h6 class="mb-0 fw-bold">
