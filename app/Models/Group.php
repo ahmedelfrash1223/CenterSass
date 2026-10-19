@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Services\Teacher\AttendanceService;
 use App\Traits\Group\HasPricingPresentation;
 use App\Traits\Group\HasStatusPresentation;
 use App\Traits\Group\ManagesStudents;
 use App\Traits\Teacher\HasCreator;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -88,5 +90,11 @@ class Group extends Model
     public function assignments(): HasMany
     {
         return $this->hasMany(Assignment::class);
+    }
+
+    public function isClosedForDate(Carbon $date): bool
+    {
+        return app(AttendanceService::class)
+            ->isGroupClosed($this, $date);
     }
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\TeacherPanel\GroupController;
 use App\Http\Controllers\TeacherPanel\InvoiceController;
 use App\Http\Controllers\TeacherPanel\PaymentController;
 use App\Http\Controllers\TeacherPanel\PayrollController;
+use App\Http\Controllers\TeacherPanel\PayrollPdfController;
 use App\Http\Controllers\TeacherPanel\RevenueController;
 use App\Http\Controllers\TeacherPanel\StaffController;
 use App\Http\Controllers\TeacherPanel\StudentController;
@@ -239,12 +240,12 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
     });
 
     // =============================================
-    // Payrolls (حسابات المدرسين)
+    // Payrolls
     // =============================================
 
-    // generate لازم تكون قبل {payroll}
     Route::middleware('teacher.permission:'.TeacherPermissionEnum::PAYROLL_GENERATE->value)->group(function () {
         Route::get('payrolls/generate', [PayrollController::class, 'generate'])->name('payrolls.generate');
+        Route::get('payrolls/review', [PayrollController::class, 'review'])->name('payrolls.review');
     });
 
     Route::middleware('teacher.permission:'.TeacherPermissionEnum::PAYROLL_MANAGE->value)->group(function () {
@@ -253,7 +254,14 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
 
     Route::middleware('teacher.permission:'.TeacherPermissionEnum::PAYROLL_VIEW->value)->group(function () {
         Route::get('payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
+        Route::get('payrolls/{payroll}/pdf', [PayrollPdfController::class, 'download'])->name('payrolls.pdf.download');
+        Route::get('payrolls/{payroll}/print', [PayrollPdfController::class, 'stream'])->name('payrolls.pdf.stream');
         Route::get('payrolls/{payroll}', [PayrollController::class, 'show'])->name('payrolls.show');
+    });
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::PAYROLL_VIEW->value)->group(function () {
+        Route::get('payrolls/{payroll}/sessions/pdf', [PayrollPdfController::class, 'sessionsPdf'])
+            ->name('payrolls.sessions.pdf');
     });
 
     // =============================================

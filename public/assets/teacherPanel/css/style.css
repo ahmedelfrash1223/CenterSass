@@ -44626,3 +44626,51 @@ body.dark .card-header {
     max-width: 100%;
   }
 }
+
+
+<style>
+
+/* مكتملة - أخضر */
+.table .session-row-completed>td {
+  background-color: rgba(25, 135, 84, .12) !important;
+}
+
+.table-hover .session-row-completed:hover>td {
+  background-color: rgba(25, 135, 84, .2) !important;
+}
+
+/* ملغية - أحمر */
+.table .session-row-cancelled>td {
+  background-color: rgba(220, 53, 69, .12) !important;
+}
+
+.table-hover .session-row-cancelled:hover>td {
+  background-color: rgba(220, 53, 69, .2) !important;
+}
+
+/* لم تُدرّس - رمادي */
+.table .session-row-upcoming>td {
+  background-color: rgba(108, 117, 125, .12) !important;
+}
+
+.table-hover .session-row-upcoming:hover>td {
+  background-color: rgba(108, 117, 125, .2) !important;
+}
+
+/* Dark mode — شفافية أعلى عشان تبان */
+[data-bs-theme="dark"] .table .session-row-completed>td {
+  background-color: rgba(25, 135, 84, .25) !important;
+}
+
+[data-bs-theme="dark"] .table .session-row-cancelled>td {
+  background-color: rgba(220, 53, 69, .25) !important;
+}
+
+[data-bs-theme="dark"] .table .session-row-upcoming>td {
+  background-color: rgba(108, 117, 125, .25) !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: #fff !important;
+}

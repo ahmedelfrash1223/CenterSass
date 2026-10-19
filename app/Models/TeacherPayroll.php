@@ -12,29 +12,17 @@ use Illuminate\Support\Str;
 class TeacherPayroll extends Model
 {
     protected $fillable = [
-        'reference',
-        'teacher_id',
-        'branch_id',
-        'period_start',
-        'period_end',
-        'period_label',
+        'reference', 'teacher_id', 'branch_id',
+        'period_start', 'period_end', 'period_label',
         'payment_type',
-        'total_sessions',
-        'cancelled_sessions',
-        'payable_sessions',
-        'total_hours',
-        'base_salary',
-        'sessions_amount',
-        'hours_amount',
-        'bonus',
-        'deductions',
-        'net_amount',
-        'paid_amount',
-        'status',
-        'paid_at',
-        'paid_by',
+        'total_sessions', 'cancelled_sessions', 'payable_sessions', 'total_hours',
+        'base_salary', 'sessions_amount', 'hours_amount',
+        'bonus', 'deductions', 'net_amount',
+        'paid_amount', 'status',
+        'paid_at', 'paid_by',
         'notes',
         'generated_by',
+        'is_reviewed', 'reviewed_at', 'reviewed_by', 'review_notes',
     ];
 
     protected function casts(): array
@@ -53,6 +41,8 @@ class TeacherPayroll extends Model
             'paid_amount' => 'decimal:2',
             'total_hours' => 'decimal:2',
             'paid_at' => 'datetime',
+            'is_reviewed' => 'boolean',
+            'reviewed_at' => 'datetime',
         ];
     }
 
@@ -83,6 +73,11 @@ class TeacherPayroll extends Model
     public function generatedBy(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'generated_by');
+    }
+
+    public function reviewedBy(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'reviewed_by');
     }
 
     public function bonuses(): HasMany

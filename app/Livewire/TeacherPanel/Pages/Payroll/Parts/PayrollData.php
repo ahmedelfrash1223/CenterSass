@@ -31,18 +31,19 @@ class PayrollData extends Component
 
     public function mount(): void
     {
-        $this->monthFilter = now()->format('Y-m');
+        $this->monthFilter = session('payroll.selected_month', now()->format('Y-m'));
+    }
+
+    public function updatedMonthFilter(): void
+    {
+        session(['payroll.selected_month' => $this->monthFilter]);
+        $this->resetPage();
     }
 
     #[On('payroll-generated')]
     public function refreshData(): void
     {
         // re-render
-    }
-
-    public function updatingMonthFilter(): void
-    {
-        $this->resetPage();
     }
 
     public function updatingStatusFilter(): void
@@ -72,6 +73,14 @@ class PayrollData extends Component
         $this->branchFilter = '';
         $this->teacherFilter = '';
         $this->search = '';
+        session(['payroll.selected_month' => $this->monthFilter]);
+        $this->resetPage();
+    }
+
+    public function resetToCurrentMonth(): void
+    {
+        $this->monthFilter = now()->format('Y-m');
+        session(['payroll.selected_month' => $this->monthFilter]);
         $this->resetPage();
     }
 
@@ -81,7 +90,6 @@ class PayrollData extends Component
         $ownerId = $user->getOwnerId();
         $accessibleBranches = $user->getAccessibleBranchIds();
 
-        // ✅ استخدم whereYear + whereMonth بدل whereDate (أكثر مرونة)
         $date = Carbon::createFromFormat('Y-m', $this->monthFilter);
         $year = $date->year;
         $month = $date->month;
@@ -101,7 +109,13 @@ class PayrollData extends Component
         $query->when($this->statusFilter !== '', fn ($q) => $q->where('status', $this->statusFilter));
         $query->when($this->branchFilter !== '', fn ($q) => $q->where('branch_id', $this->branchFilter));
         $query->when($this->teacherFilter !== '', fn ($q) => $q->where('teacher_id', $this->teacherFilter));
-        $query->when($this->search !== '', fn ($q) => $q->where('reference', 'like', "%{$this->search}%"));
+
+        $query->when($this->search !== '', function ($q) {
+            $q->where(function ($sub) {
+                $sub->whereHas('teacher', fn ($t) => $t->where('name', 'like', "%{$this->search}%"))
+                    ->orWhereHas('branch', fn ($b) => $b->where('name', 'like', "%{$this->search}%"));
+            });
+        });
 
         $payrolls = $query->orderByDesc('created_at')->paginate(15);
 
@@ -122,6 +136,7 @@ class PayrollData extends Component
             'statuses' => TeacherPayrollStatusEnum::options(),
             'canGenerate' => $user->hasPermission(TeacherPermissionEnum::PAYROLL_GENERATE),
             'canMarkPaid' => $user->hasPermission(TeacherPermissionEnum::PAYROLL_MARK_PAID),
+            'isCurrentMonth' => $this->monthFilter === now()->format('Y-m'),
         ]);
     }
 }

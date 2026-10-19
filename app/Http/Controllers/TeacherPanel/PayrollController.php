@@ -38,4 +38,9 @@ class PayrollController extends Controller
 
         return view('teacher-panel.pages.payroll.show', compact('payroll'));
     }
+
+    public function review()
+    {
+        return view('teacher-panel.pages.payroll.review');
+    }
 }

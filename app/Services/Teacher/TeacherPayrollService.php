@@ -5,6 +5,7 @@ namespace App\Services\Teacher;
 use App\Enums\Teacher\ExpenseSourceEnum;
 use App\Enums\Teacher\TeacherPaymentTypeEnum;
 use App\Enums\Teacher\TeacherPayrollStatusEnum;
+use App\Enums\Teacher\TeacherRoleEnum;
 use App\Models\GroupSchedule;
 use App\Models\Teacher;
 use App\Models\TeacherBranchPayrollSetting;
@@ -12,7 +13,6 @@ use App\Models\TeacherPayroll;
 use App\Models\TeacherPayrollSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class TeacherPayrollService
 {
@@ -75,21 +75,21 @@ class TeacherPayrollService
         [$totalSessions, $cancelledSessions, $payableSessions, $totalHours] =
             $this->calculateSessions($teacher, $periodStart, $periodEnd, $branchId);
 
-        Log::info('Payroll Generate', [
-            'teacher_id' => $teacher->id,
-            'teacher_name' => $teacher->name,
-            'branch_id' => $branchId,
-            'period' => $periodStart->toDateString().' → '.$periodEnd->toDateString(),
-            'total_sessions' => $totalSessions,
-            'payable_sessions' => $payableSessions,
-            'total_hours' => $totalHours,
-        ]);
+        $settings = $this->resolveSettings($teacher, $branchId);
 
-        if ($totalSessions === 0) {
+        if ($settings['source'] === 'none') {
             return null;
         }
 
-        $settings = $this->resolveSettings($teacher, $branchId);
+        $isAssistant = $teacher->role === TeacherRoleEnum::ASSISTANT;
+
+        if (! $isAssistant && $totalSessions === 0 && $settings['monthly_salary'] <= 0) {
+            return null;
+        }
+
+        if ($isAssistant && $settings['monthly_salary'] <= 0) {
+            return null;
+        }
 
         $baseSalary = 0.0;
         $sessionsAmount = 0.0;
@@ -166,13 +166,10 @@ class TeacherPayrollService
         Carbon $periodEnd,
         ?int $branchId
     ): array {
-        $query = GroupSchedule::query()
-            ->where('teacher_id', $teacher->id);
+        $query = GroupSchedule::query()->where('teacher_id', $teacher->id);
 
         if ($branchId !== null) {
-            $query->whereHas('group', function ($q) use ($branchId) {
-                $q->where('branch_id', $branchId);
-            });
+            $query->whereHas('group', fn ($q) => $q->where('branch_id', $branchId));
         }
 
         $schedules = $query->get();
@@ -182,13 +179,8 @@ class TeacherPayrollService
         }
 
         $dayMap = [
-            'Saturday' => 6,
-            'Sunday' => 0,
-            'Monday' => 1,
-            'Tuesday' => 2,
-            'Wednesday' => 3,
-            'Thursday' => 4,
-            'Friday' => 5,
+            'Saturday' => 6, 'Sunday' => 0, 'Monday' => 1, 'Tuesday' => 2,
+            'Wednesday' => 3, 'Thursday' => 4, 'Friday' => 5,
         ];
 
         $total = 0;
@@ -225,7 +217,6 @@ class TeacherPayrollService
     {
         $count = 0;
         $cursor = $start->copy();
-
         while ($cursor->lte($end)) {
             if ($cursor->dayOfWeek === $dayOfWeek) {
                 $count++;
@@ -234,6 +225,16 @@ class TeacherPayrollService
         }
 
         return $count;
+    }
+
+    public function markAsReviewed(TeacherPayroll $payroll, Teacher $user, ?string $notes = null): bool
+    {
+        return $payroll->update([
+            'is_reviewed' => true,
+            'reviewed_at' => now(),
+            'reviewed_by' => $user->id,
+            'review_notes' => $notes,
+        ]);
     }
 
     public function addBonus(TeacherPayroll $payroll, float $amount, string $reason, Teacher $user): void
