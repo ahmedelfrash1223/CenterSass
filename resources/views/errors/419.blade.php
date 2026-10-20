@@ -1,0 +1,7 @@
+@extends('errors.layout')
+@section('title', 'انتهت الجلسة')
+@section('eyebrow', 'انتهت صلاحية الجلسة')
+@section('code', '419')
+@section('heading', 'انتهت جلستك')
+@section('message', 'مر وقت طويل دون نشاط، لذلك انتهت صلاحية الجلسة أو رمز التحقق. حدّث الصفحة ثم أعد المحاولة.')
+@section('symbol', '⌛')

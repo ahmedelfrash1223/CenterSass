@@ -1,0 +1,7 @@
+@extends('errors.layout')
+@section('title', 'يلزم تسجيل الدخول')
+@section('eyebrow', 'تسجيل الدخول مطلوب')
+@section('code', '401')
+@section('heading', 'يجب تسجيل الدخول أولًا')
+@section('message', 'تحتاج إلى تسجيل الدخول للوصول إلى هذه الصفحة. سجّل الدخول بحسابك الصحيح ثم حاول مرة أخرى.')
+@section('symbol', '↗')

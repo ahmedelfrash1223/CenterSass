@@ -1,0 +1,7 @@
+@extends('errors.layout')
+@section('title', 'طلبات كثيرة')
+@section('eyebrow', 'تمهّل قليلًا')
+@section('code', '429')
+@section('heading', 'طلبات كثيرة في وقت قصير')
+@section('message', 'وصلتنا طلبات متتالية أكثر من المسموح به. انتظر قليلًا ثم حاول مرة أخرى.')
+@section('symbol', '…')

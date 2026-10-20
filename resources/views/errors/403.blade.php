@@ -1,0 +1,7 @@
+@extends('errors.layout')
+@section('title', 'غير مسموح بالوصول')
+@section('eyebrow', 'صلاحيات الوصول')
+@section('code', '403')
+@section('heading', 'هذه الصفحة ليست متاحة لك')
+@section('message', 'لا تملك الصلاحيات اللازمة لعرض هذا المحتوى. إذا كنت تعتقد أن هذا خطأ، تواصل مع مسؤول النظام.')
+@section('symbol', '!')

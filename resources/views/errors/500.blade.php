@@ -1,0 +1,7 @@
+@extends('errors.layout')
+@section('title', 'خطأ داخلي')
+@section('eyebrow', 'نعمل على حل المشكلة')
+@section('code', '500')
+@section('heading', 'حدث خطأ من جانبنا')
+@section('message', 'واجه النظام مشكلة غير متوقعة أثناء تنفيذ طلبك. حاول مرة أخرى بعد قليل، ونعتذر عن الإزعاج.')
+@section('symbol', '!')

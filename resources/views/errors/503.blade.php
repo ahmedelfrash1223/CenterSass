@@ -1,0 +1,7 @@
+@extends('errors.layout')
+@section('title', 'النظام غير متاح مؤقتًا')
+@section('eyebrow', 'نعود إليك قريبًا')
+@section('code', '503')
+@section('heading', 'نقوم ببعض التحسينات')
+@section('message', 'الخدمة غير متاحة مؤقتًا بسبب الصيانة أو الضغط. جرّب مرة أخرى بعد قليل، شكرًا لصبرك.')
+@section('symbol', '⚙')

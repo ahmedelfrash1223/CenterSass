@@ -13,19 +13,27 @@ use Livewire\WithPagination;
 
 class BranchData extends Component
 {
-    use WithPagination;
     use HasDeleteConfirmation;
     use HasSubscriptionLimitCheck;
+    use WithPagination;
 
     protected $paginationTheme = 'bootstrap';
 
     public string $search = '';
+
     public string $status = '';
 
     protected $listeners = ['refreshData' => '$refresh'];
 
-    public function updatingSearch(): void { $this->resetPage(); }
-    public function updatedStatus(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatus(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
@@ -36,8 +44,9 @@ class BranchData extends Component
 
     public function confirmDelete(int $id): void
     {
-        if (!Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::BRANCH_DELETE)) {
+        if (! Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::BRANCH_DELETE)) {
             $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لحذف الفروع.');
+
             return;
         }
 
@@ -46,15 +55,16 @@ class BranchData extends Component
 
     public function delete(): void
     {
-        if (!$this->deleteId) {
+        if (! $this->deleteId) {
             return;
         }
 
         $user = Auth::guard('teacher')->user();
 
-        if (!$user->hasPermission(TeacherPermissionEnum::BRANCH_DELETE)) {
+        if (! $user->hasPermission(TeacherPermissionEnum::BRANCH_DELETE)) {
             $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لحذف الفروع.');
             $this->deleteId = null;
+
             return;
         }
 
@@ -70,17 +80,16 @@ class BranchData extends Component
     {
         $user = Auth::guard('teacher')->user();
         $ownerId = $user->getOwnerId();
-
         $branches = Branch::query()
             ->with('creator')
             ->where('teacher_id', $ownerId)
-            ->when($this->search !== '', fn($q) => $q->where(function ($q) {
+            ->when($this->search !== '', fn ($q) => $q->where(function ($q) {
                 $q->where('name', 'like', "%{$this->search}%")
                     ->orWhere('address', 'like', "%{$this->search}%")
                     ->orWhere('phone', 'like', "%{$this->search}%")
                     ->orWhere('email', 'like', "%{$this->search}%");
             }))
-            ->when($this->status !== '', fn($q) => $q->where('is_active', $this->status))
+            ->when($this->status !== '', fn ($q) => $q->where('is_active', $this->status))
             ->latest()
             ->paginate(10);
 
