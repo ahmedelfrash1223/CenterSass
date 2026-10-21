@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Admin\AdminPermissionEnum;
 use App\Traits\Admin\HasIdentityDefaults;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -41,5 +42,15 @@ class Admin extends Authenticatable
     public function themeSettings(): HasOne
     {
         return $this->hasOne(AdminThemeSetting::class);
+    }
+
+    public function getOwnerId(): ?int
+    {
+        return null;
+    }
+
+    public function hasPermission(string|AdminPermissionEnum $permission): bool
+    {
+        return true;
     }
 }

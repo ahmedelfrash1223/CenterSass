@@ -230,7 +230,6 @@
                         <a wire:navigate href="{{ route('teacher.support.index') }}" class="pc-link">
                             <span class="pc-micon position-relative">
                                 <i class="ph-duotone ph-lifebuoy"></i>
-                                @livewire('teacher-panel.parts.sidebar-support-badge')
                             </span>
                             <span class="pc-mtext">
                                 الدعم الفني

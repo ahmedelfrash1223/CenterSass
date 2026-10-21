@@ -80,6 +80,19 @@
                     </a>
                 </li>
 
+                <li class="pc-item @yield('support-active')">
+                    <a
+                        wire:navigate
+                        href="{{ route('admin.support.index') }}"
+                        class="pc-link"
+                    >
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-lifebuoy"></i>
+                        </span>
+                        <span class="pc-mtext">الدعم الفني</span>
+                    </a>
+                </li>
+
                 <li class="pc-item @yield('subscription-request-active')">
                     <a
                         wire:navigate
