@@ -46,9 +46,9 @@ class GroupCreate extends Component
 
     public bool $sectionBasic = true;
 
-    public bool $sectionSchedule = true;
+    public bool $sectionSchedule = false;
 
-    public bool $sectionPricing = true;
+    public bool $sectionPricing = false;
 
     public bool $showDuplicateConfirm = false;
 
@@ -84,6 +84,10 @@ class GroupCreate extends Component
         $this->hourOptions = $this->hourOptions();
         $this->minuteOptions = $this->minuteOptions();
         $this->days = $this->daysList();
+
+        $this->sectionBasic = true;
+        $this->sectionSchedule = false;
+        $this->sectionPricing = false;
     }
 
     protected function daysList(): array
@@ -421,6 +425,10 @@ class GroupCreate extends Component
             $this->schedules = [];
             $this->availableTeachers = [];
             $this->addScheduleRow();
+
+            $this->sectionBasic = true;
+            $this->sectionSchedule = false;
+            $this->sectionPricing = false;
 
             $newCount = Group::where('teacher_id', $ownerId)->count();
 

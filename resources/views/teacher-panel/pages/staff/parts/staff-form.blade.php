@@ -47,7 +47,7 @@
             @endif
 
 
-            <div class="card border mb-3">
+            <div class="card border mb-3 {{ in_array('sectionBasic', $sectionsWithErrors) ? 'border-danger border-2' : '' }}">
                 <div class="card-header bg-body d-flex align-items-center justify-content-between"
                      style="cursor: pointer;"
                      wire:click="toggleSection('sectionBasic')">
@@ -158,7 +158,7 @@
 
             @if(!$editMode || (isset($teacher) && !$teacher->isOwner()))
                 @if((int) $role === \App\Enums\Teacher\TeacherRoleEnum::STAFF->value)
-                    <div class="card border mb-3">
+                    <div class="card border mb-3 {{ in_array('sectionGrades', $sectionsWithErrors) ? 'border-danger border-2' : '' }}">
                         <div class="card-header bg-body d-flex align-items-center justify-content-between"
                              style="cursor: pointer;"
                              wire:click="toggleSection('sectionGrades')">
@@ -207,7 +207,7 @@
                                     </div>
 
                                     @error('assigned_grades')
-                                    <div class="alert alert-danger small mb-2">{{ $message }}</div>
+                                        <div class="alert alert-danger small mb-2">{{ $message }}</div>
                                     @enderror
 
                                     @if($availableGrades->count() > 0)
@@ -271,7 +271,7 @@
                                         </div>
 
                                         @error('assigned_subjects')
-                                        <div class="alert alert-danger small mb-2">{{ $message }}</div>
+                                            <div class="alert alert-danger small mb-2">{{ $message }}</div>
                                         @enderror
 
                                         @if(count($availableSubjectsFiltered) > 0)
@@ -335,7 +335,7 @@
 
 
             @if(!$editMode || (isset($teacher) && !$teacher->isOwner()))
-                <div class="card border mb-3">
+                <div class="card border mb-3 {{ in_array('sectionBranches', $sectionsWithErrors) ? 'border-danger border-2' : '' }}">
                     <div class="card-header bg-body d-flex align-items-center justify-content-between"
                          style="cursor: pointer;"
                          wire:click="toggleSection('sectionBranches')">
@@ -360,7 +360,7 @@
                         <div class="card-body">
                             <div class="d-flex gap-2 mb-3">
                                 <button type="button"
-                                        wire:click="$set('branch_ids', @js($branches->pluck('id')->map(fn($id) => (string)$id)->toArray()))"
+                                        wire:click="$set('branch_ids', @js($branches->pluck('id')->map(fn($id) => (string) $id)->toArray()))"
                                         class="btn btn-sm btn-outline-success">
                                     <i class="ph-duotone ph-check-square me-1"></i>تحديد الكل
                                 </button>
@@ -371,7 +371,7 @@
                             </div>
 
                             @error('branch_ids')
-                            <div class="alert alert-danger small mb-2">{{ $message }}</div>
+                                <div class="alert alert-danger small mb-2">{{ $message }}</div>
                             @enderror
 
                             @if($branches->count() > 0)
@@ -412,7 +412,175 @@
             @endif
 
 
-            <div class="card border mb-3">
+            {{-- ✅ Payroll Settings --}}
+            @if(!$editMode || (isset($teacher) && !$teacher->isOwner()))
+                <div class="card border mb-3 {{ in_array('sectionPayroll', $sectionsWithErrors) ? 'border-danger border-2' : '' }}">
+                    <div class="card-header bg-body d-flex align-items-center justify-content-between"
+                         style="cursor: pointer;"
+                         wire:click="toggleSection('sectionPayroll')">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center bg-secondary-subtle text-secondary"
+                                 style="width: 40px; height: 40px;">
+                                <i class="ph-duotone ph-currency-dollar"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">إعدادات الأجر</h6>
+                                <small class="text-body-secondary">نوع الأجر والراتب والخصومات</small>
+                            </div>
+                        </div>
+                        <i class="ph-duotone {{ $sectionPayroll ? 'ph-caret-up' : 'ph-caret-down' }}"></i>
+                    </div>
+
+                    @if($sectionPayroll)
+                        <div class="card-body">
+                            {{-- General Payroll --}}
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">نوع الأجر <span class="text-danger">*</span></label>
+                                    <select wire:model.live="payment_type"
+                                            class="form-select @error('payment_type') is-invalid @enderror">
+                                        @foreach(\App\Enums\Teacher\TeacherPaymentTypeEnum::options() as $value => $label)
+                                            <option value="{{ $value }}">{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('payment_type')
+                                    <div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">يوم الصرف في الشهر</label>
+                                    <input type="number" min="1" max="31" wire:model="pay_day"
+                                           class="form-control @error('pay_day') is-invalid @enderror">
+                                    @error('pay_day')
+                                    <div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+
+                                @if(in_array($payment_type, ['monthly', 'monthly_plus_per_session']))
+                                    <div class="col-md-6">
+                                        <label class="form-label">الراتب الشهري</label>
+                                        <div class="input-group">
+                                            <input type="number" step="0.01" min="0" wire:model="monthly_salary"
+                                                   class="form-control @error('monthly_salary') is-invalid @enderror">
+                                            <span class="input-group-text">ج.م</span>
+                                        </div>
+                                        @error('monthly_salary')
+                                        <div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    </div>
+                                @endif
+
+                                @if(in_array($payment_type, ['per_session', 'monthly_plus_per_session']))
+                                    <div class="col-md-6">
+                                        <label class="form-label">سعر الحصة</label>
+                                        <div class="input-group">
+                                            <input type="number" step="0.01" min="0" wire:model="per_session_rate"
+                                                   class="form-control @error('per_session_rate') is-invalid @enderror">
+                                            <span class="input-group-text">ج.م</span>
+                                        </div>
+                                        @error('per_session_rate')
+                                        <div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    </div>
+                                @endif
+
+                                @if($payment_type === 'hourly')
+                                    <div class="col-md-6">
+                                        <label class="form-label">سعر الساعة</label>
+                                        <div class="input-group">
+                                            <input type="number" step="0.01" min="0" wire:model="hourly_rate"
+                                                   class="form-control @error('hourly_rate') is-invalid @enderror">
+                                            <span class="input-group-text">ج.م</span>
+                                        </div>
+                                        @error('hourly_rate')
+                                        <div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    </div>
+                                @endif
+
+                                <div class="col-md-6">
+                                    <label class="form-label">خصم الحصة الملغية</label>
+                                    <div class="input-group">
+                                        <input type="number" step="0.01" min="0" wire:model="session_deduction_rate"
+                                               class="form-control @error('session_deduction_rate') is-invalid @enderror">
+                                        <span class="input-group-text">ج.م</span>
+                                    </div>
+                                    @error('session_deduction_rate')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                </div>
+                            </div>
+
+                            {{-- Branch Payroll Settings --}}
+                            @if(count($branchPayrollSettings) > 0)
+                                <hr>
+                                <h6 class="mb-3 fw-bold">
+                                    <i class="ph-duotone ph-git-branch me-1"></i>
+                                    إعدادات الفروع (اختياري)
+                                </h6>
+                                <small class="text-body-secondary d-block mb-3">لو العضو بيشتغل في أكتر من فرع بسعر
+                                    مختلف</small>
+
+                                @foreach($branchPayrollSettings as $branchId => $data)
+                                    <div class="card border mb-3" wire:key="payroll-branch-{{ $branchId }}">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                                <h6 class="mb-0 fw-bold">{{ $data['branch_name'] }}</h6>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           wire:model.live="branchPayrollSettings.{{ $branchId }}.enabled"
+                                                           id="payroll-br-{{ $branchId }}">
+                                                    <label class="form-check-label small"
+                                                           for="payroll-br-{{ $branchId }}">
+                                                        تفعيل إعدادات خاصة
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            @if($data['enabled'])
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small">نوع الأجر</label>
+                                                        <select
+                                                            wire:model="branchPayrollSettings.{{ $branchId }}.payment_type"
+                                                            class="form-select form-select-sm">
+                                                            @foreach(\App\Enums\Teacher\TeacherPaymentTypeEnum::options() as $value => $label)
+                                                                <option value="{{ $value }}">{{ $label }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small">الراتب الشهري</label>
+                                                        <input type="number" step="0.01"
+                                                               wire:model="branchPayrollSettings.{{ $branchId }}.monthly_salary"
+                                                               class="form-control form-control-sm">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small">سعر الحصة</label>
+                                                        <input type="number" step="0.01"
+                                                               wire:model="branchPayrollSettings.{{ $branchId }}.per_session_rate"
+                                                               class="form-control form-control-sm">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small">سعر الساعة</label>
+                                                        <input type="number" step="0.01"
+                                                               wire:model="branchPayrollSettings.{{ $branchId }}.hourly_rate"
+                                                               class="form-control form-control-sm">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small">خصم الحصة الملغية</label>
+                                                        <input type="number" step="0.01"
+                                                               wire:model="branchPayrollSettings.{{ $branchId }}.session_deduction_rate"
+                                                               class="form-control form-control-sm">
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            @endif
+
+
+            <div class="card border mb-3 {{ in_array('sectionPermissions', $sectionsWithErrors) ? 'border-danger border-2' : '' }}">
                 <div class="card-header bg-body d-flex align-items-center justify-content-between"
                      style="cursor: pointer;"
                      wire:click="toggleSection('sectionPermissions')">

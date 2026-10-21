@@ -45,9 +45,9 @@ class GroupUpdate extends Component
 
     public bool $sectionBasic = true;
 
-    public bool $sectionSchedule = true;
+    public bool $sectionSchedule = false;
 
-    public bool $sectionPricing = true;
+    public bool $sectionPricing = false;
 
     public bool $showDuplicateConfirm = false;
 
@@ -151,6 +151,10 @@ class GroupUpdate extends Component
         $this->hourOptions = $this->hourOptions();
         $this->minuteOptions = $this->minuteOptions();
         $this->days = $this->daysList();
+
+        $this->sectionBasic = true;
+        $this->sectionSchedule = false;
+        $this->sectionPricing = false;
     }
 
     protected function daysList(): array

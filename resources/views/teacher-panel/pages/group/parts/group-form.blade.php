@@ -341,12 +341,17 @@
 
                                                 <div class="col-md-6">
                                                     <label class="form-label small fw-semibold">
-                                                        <i class="ph-duotone ph-play me-1"></i>من
+                                                        <i class="ph-duotone ph-play me-1"></i>وقت بداية الحصة
                                                     </label>
+                                                    <div class="alert alert-info py-2 px-3 mb-2 small d-flex align-items-center gap-2">
+                                                        <i class="ph-duotone ph-info fs-5"></i>
+                                                        <span>اختر الساعة والدقيقة اللي بتبدأ فيها الحصة من القوائم تحت</span>
+                                                    </div>
                                                     <div class="input-group input-group-sm">
+                                                        <span class="input-group-text"><i class="ph-duotone ph-clock"></i></span>
                                                         <select wire:model.live="schedules.{{ $index }}.start_hour"
                                                                 class="form-select form-select-sm">
-                                                            <option value="">ساعة</option>
+                                                            <option value="">ساعة البداية</option>
                                                             @foreach($hourOptions as $h)
                                                                 <option value="{{ $h }}">{{ $h }}</option>
                                                             @endforeach
@@ -362,12 +367,17 @@
 
                                                 <div class="col-md-6">
                                                     <label class="form-label small fw-semibold">
-                                                        <i class="ph-duotone ph-stop me-1"></i>إلى
+                                                        <i class="ph-duotone ph-stop me-1"></i>وقت نهاية الحصة
                                                     </label>
+                                                    <div class="alert alert-info py-2 px-3 mb-2 small d-flex align-items-center gap-2">
+                                                        <i class="ph-duotone ph-info fs-5"></i>
+                                                        <span>اختر الساعة والدقيقة اللي بتنتهي فيها الحصة من القوائم تحت</span>
+                                                    </div>
                                                     <div class="input-group input-group-sm">
+                                                        <span class="input-group-text"><i class="ph-duotone ph-clock"></i></span>
                                                         <select wire:model.live="schedules.{{ $index }}.end_hour"
                                                                 class="form-select form-select-sm">
-                                                            <option value="">ساعة</option>
+                                                            <option value="">ساعة النهاية</option>
                                                             @foreach($hourOptions as $h)
                                                                 <option value="{{ $h }}">{{ $h }}</option>
                                                             @endforeach
