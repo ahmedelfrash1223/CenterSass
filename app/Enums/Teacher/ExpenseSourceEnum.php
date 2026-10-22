@@ -66,4 +66,25 @@ enum ExpenseSourceEnum: string
             ->mapWithKeys(fn (self $s) => [$s->value => $s->label()])
             ->toArray();
     }
+
+    public function isTeacherRelated(): bool
+    {
+        return in_array($this, [
+            self::TEACHER_SALARY,
+            self::TEACHER_BONUS,
+        ], true);
+    }
+
+    public function requiresReason(): bool
+    {
+        return ! $this->isTeacherRelated();
+    }
+
+    public static function otherOptions(): array
+    {
+        return collect(self::cases())
+            ->reject(fn (self $s) => $s->isTeacherRelated())
+            ->mapWithKeys(fn (self $s) => [$s->value => $s->label()])
+            ->toArray();
+    }
 }

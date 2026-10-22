@@ -44,6 +44,21 @@ class Expense extends Model
         });
     }
 
+    public function getReasonAttribute(): ?string
+    {
+        return $this->meta['reason'] ?? null;
+    }
+
+    public function setReasonAttribute(?string $value): void
+    {
+        $meta = $this->meta ?? [];
+        $meta['reason'] = $value;
+        $this->meta = $meta;
+    }
+
+    // ═══════════════════════════════════════
+    // Relations
+    // ═══════════════════════════════════════
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'teacher_id');

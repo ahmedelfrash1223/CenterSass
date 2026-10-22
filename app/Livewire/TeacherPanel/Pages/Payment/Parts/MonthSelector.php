@@ -34,8 +34,17 @@ class MonthSelector extends Component
         $this->updatedMonth();
     }
 
+    public function goToCurrentMonth(): void
+    {
+        $this->month = now()->format('Y-m');
+        $this->updatedMonth();
+    }
+
     public function render()
     {
-        return view('teacher-panel.pages.payment.parts.month-selector');
+        return view('teacher-panel.pages.payment.parts.month-selector', [
+            'currentMonth' => now()->format('Y-m'),
+            'isCurrentMonth' => $this->month === now()->format('Y-m'),
+        ]);
     }
 }
