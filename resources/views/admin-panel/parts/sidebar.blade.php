@@ -93,6 +93,15 @@
                     </a>
                 </li>
 
+                <li class="pc-item @yield('card-requests-active')">
+                    <a wire:navigate href="{{ route('admin.card-requests.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-identification-card"></i>
+                        </span>
+                        <span class="pc-mtext">طلبات الكروت</span>
+                    </a>
+                </li>
+
                 <li class="pc-item @yield('subscription-request-active')">
                     <a
                         wire:navigate

@@ -19,6 +19,7 @@ class CardRequestItem extends Model
         'is_paid',
         'paid_at',
         'paid_by',
+        'paid_by_admin_id',
         'revenue_id',
     ];
 
@@ -54,5 +55,10 @@ class CardRequestItem extends Model
     public function paidBy(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'paid_by');
+    }
+
+    public function paidByAdmin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'paid_by_admin_id');
     }
 }

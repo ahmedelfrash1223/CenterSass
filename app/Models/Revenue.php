@@ -15,6 +15,7 @@ class Revenue extends Model
         'source',
         'source_id',
         'recorded_by',
+        'recorded_by_admin_id',
         'amount',
         'currency',
         'branch_id',
@@ -55,6 +56,11 @@ class Revenue extends Model
     public function recordedBy(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'recorded_by');
+    }
+
+    public function recordedByAdmin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'recorded_by_admin_id');
     }
 
     public function branch(): BelongsTo

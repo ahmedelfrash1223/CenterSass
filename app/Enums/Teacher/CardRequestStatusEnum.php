@@ -11,6 +11,7 @@ enum CardRequestStatusEnum: string
     case SHIPPED = 'shipped';
     case DELIVERED = 'delivered';
     case REJECTED = 'rejected';
+    case CANCELLED = 'cancelled';
 
     public function label(): string
     {
@@ -22,6 +23,7 @@ enum CardRequestStatusEnum: string
             self::SHIPPED => 'تم الشحن',
             self::DELIVERED => 'اكتمل',
             self::REJECTED => 'مرفوض',
+            self::CANCELLED => 'ملغي',
         };
     }
 
@@ -35,6 +37,7 @@ enum CardRequestStatusEnum: string
             self::SHIPPED => 'info',
             self::DELIVERED => 'success',
             self::REJECTED => 'danger',
+            self::CANCELLED => 'secondary',
         };
     }
 
@@ -48,6 +51,7 @@ enum CardRequestStatusEnum: string
             self::SHIPPED => 'ph-truck',
             self::DELIVERED => 'ph-package',
             self::REJECTED => 'ph-x-circle',
+            self::CANCELLED => 'ph-x-circle',
         };
     }
 
@@ -62,6 +66,16 @@ enum CardRequestStatusEnum: string
             self::DELIVERED,
             self::REJECTED,
         ];
+    }
+
+    public function isApproved(): bool
+    {
+        return $this === self::APPROVED;
+    }
+
+    public function canTransitionToInProgress(): bool
+    {
+        return $this === self::APPROVED;
     }
 
     public static function options(): array

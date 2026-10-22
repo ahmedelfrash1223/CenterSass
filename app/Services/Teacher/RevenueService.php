@@ -3,15 +3,17 @@
 namespace App\Services\Teacher;
 
 use App\Enums\Teacher\RevenueSourceEnum;
+use App\Models\Admin;
 use App\Models\Revenue;
 use App\Models\Teacher;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class RevenueService
 {
     public function record(
-        Teacher $user,
+        Teacher|Admin $user,
         RevenueSourceEnum $source,
         float $amount,
         ?int $sourceId = null,
@@ -20,14 +22,22 @@ class RevenueService
         ?string $description = null,
         array $meta = [],
         \DateTimeInterface|string|null $occurredAt = null,
+        ?int $ownerTeacherId = null,
     ): Revenue {
+        $teacherId = $user instanceof Teacher ? $user->getOwnerId() : $ownerTeacherId;
+
+        if ($teacherId === null) {
+            throw new InvalidArgumentException('An owning teacher ID is required when recording revenue as an admin.');
+        }
+
         return DB::transaction(function () use (
-            $user, $source, $amount, $sourceId, $branchId, $studentId,
+            $user, $teacherId, $source, $amount, $sourceId, $branchId, $studentId,
             $description, $meta, $occurredAt
         ) {
             return Revenue::create([
-                'teacher_id' => $user->getOwnerId(),
-                'recorded_by' => $user->id,
+                'teacher_id' => $teacherId,
+                'recorded_by' => $user instanceof Teacher ? $user->id : null,
+                'recorded_by_admin_id' => $user instanceof Admin ? $user->id : null,
                 'source' => $source->value,
                 'source_id' => $sourceId,
                 'amount' => $amount,
