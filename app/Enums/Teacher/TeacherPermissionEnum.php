@@ -131,7 +131,10 @@ enum TeacherPermissionEnum: string
     case REVENUE_UPDATE = 'revenues.update';
     case REVENUE_DELETE = 'revenues.delete';
 
+
+    // =============================================
     // Payroll
+    // =============================================
     case PAYROLL_VIEW = 'payroll.view';
     case PAYROLL_MANAGE = 'payroll.manage';
     case PAYROLL_GENERATE = 'payroll.generate';
@@ -139,8 +142,18 @@ enum TeacherPermissionEnum: string
     case PAYROLL_ADD_BONUS = 'payroll.add_bonus';
     case PAYROLL_ADD_DEDUCTION = 'payroll.add_deduction';
 
+    // =============================================
     // Expenses
+    // =============================================
     case EXPENSE_VIEW = 'expenses.view';
+
+    // =============================================
+    // Monthly Closing (تقفيل الشهر)
+    // =============================================
+    case MONTHLY_CLOSING_VIEW = 'monthly_closing.view';
+    case MONTHLY_CLOSING_MANAGE = 'monthly_closing.manage';   // تقفيل / إعادة فتح
+    case MONTHLY_CLOSING_DELETE = 'monthly_closing.delete';
+    case MONTHLY_CLOSING_EXPORT = 'monthly_closing.export';   // تنزيل PDF
 
     // =============================================
     // Labels
@@ -231,6 +244,11 @@ enum TeacherPermissionEnum: string
             self::PAYROLL_ADD_DEDUCTION => 'إضافة خصم',
             self::EXPENSE_VIEW => 'عرض المصروفات',
 
+            self::MONTHLY_CLOSING_VIEW => 'عرض تقفيل الشهر',
+            self::MONTHLY_CLOSING_MANAGE => 'إدارة تقفيل الشهر',
+            self::MONTHLY_CLOSING_DELETE => 'حذف تقفيل الشهر',
+            self::MONTHLY_CLOSING_EXPORT => 'تصدير تقفيل الشهر',
+
         };
     }
 
@@ -320,6 +338,11 @@ enum TeacherPermissionEnum: string
             self::PAYROLL_MARK_PAID, self::PAYROLL_ADD_BONUS, self::PAYROLL_ADD_DEDUCTION => 'حسابات المدرسين',
 
             self::EXPENSE_VIEW => 'المصروفات',
+
+            self::MONTHLY_CLOSING_VIEW,
+            self::MONTHLY_CLOSING_MANAGE,
+            self::MONTHLY_CLOSING_DELETE,
+            self::MONTHLY_CLOSING_EXPORT => 'تقفيل الشهر',
         };
     }
 
@@ -408,6 +431,11 @@ enum TeacherPermissionEnum: string
             self::PAYROLL_ADD_BONUS => 'ph-gift',
             self::PAYROLL_ADD_DEDUCTION => 'ph-minus-circle',
             self::EXPENSE_VIEW => 'ph-eye',
+
+            self::MONTHLY_CLOSING_VIEW => 'ph-eye',
+            self::MONTHLY_CLOSING_MANAGE => 'ph-lock',
+            self::MONTHLY_CLOSING_DELETE => 'ph-trash',
+            self::MONTHLY_CLOSING_EXPORT => 'ph-file-pdf',
         };
     }
 
