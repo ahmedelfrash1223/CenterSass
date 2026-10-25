@@ -14,6 +14,15 @@ class MonthlyClosingController extends Controller
         return view('teacher-panel.pages.monthly-closing.index');
     }
 
+    public function show(MonthlyClosing $closing)
+    {
+        $user = Auth::guard('teacher')->user();
+
+        abort_unless($user && $closing->teacher_id === $user->getOwnerId(), 404);
+
+        return view('teacher-panel.pages.monthly-closing.show', compact('closing'));
+    }
+
     public function revenuePdf(MonthlyClosing $closing, MonthlyClosingPdfService $pdf)
     {
         $this->authorizeOwnership($closing);

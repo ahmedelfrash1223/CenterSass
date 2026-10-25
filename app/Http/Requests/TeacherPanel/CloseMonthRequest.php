@@ -17,28 +17,30 @@ class CloseMonthRequest extends FormRequest
         $branches = Auth::guard('teacher')->user()?->getAccessibleBranchIds() ?? [];
 
         return [
-            'month' => ['required', 'date_format:Y-m'],
-            'branchId' => ['nullable', 'integer', 'in:'.implode(',', $branches ?: [0])],
-            'notes' => ['nullable', 'string', 'max:1000'],
+            'closeMonth' => ['required', 'date_format:Y-m'],
+            'closeBranchId' => ['required', 'integer', 'in:'.implode(',', $branches ?: [0])],
+            'closeNotes' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'month.required' => 'الشهر مطلوب.',
-            'month.date_format' => 'صيغة الشهر غير صحيحة.',
-            'branchId.in' => 'الفرع المختار غير متاح لك.',
-            'notes.max' => 'الملاحظات طويلة جداً.',
+            'closeMonth.required' => 'الشهر مطلوب.',
+            'closeMonth.date_format' => 'صيغة الشهر غير صحيحة.',
+            'closeBranchId.required' => 'يجب اختيار الفرع.',
+            'closeBranchId.integer' => 'الفرع غير صالح.',
+            'closeBranchId.in' => 'الفرع المختار غير متاح لك.',
+            'closeNotes.max' => 'الملاحظات طويلة جداً.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'month' => 'الشهر',
-            'branchId' => 'الفرع',
-            'notes' => 'الملاحظات',
+            'closeMonth' => 'الشهر',
+            'closeBranchId' => 'الفرع',
+            'closeNotes' => 'الملاحظات',
         ];
     }
 }

@@ -9,14 +9,17 @@
     {{-- Header with button --}}
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <p class="text-body-secondary mb-0 small">تقفيل شامل للوارد والصادر لكل شهر</p>
-        <button type="button" wire:click="toggleCloseForm" class="btn btn-primary">
-            <i class="ph-duotone {{ $showCloseForm ? 'ph-x-circle' : 'ph-lock' }} me-1"></i>
-            {{ $showCloseForm ? 'إغلاق الفورم' : 'تقفيل شهر جديد' }}
-        </button>
+
+        @if($canManage)
+            <button type="button" wire:click="toggleCloseForm" class="btn btn-primary">
+                <i class="ph-duotone {{ $showCloseForm ? 'ph-x-circle' : 'ph-lock' }} me-1"></i>
+                {{ $showCloseForm ? 'إغلاق الفورم' : 'تقفيل شهر جديد' }}
+            </button>
+        @endif
     </div>
 
     {{-- Inline Form --}}
-    @if($showCloseForm)
+    @if($showCloseForm && $canManage)
         <div class="card border-0 shadow-sm mb-4" style="border-inline-start: 4px solid var(--bs-primary) !important;">
             <div class="card-header bg-body">
                 <h6 class="mb-0 fw-bold">
@@ -25,6 +28,7 @@
             </div>
             <div class="card-body">
                 <div class="row g-3">
+                    {{-- الشهر --}}
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">
                             الشهر <span class="text-danger">*</span>
@@ -36,11 +40,14 @@
                         @enderror
                     </div>
 
+                    {{-- الفرع (إجباري الآن) --}}
                     <div class="col-md-4">
-                        <label class="form-label small fw-semibold">الفرع</label>
+                        <label class="form-label small fw-semibold">
+                            الفرع <span class="text-danger">*</span>
+                        </label>
                         <select wire:model="closeBranchId"
                                 class="form-select @error('closeBranchId') is-invalid @enderror">
-                            <option value="">— كل الفروع —</option>
+                            <option value="">— اختر الفرع —</option>
                             @foreach($branches as $branch)
                                 <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                             @endforeach
@@ -50,6 +57,7 @@
                         @enderror
                     </div>
 
+                    {{-- ملاحظات --}}
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">ملاحظات</label>
                         <input type="text" wire:model="closeNotes"
@@ -70,12 +78,12 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 mt-3 pt-3 border-top">
-                    <button type="button" wire:click="closeMonth" wire:loading.attr="disabled"
-                            wire:target="closeMonth" class="btn btn-primary">
-                        <span wire:loading.remove wire:target="closeMonth">
+                    <button type="button" wire:click="storeClosing" wire:loading.attr="disabled"
+                            wire:target="storeClosing" class="btn btn-primary">
+                        <span wire:loading.remove wire:target="storeClosing">
                             <i class="ph-duotone ph-lock me-1"></i>تقفيل الشهر
                         </span>
-                        <span wire:loading wire:target="closeMonth">
+                                        <span wire:loading wire:target="storeClosing">
                             <span class="spinner-border spinner-border-sm me-1"></span>جاري التنفيذ...
                         </span>
                     </button>
@@ -143,9 +151,7 @@
                                 <span class="text-body-secondary">—</span>
                             @endif
                         </td>
-                        <td>
-                            <small>{{ $closing->month }}</small>
-                        </td>
+                        <td><small>{{ $closing->month }}</small></td>
                         <td class="text-center fw-bold text-success">
                             {{ number_format($closing->total_revenue, 2) }}
                         </td>
@@ -168,41 +174,22 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center justify-content-center gap-2">
-                                <a href="{{ route('teacher.monthly-closing.revenue-pdf', $closing->id) }}"
-                                   target="_blank" class="text-success" title="وارد PDF">
-                                    <i class="ph-duotone ph-file-arrow-down fs-4"></i>
-                                </a>
-                                <a href="{{ route('teacher.monthly-closing.expense-pdf', $closing->id) }}"
-                                   target="_blank" class="text-danger" title="صادر PDF">
-                                    <i class="ph-duotone ph-file-arrow-down fs-4"></i>
-                                </a>
-                                <a href="{{ route('teacher.monthly-closing.summary-pdf', $closing->id) }}"
-                                   target="_blank" class="text-primary" title="خلاصة PDF">
-                                    <i class="ph-duotone ph-file-pdf fs-4"></i>
+                                <a wire:navigate href="{{ route('teacher.monthly-closing.show', $closing->id) }}"
+                                   class="border-0 bg-transparent p-0 text-info" title="عرض">
+                                    <i class="ph-duotone ph-eye fs-4"></i>
                                 </a>
 
-                                @if($confirmingReopenId === $closing->id)
-                                    <button type="button" wire:click="reopen" class="border-0 bg-transparent p-0 text-success" title="تأكيد">
-                                        <i class="ph-duotone ph-check-circle fs-4"></i>
+                                @if($canManage && $closing->isClosed())
+                                    <button type="button"
+                                            wire:click="$dispatch('ask-reopen', { id: {{ $closing->id }} })"
+                                            class="border-0 bg-transparent p-0 text-warning" title="إلغاء التقفيل">
+                                        <i class="ph-duotone ph-lock-open fs-4"></i>
                                     </button>
-                                    <button type="button" wire:click="cancelReopen" class="border-0 bg-transparent p-0 text-secondary">
-                                        <i class="ph-duotone ph-x-circle fs-4"></i>
-                                    </button>
-                                @elseif($confirmingDeleteId === $closing->id)
-                                    <button type="button" wire:click="delete" class="border-0 bg-transparent p-0 text-success" title="تأكيد">
-                                        <i class="ph-duotone ph-check-circle fs-4"></i>
-                                    </button>
-                                    <button type="button" wire:click="cancelDelete" class="border-0 bg-transparent p-0 text-secondary">
-                                        <i class="ph-duotone ph-x-circle fs-4"></i>
-                                    </button>
-                                @else
-                                    @if($closing->isClosed())
-                                        <button type="button" wire:click="askReopen({{ $closing->id }})"
-                                                class="border-0 bg-transparent p-0 text-warning" title="إعادة فتح">
-                                            <i class="ph-duotone ph-lock-open fs-4"></i>
-                                        </button>
-                                    @endif
-                                    <button type="button" wire:click="askDelete({{ $closing->id }})"
+                                @endif
+
+                                @if($canDelete)
+                                    <button type="button"
+                                            wire:click="$dispatch('ask-delete', { id: {{ $closing->id }} })"
                                             class="border-0 bg-transparent p-0 text-danger" title="حذف">
                                         <i class="ph-duotone ph-trash fs-4"></i>
                                     </button>

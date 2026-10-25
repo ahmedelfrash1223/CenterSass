@@ -276,14 +276,16 @@ Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(functio
     // =============================================
     // Monthly Close
     // =============================================
-    // View
-    Route::middleware('teacher.permission:' . TeacherPermissionEnum::MONTHLY_CLOSING_VIEW->value)->group(function () {
+
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::MONTHLY_CLOSING_VIEW->value)->group(function () {
         Route::get('monthly-closing', [MonthlyClosingController::class, 'index'])
             ->name('monthly-closing.index');
+
+        Route::get('monthly-closing/{closing}', [MonthlyClosingController::class, 'show'])
+            ->name('monthly-closing.show');
     });
 
-    // PDFs
-    Route::middleware('teacher.permission:' . TeacherPermissionEnum::MONTHLY_CLOSING_EXPORT->value)->group(function () {
+    Route::middleware('teacher.permission:'.TeacherPermissionEnum::MONTHLY_CLOSING_EXPORT->value)->group(function () {
         Route::get('monthly-closing/{closing}/revenue-pdf', [MonthlyClosingController::class, 'revenuePdf'])
             ->name('monthly-closing.revenue-pdf');
 

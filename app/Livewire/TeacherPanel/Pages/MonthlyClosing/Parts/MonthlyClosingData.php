@@ -2,12 +2,13 @@
 
 namespace App\Livewire\TeacherPanel\Pages\MonthlyClosing\Parts;
 
+use App\Enums\Teacher\TeacherPermissionEnum;
 use App\Http\Requests\TeacherPanel\CloseMonthRequest;
 use App\Models\Branch;
 use App\Models\MonthlyClosing;
 use App\Services\Teacher\MonthlyClosingService;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -38,6 +39,11 @@ class MonthlyClosingData extends Component
 
     public function mount(): void
     {
+        abort_unless(
+            Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_VIEW),
+            403
+        );
+
         $this->month = session('teacher.monthly-closing.selected_month', now()->format('Y-m'));
         $this->closeMonth = now()->format('Y-m');
     }
@@ -61,7 +67,14 @@ class MonthlyClosingData extends Component
 
     public function toggleCloseForm(): void
     {
+        if (! Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_MANAGE)) {
+            $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لتقفيل الشهر.');
+
+            return;
+        }
+
         $this->showCloseForm = ! $this->showCloseForm;
+
         if (! $this->showCloseForm) {
             $this->resetCloseForm();
         }
@@ -75,19 +88,36 @@ class MonthlyClosingData extends Component
         $this->resetValidation();
     }
 
-    public function closeMonth(MonthlyClosingService $service): void
+
+    public function storeClosing(MonthlyClosingService $service): void
     {
+        if (! Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_MANAGE)) {
+            $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لتقفيل الشهر.');
+
+            return;
+        }
+
         $request = new CloseMonthRequest;
-        $this->validate($request->rules(), $request->messages(), $request->attributes());
+
+        $validated = Validator::make(
+            [
+                'closeMonth' => $this->closeMonth,
+                'closeBranchId' => $this->closeBranchId,
+                'closeNotes' => $this->closeNotes,
+            ],
+            $request->rules(),
+            $request->messages(),
+            $request->attributes(),
+        )->validate();
 
         $user = Auth::guard('teacher')->user();
 
         try {
-            $closing = $service->closeMonth(
+            $service->closeMonth(
                 $user,
-                $this->closeMonth,
-                $this->closeBranchId !== '' ? (int) $this->closeBranchId : null,
-                $this->closeNotes ?: null,
+                $validated['closeMonth'],
+                (int) $validated['closeBranchId'],
+                $validated['closeNotes'] ?? null,
             );
 
             $this->resetCloseForm();
@@ -101,6 +131,12 @@ class MonthlyClosingData extends Component
 
     public function askReopen(int $id): void
     {
+        if (! Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_MANAGE)) {
+            $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لإعادة فتح الشهر.');
+
+            return;
+        }
+
         $this->confirmingReopenId = $id;
     }
 
@@ -112,6 +148,13 @@ class MonthlyClosingData extends Component
     public function reopen(MonthlyClosingService $service): void
     {
         if (! $this->confirmingReopenId) {
+            return;
+        }
+
+        if (! Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_MANAGE)) {
+            $this->confirmingReopenId = null;
+            $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لإعادة فتح الشهر.');
+
             return;
         }
 
@@ -128,8 +171,15 @@ class MonthlyClosingData extends Component
         }
     }
 
+
     public function askDelete(int $id): void
     {
+        if (! Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_DELETE)) {
+            $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لحذف التقفيل.');
+
+            return;
+        }
+
         $this->confirmingDeleteId = $id;
     }
 
@@ -141,6 +191,13 @@ class MonthlyClosingData extends Component
     public function delete(MonthlyClosingService $service): void
     {
         if (! $this->confirmingDeleteId) {
+            return;
+        }
+
+        if (! Auth::guard('teacher')->user()->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_DELETE)) {
+            $this->confirmingDeleteId = null;
+            $this->dispatch('show-error-message', message: 'ليس لديك صلاحية لحذف التقفيل.');
+
             return;
         }
 
@@ -163,10 +220,6 @@ class MonthlyClosingData extends Component
         $ownerId = $user->getOwnerId();
         $accessibleBranches = $user->getAccessibleBranchIds();
 
-        $date = Carbon::createFromFormat('Y-m', $this->month);
-        $periodStart = $date->copy()->startOfMonth();
-        $periodEnd = $date->copy()->endOfMonth();
-
         $query = MonthlyClosing::query()
             ->with(['branch', 'closedBy'])
             ->where('teacher_id', $ownerId)
@@ -186,6 +239,9 @@ class MonthlyClosingData extends Component
         return view('teacher-panel.pages.monthly-closing.parts.monthly-closing-data', [
             'closings' => $closings,
             'branches' => Branch::whereIn('id', $accessibleBranches)->orderBy('name')->get(),
+            'canManage' => $user->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_MANAGE),
+            'canDelete' => $user->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_DELETE),
+            'canExport' => $user->hasPermission(TeacherPermissionEnum::MONTHLY_CLOSING_EXPORT),
         ]);
     }
 }

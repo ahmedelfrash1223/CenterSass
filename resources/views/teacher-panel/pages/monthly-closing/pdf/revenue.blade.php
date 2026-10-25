@@ -20,7 +20,6 @@
 </head>
 <body>
 <div class="header">
-    <div class="brand">Classio</div>
     <h1>كشف الوارد — {{ $closing->month }}</h1>
     <div class="meta">
         <span>رقم التقفيل: <strong>{{ $closing->reference }}</strong></span>
@@ -66,9 +65,5 @@
     </tr>
     </tbody>
 </table>
-
-<div class="footer">
-    Classio — {{ now()->format('Y-m-d H:i') }}
-</div>
 </body>
 </html>
