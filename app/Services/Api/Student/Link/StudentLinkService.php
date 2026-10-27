@@ -75,6 +75,29 @@ class StudentLinkService
     }
 
 
+
+    public function subscribedTeachers(StudentAccount $account): \Illuminate\Support\Collection
+    {
+        $students = $account->students()
+            ->with('teacher')
+            ->get();
+
+        return $students
+            ->map(function ($student) {
+                if (!$student->teacher) {
+                    return null;
+                }
+                $teacher = $student->teacher;
+                $teacher->subscription_started_at = $student->pivot->linked_at;
+
+                return $teacher;
+            })
+            ->filter()
+            ->unique('id')
+            ->values();
+    }
+
+
     public function linkedStudents(StudentAccount $account): Collection
     {
         return $account->students()

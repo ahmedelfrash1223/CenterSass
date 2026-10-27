@@ -7,4 +7,5 @@ Route::prefix('links')->name('links.')->group(function () {
     Route::post('scan', [StudentLinkController::class, 'scan'])->name('scan');
     Route::get('/', [StudentLinkController::class, 'index'])->name('index');
     Route::delete('/', [StudentLinkController::class, 'unlink'])->name('unlink');
+    Route::get('teachers', [StudentLinkController::class, 'teachers'])->name('teachers');
 });

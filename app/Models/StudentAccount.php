@@ -104,5 +104,18 @@ class StudentAccount extends Authenticatable
         }
     }
 
+    public function teachers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Teacher::class,
+            'student_account_student',
+            'student_account_id',
+            'student_id'
+        )
+            ->join('students', 'student_account_student.student_id', '=', 'students.id')
+            ->join('teachers', 'students.teacher_id', '=', 'teachers.id')
+            ->select('teachers.*', 'student_account_student.linked_at as subscription_started_at');
+    }
+
 
 }
