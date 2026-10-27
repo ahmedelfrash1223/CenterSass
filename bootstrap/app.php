@@ -12,6 +12,7 @@ use App\Http\Middleware\TeacherPermissionMiddleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
+        api: __DIR__.'/../routes/api/api.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'teacher' => TeacherMiddleware::class,
             'student' => StudentMiddleware::class,
             'teacher.permission' => TeacherPermissionMiddleware::class,
+            'student.active' => \App\Http\Middleware\Api\Student\EnsureAccountIsActive::class,
 
         ]);
     })

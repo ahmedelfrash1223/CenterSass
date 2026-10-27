@@ -25,7 +25,7 @@ class StoreOtherExpenseRequest extends FormRequest
             'otherReason' => ['required', 'string', 'min:3', 'max:2000'],
             'otherDescription' => ['nullable', 'string', 'max:1000'],
             'otherAmount' => ['required', 'numeric', 'min:0.01'],
-            'otherBranchId' => ['nullable', 'integer', 'in:'.$allowedBranches],
+            'otherBranchId' => ['required', 'integer', 'in:'.$allowedBranches],
             'otherOccurredAt' => ['required', 'date'],
         ];
     }
@@ -43,6 +43,7 @@ class StoreOtherExpenseRequest extends FormRequest
             'otherAmount.numeric' => 'المبلغ يجب أن يكون رقماً.',
             'otherAmount.min' => 'المبلغ يجب أن يكون أكبر من صفر.',
             'otherBranchId.in' => 'الفرع المختار غير متاح لك.',
+            'otherBranchId.required' => 'تاريخ المصروف مطلوب.',
             'otherOccurredAt.required' => 'تاريخ المصروف مطلوب.',
             'otherOccurredAt.date' => 'تاريخ المصروف غير صالح.',
         ];

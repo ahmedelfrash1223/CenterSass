@@ -31,12 +31,22 @@ class RevenueData extends Component
     public function mount(): void
     {
         $this->month = session('teacher.revenues.selected_month', now()->format('Y-m'));
+
+        $this->branchFilter = (string) session('teacher.payments.selected_branch', '');
     }
 
     #[On('month-changed')]
     public function onMonthChanged(string $month): void
     {
         $this->month = $month;
+        $this->resetPage();
+    }
+
+
+    #[On('branch-changed')]
+    public function onBranchChanged(string $branchId): void
+    {
+        $this->branchFilter = $branchId;
         $this->resetPage();
     }
 
@@ -122,31 +132,32 @@ class RevenueData extends Component
         $periodStart = $date->copy()->startOfMonth();
         $periodEnd = $date->copy()->endOfMonth();
 
-        $query = Revenue::query()
+        $baseQuery = Revenue::query()
             ->with(['student', 'branch', 'recordedBy'])
             ->where('teacher_id', $ownerId)
             ->whereBetween('occurred_at', [$periodStart, $periodEnd]);
 
         if (! $user->isOwner()) {
             empty($accessibleBranches)
-                ? $query->whereRaw('1 = 0')
-                : $query->whereIn('branch_id', $accessibleBranches);
+                ? $baseQuery->whereRaw('1 = 0')
+                : $baseQuery->whereIn('branch_id', $accessibleBranches);
         }
 
-        $query->when($this->sourceFilter !== '', fn ($q) => $q->where('source', $this->sourceFilter));
-        $query->when($this->branchFilter !== '', fn ($q) => $q->where('branch_id', $this->branchFilter));
-        $query->when($this->search !== '', fn ($q) => $q->where(function ($sub) {
-            $sub->where('reference', 'like', "%{$this->search}%")
-                ->orWhere('description', 'like', "%{$this->search}%");
-        }));
+        $listQuery = (clone $baseQuery)
+            ->when($this->sourceFilter !== '', fn ($q) => $q->where('source', $this->sourceFilter))
+            ->when($this->branchFilter !== '', fn ($q) => $q->where('branch_id', $this->branchFilter))
+            ->when($this->search !== '', fn ($q) => $q->where(function ($sub) {
+                $sub->where('reference', 'like', "%{$this->search}%")
+                    ->orWhere('description', 'like', "%{$this->search}%");
+            }));
 
-        $revenues = $query->orderByDesc('occurred_at')->paginate(15);
+        $revenues = $listQuery->orderByDesc('occurred_at')->paginate(15);
 
-        $totalsBySource = Revenue::query()
+        $totalsQuery = (clone $baseQuery)
+            ->when($this->branchFilter !== '', fn ($q) => $q->where('branch_id', $this->branchFilter));
+
+        $totalsBySource = $totalsQuery
             ->selectRaw('source, SUM(amount) as total, COUNT(*) as count')
-            ->where('teacher_id', $ownerId)
-            ->whereBetween('occurred_at', [$periodStart, $periodEnd])
-            ->when(! $user->isOwner(), fn ($q) => $q->whereIn('branch_id', $accessibleBranches))
             ->groupBy('source')
             ->get()
             ->keyBy('source');

@@ -1,0 +1,36 @@
+<?php
+
+use App\Http\Controllers\Api\Student\Auth\GoogleController;
+use App\Http\Controllers\Api\Student\Auth\LoginController;
+use App\Http\Controllers\Api\Student\Auth\LogoutController;
+use App\Http\Controllers\Api\Student\Auth\OtpController;
+use App\Http\Controllers\Api\Student\Auth\RegisterController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Student Auth Routes
+|--------------------------------------------------------------------------
+*/
+
+// ─── Public ────────────────────────────────────────────
+Route::post('auth/register', [RegisterController::class, 'register'])
+    ->name('auth.register');
+
+Route::post('auth/login', [LoginController::class, 'login'])
+    ->name('auth.login');
+
+Route::post('auth/google', [GoogleController::class, 'callback'])
+    ->name('auth.google');
+
+Route::post('auth/otp/verify', [OtpController::class, 'verify'])
+    ->name('auth.otp.verify');
+
+Route::post('auth/otp/resend', [OtpController::class, 'resend'])
+    ->name('auth.otp.resend');
+
+// ─── Protected ─────────────────────────────────────────
+Route::middleware(['auth:sanctum', 'student.active'])->group(function () {
+    Route::get('me', [LoginController::class, 'me'])->name('me');
+    Route::post('auth/logout', [LogoutController::class, 'logout'])->name('auth.logout');
+});

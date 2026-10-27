@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\DB;
 
 trait HasGroupScheduleManagement
 {
-    protected function teachersForGrade(string $grade, int $ownerId): Collection
+
+    protected function teachersForGrade(string $grade, int $ownerId, ?int $branchId = null): Collection
     {
-        if (!$grade) return collect();
+        if (! $grade) {
+            return collect();
+        }
 
         $fromCreatedBy = TeacherSubject::query()
             ->where('teacher_id', $ownerId)
@@ -33,20 +36,29 @@ trait HasGroupScheduleManagement
             [$ownerId]
         ));
 
-        return \App\Models\Teacher::query()
+        $query = \App\Models\Teacher::query()
             ->whereIn('id', $teacherIds)
             ->where(function ($q) use ($ownerId) {
                 $q->where('id', $ownerId)
                     ->orWhere('owner_id', $ownerId);
             })
-            ->where('is_active', 1)
-            ->orderBy('name')
-            ->get();
+            ->where('is_active', 1);
+
+        if ($branchId) {
+            $query->where(function ($q) use ($branchId, $ownerId) {
+                $q->where('id', $ownerId)
+                    ->orWhereHas('branches', fn ($bq) => $bq->where('branches.id', $branchId));
+            });
+        }
+
+        return $query->orderBy('name')->get();
     }
 
     protected function subjectsForTeacherAndGrade(int $teacherId, string $grade, int $ownerId): Collection
     {
-        if (!$teacherId || !$grade) return collect();
+        if (! $teacherId || ! $grade) {
+            return collect();
+        }
 
         $assignedIds = DB::table('teacher_grade_subjects')
             ->join('teacher_subjects', 'teacher_subjects.id', '=', 'teacher_grade_subjects.teacher_subject_id')
@@ -74,7 +86,9 @@ trait HasGroupScheduleManagement
 
         $allIds = array_unique(array_merge($assignedIds, $createdByIds, $ownerIds));
 
-        if (empty($allIds)) return collect();
+        if (empty($allIds)) {
+            return collect();
+        }
 
         return TeacherSubject::query()
             ->whereIn('id', $allIds)
@@ -84,7 +98,9 @@ trait HasGroupScheduleManagement
 
     protected function loadSubjectsForGrade(string $grade, int $ownerId): Collection
     {
-        if (!$grade) return collect();
+        if (! $grade) {
+            return collect();
+        }
 
         return TeacherSubject::query()
             ->where('teacher_id', $ownerId)
@@ -99,7 +115,9 @@ trait HasGroupScheduleManagement
 
         foreach ($schedules as $schedule) {
             $days = $schedule['days'] ?? [];
-            if (empty($days)) continue;
+            if (empty($days)) {
+                continue;
+            }
 
             foreach ($days as $day) {
                 $row = $schedule;
@@ -124,7 +142,9 @@ trait HasGroupScheduleManagement
             return null;
         }
 
-        if ($end->lessThanOrEqualTo($start)) return null;
+        if ($end->lessThanOrEqualTo($start)) {
+            return null;
+        }
 
         return $start->diffInMinutes($end);
     }
@@ -134,30 +154,43 @@ trait HasGroupScheduleManagement
         $hours = intdiv($minutes, 60);
         $mins = $minutes % 60;
 
-        if ($hours > 0 && $mins > 0) return "{$hours} س {$mins} د";
-        if ($hours > 0) return "{$hours} س";
+        if ($hours > 0 && $mins > 0) {
+            return "{$hours} س {$mins} د";
+        }
+        if ($hours > 0) {
+            return "{$hours} س";
+        }
+
         return "{$mins} د";
     }
 
     protected function findDuplicateScheduleIndex(array $schedules, int $currentIndex): ?int
     {
         $current = $schedules[$currentIndex] ?? null;
-        if (!$current) return null;
+        if (! $current) {
+            return null;
+        }
 
         $currentDays = $current['days'] ?? [];
-        $currentSubject = (string)($current['subject_id'] ?? '');
+        $currentSubject = (string) ($current['subject_id'] ?? '');
 
-        if (empty($currentDays) || $currentSubject === '') return null;
+        if (empty($currentDays) || $currentSubject === '') {
+            return null;
+        }
 
         foreach ($schedules as $index => $schedule) {
-            if ($index === $currentIndex) continue;
+            if ($index === $currentIndex) {
+                continue;
+            }
 
             $days = $schedule['days'] ?? [];
-            $subject = (string)($schedule['subject_id'] ?? '');
+            $subject = (string) ($schedule['subject_id'] ?? '');
 
-            if ($subject !== $currentSubject) continue;
+            if ($subject !== $currentSubject) {
+                continue;
+            }
 
-            if (!empty(array_intersect($currentDays, $days))) {
+            if (! empty(array_intersect($currentDays, $days))) {
                 return $index;
             }
         }
@@ -171,24 +204,30 @@ trait HasGroupScheduleManagement
 
         foreach ($schedules as $i => $scheduleA) {
             $daysA = $scheduleA['days'] ?? [];
-            $subjectA = (string)($scheduleA['subject_id'] ?? '');
+            $subjectA = (string) ($scheduleA['subject_id'] ?? '');
 
-            if (empty($daysA) || $subjectA === '') continue;
+            if (empty($daysA) || $subjectA === '') {
+                continue;
+            }
 
             foreach ($schedules as $j => $scheduleB) {
-                if ($j <= $i) continue;
+                if ($j <= $i) {
+                    continue;
+                }
 
                 $daysB = $scheduleB['days'] ?? [];
-                $subjectB = (string)($scheduleB['subject_id'] ?? '');
+                $subjectB = (string) ($scheduleB['subject_id'] ?? '');
 
-                if ($subjectB !== $subjectA) continue;
+                if ($subjectB !== $subjectA) {
+                    continue;
+                }
 
                 foreach (array_intersect($daysA, $daysB) as $day) {
                     $duplicates[] = [
-                        'row_index'    => $i,
+                        'row_index' => $i,
                         'duplicate_of' => $j,
-                        'day'          => $day,
-                        'subject_id'   => $subjectA,
+                        'day' => $day,
+                        'subject_id' => $subjectA,
                     ];
                 }
             }
@@ -201,24 +240,24 @@ trait HasGroupScheduleManagement
     {
         $days = $schedule['days'] ?? [];
 
-        return !empty($days)
-            && !empty($schedule['start_time'])
-            && !empty($schedule['end_time'])
-            && !empty($schedule['subject_id'])
-            && !empty($schedule['teacher_id'])
+        return ! empty($days)
+            && ! empty($schedule['start_time'])
+            && ! empty($schedule['end_time'])
+            && ! empty($schedule['subject_id'])
+            && ! empty($schedule['teacher_id'])
             && $this->computeScheduleMinutes($schedule) !== null;
     }
 
     protected function getDayLabel(string $day): string
     {
         return [
-            'Saturday'  => 'السبت',
-            'Sunday'    => 'الأحد',
-            'Monday'    => 'الإثنين',
-            'Tuesday'   => 'الثلاثاء',
+            'Saturday' => 'السبت',
+            'Sunday' => 'الأحد',
+            'Monday' => 'الإثنين',
+            'Tuesday' => 'الثلاثاء',
             'Wednesday' => 'الأربعاء',
-            'Thursday'  => 'الخميس',
-            'Friday'    => 'الجمعة',
+            'Thursday' => 'الخميس',
+            'Friday' => 'الجمعة',
         ][$day] ?? $day;
     }
 
@@ -226,19 +265,19 @@ trait HasGroupScheduleManagement
     {
         $hours = [];
         for ($h = 7; $h <= 23; $h++) {
-            $val = str_pad((string)$h, 2, '0', STR_PAD_LEFT);
+            $val = str_pad((string) $h, 2, '0', STR_PAD_LEFT);
             $hours[$val] = $val;
         }
+
         return $hours;
     }
-
 
     protected function minuteOptions(): array
     {
         $minutes = [];
 
         for ($m = 0; $m < 60; $m += 15) {
-            $val = str_pad((string)$m, 2, '0', STR_PAD_LEFT);
+            $val = str_pad((string) $m, 2, '0', STR_PAD_LEFT);
             $minutes[$val] = $val;
         }
 

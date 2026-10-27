@@ -56,9 +56,11 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label small fw-semibold">الفرع</label>
+                        <label class="form-label small fw-semibold">
+                            الفرع<span class="text-danger">*</span>
+                        </label>
                         <select wire:model="otherBranchId" class="form-select @error('otherBranchId') is-invalid @enderror">
-                            <option value="">— بدون فرع —</option>
+                            <option value="">— اختر الفرع —</option>
                             @foreach($branches as $branch)
                                 <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                             @endforeach

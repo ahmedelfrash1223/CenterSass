@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    'mailtrap' => [
+        'api_token' => env('MAILTRAP_API_TOKEN'),
+        'inbox_id'  => env('MAILTRAP_INBOX_ID'),
+        'proxy'     => env('MAILTRAP_HTTP_PROXY'),
+    ],
+
 ];

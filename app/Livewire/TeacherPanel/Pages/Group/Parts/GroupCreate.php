@@ -174,10 +174,34 @@ class GroupCreate extends Component
         $this->schedules[$index]['days'] = [];
     }
 
+
+    public function updatedBranchId(): void
+    {
+        $user = Auth::guard('teacher')->user();
+
+        $this->availableTeachers = $this->teachersForGrade(
+            $this->grade,
+            $user->getOwnerId(),
+            $this->branch_id !== '' ? (int) $this->branch_id : null,
+        )
+            ->map(fn ($t) => ['id' => $t->id, 'name' => $t->name])
+            ->toArray();
+
+        foreach ($this->schedules as $i => $schedule) {
+            $this->schedules[$i]['teacher_id'] = '';
+            $this->schedules[$i]['subject_id'] = '';
+        }
+    }
+
     public function updatedGrade(): void
     {
         $user = Auth::guard('teacher')->user();
-        $this->availableTeachers = $this->teachersForGrade($this->grade, $user->getOwnerId())
+
+        $this->availableTeachers = $this->teachersForGrade(
+            $this->grade,
+            $user->getOwnerId(),
+            $this->branch_id !== '' ? (int) $this->branch_id : null,
+        )
             ->map(fn ($t) => ['id' => $t->id, 'name' => $t->name])
             ->toArray();
 

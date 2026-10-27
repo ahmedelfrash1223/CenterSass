@@ -45,6 +45,9 @@ class MonthlyClosingData extends Component
         );
 
         $this->month = session('teacher.monthly-closing.selected_month', now()->format('Y-m'));
+
+        $this->branchFilter = (string) session('teacher.payments.selected_branch', '');
+
         $this->closeMonth = now()->format('Y-m');
     }
 
@@ -52,6 +55,14 @@ class MonthlyClosingData extends Component
     public function onMonthChanged(string $month): void
     {
         $this->month = $month;
+        $this->resetPage();
+    }
+
+
+    #[On('branch-changed')]
+    public function onBranchChanged(string $branchId): void
+    {
+        $this->branchFilter = $branchId;
         $this->resetPage();
     }
 
@@ -87,7 +98,6 @@ class MonthlyClosingData extends Component
         $this->closeNotes = '';
         $this->resetValidation();
     }
-
 
     public function storeClosing(MonthlyClosingService $service): void
     {
@@ -170,7 +180,6 @@ class MonthlyClosingData extends Component
             $this->dispatch('show-error-message', message: $e->getMessage());
         }
     }
-
 
     public function askDelete(int $id): void
     {
