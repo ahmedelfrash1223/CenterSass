@@ -2,35 +2,178 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
+    <title>كشف الصادر - {{ $closing->month }}</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'dejavusans', sans-serif; color: #1a1a1a; font-size: 10.5px; }
-        .header { border-bottom: 2px solid #2c3e50; padding-bottom: 10px; margin-bottom: 16px; }
-        .header .brand { font-size: 20px; font-weight: bold; color: #2c3e50; }
-        .header h1 { font-size: 15px; color: #2c3e50; margin-top: 6px; }
-        .header .meta { font-size: 10px; color: #666; margin-top: 4px; }
-        .header .meta span { margin-left: 16px; }
-        table.list { width: 100%; border-collapse: collapse; font-size: 10px; }
-        table.list th, table.list td { border: 1px solid #888; padding: 7px 8px; text-align: right; }
-        table.list thead th { background: #2c3e50; color: #fff; font-weight: bold; text-align: center; }
-        table.list tbody tr:nth-child(even) td { background: #f8f9fa; }
-        .total-row td { background: #e8eef3 !important; font-weight: bold; font-size: 11px; border-top: 1.5px solid #2c3e50; }
-        .footer { position: fixed; bottom: 6px; left: 0; right: 0; text-align: center; font-size: 8.5px; color: #999; border-top: 1px solid #e0e0e0; padding-top: 4px; }
+        @page {
+            margin: 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: dejavusans, sans-serif;
+            color: #222;
+            font-size: 10px;
+            line-height: 1.5;
+            direction: rtl;
+        }
+
+        .header {
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .header h1 {
+            font-size: 19px;
+            color: #222;
+            margin: 0 0 8px;
+            text-align: center;
+        }
+
+        .header .meta {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header .meta td {
+            border: none;
+            padding: 3px 0;
+            text-align: right;
+            font-size: 10px;
+            width: 50%;
+        }
+
+        .header .meta td.left {
+            text-align: left;
+        }
+
+        .details {
+            border: 1px solid #999;
+            padding: 7px 9px;
+            margin-bottom: 12px;
+        }
+
+        .details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details td {
+            border: none;
+            padding: 3px;
+            text-align: right;
+        }
+
+        table.list {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5px;
+            margin-bottom: 12px;
+        }
+
+        table.list thead {
+            display: table-header-group;
+        }
+
+        table.list th,
+        table.list td {
+            border: 1px solid #999;
+            padding: 6px 5px;
+            text-align: right;
+            vertical-align: middle;
+        }
+
+        table.list thead th {
+            background: #eee;
+            color: #222;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table.list tbody tr {
+            page-break-inside: avoid;
+        }
+
+        .total-row td {
+            background: #eee;
+            font-weight: bold;
+            font-size: 10.5px;
+            border-top: 2px solid #555;
+        }
+
+        .amount {
+            text-align: left !important;
+            direction: ltr;
+            white-space: nowrap;
+        }
+
+        .center {
+            text-align: center !important;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: -5mm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #999;
+            padding-top: 4px;
+        }
     </style>
 </head>
 <body>
+
+{{-- Document Header --}}
 <div class="header">
-    <h1>كشف الصادر — {{ $closing->month }}</h1>
-    <div class="meta">
-        <span>رقم التقفيل: <strong>{{ $closing->reference }}</strong></span>
-        @if($closing->branch)
-            <span>الفرع: <strong>{{ $closing->branch->name }}</strong></span>
-        @endif
-        <span>المدرس: {{ $closing->teacher?->name }}</span>
-        <span>التاريخ: {{ $closing->closed_at?->format('Y-m-d') }}</span>
-    </div>
+    <h1>كشف الصادر</h1>
+
+    <table class="meta">
+        <tr>
+            <td>
+                <strong>رقم التقفيل:</strong>
+                {{ $closing->reference }}
+            </td>
+            <td class="left">
+                <strong>تاريخ الطباعة:</strong>
+                {{ now()->format('Y/m/d h:i A') }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>الشهر:</strong>
+                {{ $closing->month }}
+            </td>
+            <td class="left">
+                <strong>تاريخ التقفيل:</strong>
+                {{ $closing->closed_at?->format('Y/m/d') ?? '—' }}
+            </td>
+        </tr>
+    </table>
 </div>
 
+{{-- Closing Details --}}
+<div class="details">
+    <table>
+        <tr>
+            <td>
+                <strong>المدرس:</strong>
+                {{ $closing->teacher?->name ?? '—' }}
+            </td>
+            <td>
+                <strong>الفرع:</strong>
+                {{ $closing->branch?->name ?? 'كل الفروع' }}
+            </td>
+        </tr>
+    </table>
+</div>
+
+{{-- Expenses List --}}
 <table class="list">
     <thead>
     <tr>
@@ -39,7 +182,7 @@
         <th>المصدر</th>
         <th>الوصف / السبب</th>
         <th style="width:90px;">المبلغ</th>
-        <th style="width:90px;">التاريخ</th>
+        <th style="width:80px;">التاريخ</th>
     </tr>
     </thead>
     <tbody>
@@ -48,22 +191,33 @@
             $enum = \App\Enums\Teacher\ExpenseSourceEnum::tryFrom($item->source_type);
         @endphp
         <tr>
-            <td style="text-align:center;">{{ $i + 1 }}</td>
+            <td class="center">{{ $i + 1 }}</td>
             <td>{{ $item->reference }}</td>
             <td>{{ $enum?->label() ?? $item->source_type }}</td>
             <td>{{ $item->description ?: '—' }}</td>
-            <td style="text-align:left; direction:ltr;">{{ number_format($item->amount, 2) }} ج.م</td>
-            <td style="text-align:center;">{{ $item->occurred_at?->format('Y-m-d') }}</td>
+            <td class="amount">{{ number_format($item->amount, 2) }} ج.م</td>
+            <td class="center">{{ $item->occurred_at?->format('Y/m/d') ?? '—' }}</td>
         </tr>
     @empty
-        <tr><td colspan="6" style="text-align:center; padding:20px;">لا توجد بنود</td></tr>
+        <tr>
+            <td colspan="6" class="center" style="padding:15px;">
+                لا توجد بنود
+            </td>
+        </tr>
     @endforelse
+
     <tr class="total-row">
         <td colspan="4" style="text-align:right;">الإجمالي</td>
-        <td style="text-align:left; direction:ltr;">{{ number_format($closing->total_expense, 2) }} ج.م</td>
+        <td class="amount">{{ number_format($closing->total_expense, 2) }} ج.م</td>
         <td></td>
     </tr>
     </tbody>
 </table>
+
+{{-- Footer --}}
+<div class="footer">
+    كشف صادر رسمي — تم إنشاء المستند إلكترونيًا بتاريخ {{ now()->format('Y/m/d') }}
+</div>
+
 </body>
 </html>

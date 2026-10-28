@@ -28,7 +28,7 @@ Route::prefix('student')->name('student.')->group(function () {
         require __DIR__ . '/student/groups.php';
 
         // Schedules Routes
-        require __DIR__ . '/student/schedules.php'; 
+        require __DIR__ . '/student/schedules.php';
 
         // Attendance Routes
         require __DIR__ . '/student/attendance.php';
