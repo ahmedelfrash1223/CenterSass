@@ -129,7 +129,7 @@ class PayrollPdfController extends Controller
 
         $mpdf->SetHTMLFooter('
             <div style="text-align: center; font-size: 9px; color: #999; border-top: 1px solid #ddd; padding-top: 5px;">
-                Classio — نظام إدارة المراكز التعليمية | '.now()->format('Y-m-d H:i').'
+                نبذة — نظام إدارة المراكز التعليمية | '.now()->format('Y-m-d H:i').'
             </div>
         ');
 

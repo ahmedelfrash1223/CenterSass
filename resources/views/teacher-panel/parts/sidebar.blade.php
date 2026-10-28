@@ -18,8 +18,8 @@
     <div class="navbar-wrapper">
         <div class="m-header">
             <a href="{{ route('teacher.dashboard') }}" class="b-brand text-primary">
-                <img style="max-height: 95px;" src="{{ asset('assets/teacherPanel/images/logo.png') }}"
-                     alt="logo image"/>
+                <img style="max-height: 95px;" src="{{ asset('assets/brand.svg') }}"
+                     alt="نبذة"/>
             </a>
         </div>
         <div class="navbar-content">

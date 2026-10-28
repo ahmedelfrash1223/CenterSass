@@ -278,7 +278,7 @@
                 <div class="col-12 col-md-4">
                     <div class="icon-capsule mx-auto mb-3"><span class="material-symbols-outlined">support_agent</span></div>
                     <h4 class="fw-bold fs-6 mb-2">دعم مستمر</h4>
-                    <p class="text-on-surface-variant small mb-0">نساعدك على الاستفادة من كلاسيو بأفضل شكل.</p>
+                    <p class="text-on-surface-variant small mb-0">نساعدك على الاستفادة من نبذة بأفضل شكل.</p>
                 </div>
 
             </div>
@@ -291,7 +291,7 @@
             <div class="hero-glow-a" style="top:auto;bottom:-14rem;opacity:.55;"></div>
             <div class="position-relative" style="z-index:1;">
                 <div class="icon-capsule primary-icon mx-auto mb-4"><span class="material-symbols-outlined fs-3">rocket_launch</span></div>
-                <h2 class="fw-bold mb-3">جاهز تبدأ مع كلاسيو؟</h2>
+                <h2 class="fw-bold mb-3">جاهز تبدأ مع نبذة؟</h2>
                 <p class="text-on-surface-variant mx-auto mb-4" style="max-width:620px;">
                     اختر خطتك وابدأ في تنظيم طلابك ومجموعاتك وحضورك وواجباتك
                     من خلال منصة واحدة مصممة للمعلمين.

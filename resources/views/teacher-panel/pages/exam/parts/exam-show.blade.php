@@ -173,11 +173,11 @@
             }
         };
 
-        if (!document.querySelector('script[data-classio-mathjax]')) {
+        if (!document.querySelector('script[data-mathjax-loader]')) {
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js';
             script.async = true;
-            script.dataset.classioMathjax = 'true';
+            script.dataset.mathjaxLoader = 'true';
             document.head.appendChild(script);
         } else if (window.MathJax?.typesetPromise) {
             window.MathJax.typesetPromise();

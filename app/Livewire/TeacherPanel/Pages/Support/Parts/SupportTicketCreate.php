@@ -75,11 +75,11 @@ class SupportTicketCreate extends Component
     {
         return "أهلاً بك {$teacherName} 👋
 
-شكراً لتواصلك مع فريق دعم Classio.
+شكراً لتواصلك مع فريق دعم نبذة.
 تم استلام تذكرتك بنجاح وسيتم مراجعتها من قبل فريق الدعم والتواصل معك في أقرب وقت ممكن.
 
 نحن هنا لمساعدتك دائماً 🌟
-فريق دعم Classio";
+فريق دعم نبذة";
     }
 
     public function render()

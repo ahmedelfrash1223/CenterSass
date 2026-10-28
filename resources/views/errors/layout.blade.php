@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'حدث خطأ') | Classio</title>
+    <title>@yield('title', 'حدث خطأ') | نبذة</title>
 
     <style>
         :root {
@@ -173,8 +173,8 @@
 
 <body>
     <main class="error-page">
-        <a class="error-logo" href="{{ url('/') }}" aria-label="Classio">
-            <img src="{{ asset('assets/adminPanel/images/logo.png') }}" alt="Classio">
+        <a class="error-logo" href="{{ url('/') }}" aria-label="نبذة">
+            <img src="{{ asset('assets/brand.svg') }}" alt="نبذة">
         </a>
 
         <section class="error-content">

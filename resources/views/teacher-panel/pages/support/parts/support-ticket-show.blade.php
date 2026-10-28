@@ -15,12 +15,12 @@
                                         <div class="chat-avtar">
                                             <img class="rounded-circle img-fluid wid-40"
                                                 src="{{ asset('assets/teacherPanel/images/favicon.png') }}"
-                                                alt="Classio" />
+                                                alt="نبذة" />
                                             <i class="chat-badge bg-success"></i>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1 mx-3 d-none d-sm-inline-block">
-                                        <h6 class="mb-0">فريق دعم Classio</h6>
+                                        <h6 class="mb-0">فريق دعم نبذة</h6>
                                         <span class="text-sm text-muted">{{ $ticket->reference }}</span>
                                     </div>
                                 </div>
@@ -99,14 +99,14 @@
                                                     <div class="chat-avtar">
                                                         <img class="rounded-circle img-fluid wid-40"
                                                             src="{{ asset('assets/teacherPanel/images/favicon.png') }}"
-                                                            alt="Classio" />
+                                                            alt="نبذة" />
                                                         <i class="chat-badge bg-success"></i>
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1 mx-3">
                                                     <div class="d-flex align-items-start flex-column">
                                                         <p class="mb-1 text-muted">
-                                                            Classio
+                                                            نبذة
                                                             <small>{{ $message->created_at?->format('h:i A') }}</small>
                                                         </p>
                                                         <div class="message d-flex align-items-start flex-column">

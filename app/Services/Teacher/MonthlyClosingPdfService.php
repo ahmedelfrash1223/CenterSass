@@ -8,7 +8,6 @@ use Mpdf\Output\Destination;
 
 class MonthlyClosingPdfService
 {
-
     public function revenuePdf(MonthlyClosing $closing): string
     {
         $closing->load(['branch', 'teacher', 'closedBy']);
@@ -25,7 +24,6 @@ class MonthlyClosingPdfService
 
         return $this->render($html);
     }
-
 
     public function expensePdf(MonthlyClosing $closing): string
     {
@@ -44,7 +42,6 @@ class MonthlyClosingPdfService
         return $this->render($html);
     }
 
-
     public function summaryPdf(MonthlyClosing $closing): string
     {
         $closing->load(['branch', 'teacher', 'closedBy', 'items']);
@@ -55,7 +52,6 @@ class MonthlyClosingPdfService
 
         return $this->render($html);
     }
-
 
     protected function render(string $html): string
     {
@@ -85,7 +81,7 @@ class MonthlyClosingPdfService
         $mpdf->SetDirectionality('rtl');
         $mpdf->SetHTMLFooter('
             <div style="text-align:center; font-size:9px; color:#999; border-top:1px solid #ddd; padding-top:5px;">
-                Classio — نظام إدارة المراكز التعليمية | '.now()->format('Y-m-d H:i').'
+                نبذة — نظام إدارة المراكز التعليمية | '.now()->format('Y-m-d H:i').'
             </div>
         ');
 

@@ -7,8 +7,8 @@
             >
                 <img
                     style="max-height: 85px;"
-                    src="{{ asset('assets/adminPanel') }}/images/logo.png"
-                    alt="logo image"
+                    src="{{ asset('assets/brand.svg') }}"
+                    alt="نبذة"
                 />
             </a>
         </div>

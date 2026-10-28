@@ -1,5 +1,5 @@
 @section('index-active','active')
-@section('title','منصة كلاسيو التعليمية')
+@section('title','منصة نبذة التعليمية')
 @extends('landing.master')
 @section('main')
     <!-- Hero -->
@@ -118,7 +118,7 @@
                         تحديث فوري للبيانات
                     </div>
                     <h3 class="fw-bold mb-3">رؤية شاملة وإحصاءات دقيقة في مكان واحد</h3>
-                    <p class="text-on-surface-variant mb-4">تمنحك كلاسيو تحليلات تفاعلية لمستوى التحصيل العلمي للطلاب،
+                    <p class="text-on-surface-variant mb-4">تمنحك نبذة تحليلات تفاعلية لمستوى التحصيل العلمي للطلاب،
                         معدلات التفاعل في الدروس الخصوصية، ومعدلات الحضور الأسبوعية بنظام ذكي ومبسط.</p>
                     <div class="row g-3">
                         <div class="col-6">

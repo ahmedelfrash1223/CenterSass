@@ -12,8 +12,8 @@
 
                         <div class="text-center mb-4">
                             <img
-                                src="{{ asset('assets/adminPanel/images/logo.png') }}"
-                                alt="VSoft"
+                                src="{{ asset('assets/brand.svg') }}"
+                                alt="نبذة"
                                 class="img-fluid mb-3"
                                 style="max-height:120px;"
                             >

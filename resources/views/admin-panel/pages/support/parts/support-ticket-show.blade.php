@@ -9,7 +9,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
                                         <div class="chat-avtar">
-                                            <img class="rounded-circle img-fluid wid-40" src="{{ asset('assets/adminPanel/images/favicon.png') }}" alt="Classio" />
+                                            <img class="rounded-circle img-fluid wid-40" src="{{ asset('assets/adminPanel/images/favicon.png') }}"                                             alt="نبذة" />
                                             <i class="chat-badge bg-success"></i>
                                         </div>
                                     </div>

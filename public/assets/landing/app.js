@@ -1,12 +1,12 @@
 /* =========================================================
-   Classio | Theme + Landing Interactions
+   نبذة | Theme + Landing Interactions
    ========================================================= */
 (function () {
     "use strict";
 
     // ---------- Theme ----------
     const root = document.documentElement;
-    const storageKey = "classio-theme";
+    const storageKey = "app-theme";
 
     function getSystemTheme() {
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -53,7 +53,7 @@
 
     // ---------- Theme Button ----------
     function bindThemeButton() {
-        const button = document.getElementById("classioThemeToggle");
+        const button = document.getElementById("appThemeToggle");
 
         if (!button || button.dataset.themeBound === "true") {
             updateThemeIcons();

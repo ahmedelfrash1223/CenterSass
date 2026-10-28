@@ -2,7 +2,7 @@
     <div class="navbar-wrapper">
         <div class="m-header">
             <a href="{{ route('student.dashboard') }}" wire:navigate class="b-brand">
-                <img class="student-sidebar-logo" src="{{ asset('assets/studentPanel/images/logo.png') }}" alt="Classio">
+                <img class="student-sidebar-logo" src="{{ asset('assets/brand.svg') }}" alt="نبذة">
             </a>
         </div>
         <div class="navbar-content">

@@ -1,5 +1,5 @@
 <head>
-    <title>Classio | @yield('title')</title>
+    <title>نبذة | @yield('title')</title>
     <!-- [Meta] -->
     <meta charset="utf-8"/>
     <meta

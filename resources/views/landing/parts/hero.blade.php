@@ -22,7 +22,7 @@
             <span style="background:linear-gradient(135deg,var(--tertiary),var(--on-surface-variant));">ع</span>
         </div>
         <span class="fw-bold text-on-surface">10,000+</span>
-        <span class="text-on-surface-variant small">طالب ومعلم يثقون في كلاسيو</span>
+        <span class="text-on-surface-variant small">طالب ومعلم يثقون في نبذة</span>
         <span class="vr d-none d-sm-block" style="opacity:.4;"></span>
         <div class="d-flex align-items-center gap-1">
             <span class="fw-bold text-warning">4.9</span>

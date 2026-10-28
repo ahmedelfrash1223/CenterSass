@@ -16,8 +16,11 @@ use Illuminate\Validation\ValidationException;
 class OtpService
 {
     public const OTP_LENGTH = 6;
+
     public const OTP_TTL_MINUTES = 5;
+
     public const MAX_ATTEMPTS = 5;
+
     public const RESEND_COOLDOWN_SECONDS = 60;
 
     public function __construct(
@@ -38,9 +41,9 @@ class OtpService
 
             $otp = StudentOtp::create([
                 'identifier' => $identifier,
-                'channel'    => $this->resolveChannel($identifier)->value,
-                'purpose'    => $purpose->value,
-                'code'       => $this->generateCode(),
+                'channel' => $this->resolveChannel($identifier)->value,
+                'purpose' => $purpose->value,
+                'code' => $this->generateCode(),
                 'expires_at' => now()->addMinutes(self::OTP_TTL_MINUTES),
             ]);
 
@@ -98,7 +101,7 @@ class OtpService
         $this->markVerified($account, $identifier, $purposeEnum);
 
         return [
-            'token'   => $this->tokenHelper->createToken($account, $deviceName),
+            'token' => $this->tokenHelper->createToken($account, $deviceName),
             'account' => $account,
         ];
     }
@@ -189,8 +192,8 @@ class OtpService
     protected function sendViaMailtrapApi(StudentOtp $otp): void
     {
         $apiToken = config('services.mailtrap.api_token');
-        $inboxId  = config('services.mailtrap.inbox_id');
-        $proxy    = config('services.mailtrap.proxy');
+        $inboxId = config('services.mailtrap.inbox_id');
+        $proxy = config('services.mailtrap.proxy');
 
         if (! $apiToken || ! $inboxId) {
             Log::error('Mailtrap API credentials missing', [
@@ -207,28 +210,28 @@ class OtpService
 
         try {
             $response = Http::withOptions(array_filter([
-                'proxy'   => $proxy ?: null,
+                'proxy' => $proxy ?: null,
                 'timeout' => 30,
             ]))
                 ->withHeaders([
-                    'Api-Token'    => $apiToken,
+                    'Api-Token' => $apiToken,
                     'Content-Type' => 'application/json',
                 ])
                 ->post($url, [
                     'from' => [
-                        'email' => config('mail.from.address', 'noreply@classio.test'),
-                        'name'  => config('mail.from.name', 'Classio'),
+                        'email' => config('mail.from.address', 'noreply@local.test'),
+                        'name' => config('mail.from.name', 'نبذة'),
                     ],
                     'to' => [
                         ['email' => $otp->identifier],
                     ],
-                    'subject' => 'كود التحقق - Classio',
-                    'text'    => "كود التحقق الخاص بك هو: {$otp->code}\n\nينتهي بعد " . self::OTP_TTL_MINUTES . " دقائق.",
-                    'html'    => view('emails.api.student.auth.otp', [
-                        'otp'              => $otp,
-                        'code'             => $otp->code,
+                    'subject' => 'كود التحقق - نبذة',
+                    'text' => "كود التحقق الخاص بك هو: {$otp->code}\n\nينتهي بعد ".self::OTP_TTL_MINUTES.' دقائق.',
+                    'html' => view('emails.api.student.auth.otp', [
+                        'otp' => $otp,
+                        'code' => $otp->code,
                         'expiresInMinutes' => self::OTP_TTL_MINUTES,
-                        'purposeLabel'     => $otp->purpose?->label() ?? '',
+                        'purposeLabel' => $otp->purpose?->label() ?? '',
                     ])->render(),
                     'category' => 'OTP',
                 ]);
@@ -236,8 +239,8 @@ class OtpService
             if ($response->failed()) {
                 Log::error('Mailtrap API send failed', [
                     'identifier' => $otp->identifier,
-                    'status'     => $response->status(),
-                    'body'       => $response->body(),
+                    'status' => $response->status(),
+                    'body' => $response->body(),
                 ]);
 
                 throw ValidationException::withMessages([
@@ -246,14 +249,14 @@ class OtpService
             }
 
             Log::info('Mailtrap API OTP sent', [
-                'identifier'  => $otp->identifier,
+                'identifier' => $otp->identifier,
                 'message_ids' => $response->json('message_ids'),
             ]);
         } catch (ConnectionException $e) {
             Log::error('Mailtrap API connection failed', [
                 'identifier' => $otp->identifier,
-                'error'      => $e->getMessage(),
-                'proxy'      => $proxy,
+                'error' => $e->getMessage(),
+                'proxy' => $proxy,
             ]);
 
             throw ValidationException::withMessages([

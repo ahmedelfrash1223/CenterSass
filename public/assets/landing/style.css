@@ -1,5 +1,5 @@
 /* =========================================================
-   Classio | Design Tokens
+   نبذة | Design Tokens
    ========================================================= */
 :root {
     --surface: #f8f9ff;
@@ -570,7 +570,7 @@ a {
 }
 
 
-.classio-store-btn {
+.store-btn {
     display:flex;
     align-items:center;
     gap:.7rem;
@@ -583,45 +583,45 @@ a {
     border:1px solid #222;
     transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease;
 }
-.classio-store-btn:hover {
+.store-btn:hover {
     color:#fff;
     background:#111;
     transform:translateY(-3px);
     box-shadow:0 10px 25px rgba(0,0,0,.18);
 }
-.classio-store-icon {
+.store-icon {
     width:29px;
     height:29px;
     flex-shrink:0;
 }
-.classio-google-play-icon {
+.google-play-icon {
     width:31px;
     height:31px;
     flex-shrink:0;
 }
-.classio-store-copy {
+.store-copy {
     display:flex;
     flex-direction:column;
     justify-content:center;
     line-height:1;
     text-align:left;
 }
-.classio-store-small {
+.store-small {
     font-size:.58rem;
     font-weight:500;
     letter-spacing:.01em;
     margin-bottom:.25rem;
 }
-.classio-store-name {
+.store-name {
     font-size:1.05rem;
     font-weight:600;
     letter-spacing:-.02em;
 }
-.classio-store-btn-lg {
+.store-btn-lg {
     min-width:210px;
     height:62px;
 }
-.classio-qr-box {
+.qr-box {
     width:190px;
     height:190px;
     padding:12px;
@@ -632,21 +632,21 @@ a {
     justify-content:center;
     box-shadow:0 8px 25px rgba(11,28,48,.08);
 }
-.classio-qr-box img {
+.qr-box img {
     width:166px;
     height:166px;
     display:block;
 }
 @media (max-width:575.98px) {
-    .classio-store-btn {
+    .store-btn {
         width:100%;
         max-width:230px;
     }
-    .classio-qr-box {
+    .qr-box {
         width:175px;
         height:175px;
     }
-    .classio-qr-box img {
+    .qr-box img {
         width:151px;
         height:151px;
     }

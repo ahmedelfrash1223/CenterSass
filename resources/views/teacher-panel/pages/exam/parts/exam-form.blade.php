@@ -486,7 +486,7 @@
     {{-- ============ Math editor scripts ============ --}}
     @script
     <script>
-        window.ClassioExamMath = {
+        window.ExamMath = {
             insert(input, value) {
                 const start = input.selectionStart ?? input.value.length;
                 const end = input.selectionEnd ?? input.value.length;
@@ -504,7 +504,7 @@
             const toolbar = button.closest('.math-toolbar');
             const textarea = toolbar?.parentElement?.querySelector('.exam-question-editor');
             if (!textarea) return;
-            window.ClassioExamMath.insert(textarea, button.dataset.math);
+            window.ExamMath.insert(textarea, button.dataset.math);
         });
     </script>
     @endscript

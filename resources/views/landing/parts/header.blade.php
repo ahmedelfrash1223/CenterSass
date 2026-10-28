@@ -4,10 +4,10 @@
         {{-- Brand --}}
         <div class="d-flex align-items-center gap-2">
             <div class="d-flex align-items-center justify-content-center" style="width:2rem;height:2rem;">
-                <img src="{{ asset('assets/landing/images/favicon.png') }}" alt="Classio"
+                <img src="{{ asset('assets/landing/images/favicon.png') }}" alt="نبذة"
                      style="width:2rem;height:2rem;object-fit:contain;">
             </div>
-            <span class="fw-bold fs-5 text-on-surface">كلاسيو</span>
+            <span class="fw-bold fs-5 text-on-surface">نبذة</span>
             <span class="brand-badge d-none d-sm-inline-flex">النسخة 2.0</span>
         </div>
 
@@ -22,7 +22,7 @@
 
         {{-- Header Actions --}}
         <div class="d-flex align-items-center gap-2">
-            <button type="button" class="theme-toggle-btn" id="classioThemeToggle" aria-label="تبديل المظهر">
+            <button type="button" class="theme-toggle-btn" id="appThemeToggle" aria-label="تبديل المظهر">
                 <span class="material-symbols-outlined theme-icon-dark" style="font-size:20px;">dark_mode</span>
                 <span class="material-symbols-outlined theme-icon-light d-none"
                       style="font-size:20px;color:var(--primary-fixed);">light_mode</span>

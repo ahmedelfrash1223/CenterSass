@@ -20,7 +20,7 @@ class StudentOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'كود التحقق - Classio',
+            subject: 'كود التحقق - نبذة',
         );
     }
 

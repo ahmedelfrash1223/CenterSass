@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كود التحقق - Classio</title>
+    <title>كود التحقق - نبذة</title>
     <style>
         body {
             font-family: 'Cairo', 'DejaVu Sans', Arial, sans-serif;
@@ -103,7 +103,7 @@
 <div class="container">
     {{-- Header --}}
     <div class="header">
-        <h1>Classio</h1>
+        <h1>نبذة</h1>
         <p>كود التحقق الخاص بك</p>
     </div>
 
@@ -130,7 +130,7 @@
         <div class="warning">
             <strong>⚠️ تنبيه:</strong>
             لا تشارك هذا الكود مع أي شخص.
-            فريق Classio لن يطلب منك الكود أبدًا.
+            فريق نبذة لن يطلب منك الكود أبدًا.
         </div>
 
         <p class="text" style="margin-bottom: 0;">
@@ -141,10 +141,10 @@
     {{-- Footer --}}
     <div class="footer">
         <p style="margin: 0;">
-            هذا البريد أُرسل تلقائيًا من <strong>Classio</strong>
+            هذا البريد أُرسل تلقائيًا من <strong>نبذة</strong>
         </p>
         <p style="margin: 6px 0 0;">
-            © {{ date('Y') }} Classio — نظام إدارة المراكز التعليمية
+            © {{ date('Y') }} نبذة — نظام إدارة المراكز التعليمية
         </p>
     </div>
 </div>
