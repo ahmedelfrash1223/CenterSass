@@ -12,7 +12,9 @@
     </title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel') }}/css/verify.css" id="main-style-link">
-    <link rel="icon" href="{{ asset('assets/teacherPanel/images/favicon.png') }}" type="image/x-icon"/>
+    <link rel="icon" href="{{ asset('assets/teacherPanel/images/favicon-nabza.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('assets/teacherPanel/images/favicon-32.png') }}" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('assets/teacherPanel/images/apple-touch-icon.png') }}">
 </head>
 <body>
 

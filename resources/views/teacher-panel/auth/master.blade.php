@@ -7,7 +7,9 @@
     <meta name="theme-color" content="#FFFFFF">
     <title>نبذة | @yield('title')</title>
 
-    <link rel="icon" href="{{ asset('assets/teacherPanel/images/favicon.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('assets/teacherPanel/images/favicon-nabza.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('assets/teacherPanel/images/favicon-32.png') }}" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('assets/teacherPanel/images/apple-touch-icon.png') }}">
 
     <!-- Font: IBM Plex Sans Arabic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
