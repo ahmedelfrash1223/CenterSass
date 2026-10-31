@@ -13,11 +13,11 @@
 @section('main')
     <main class="nb-login">
 
-        <!-- ================= Form side ================= -->
-        <section class="nb-login__form-side" aria-labelledby="nb-login-title">
-            <div class="nb-login__form-wrap">
+        <!-- ================= Form column (start side) ================= -->
+        <section class="nb-login__main" aria-labelledby="nb-login-title">
 
-                <div class="nb-login__logo nb-reveal">
+            <header class="nb-login__top">
+                <div class="nb-logo">
                     <img
                         src="{{ asset('assets/teacherPanel/images/logo.png') }}"
                         alt="نبذة"
@@ -25,155 +25,126 @@
                         height="408"
                     >
                 </div>
+            </header>
 
-                <header class="nb-login__header nb-reveal nb-reveal--2">
+            <div class="nb-login__center">
+                <div class="nb-login__form-block">
+
+                    <p class="nb-eyebrow">
+                        <span class="nb-eyebrow__dot" aria-hidden="true"></span>
+                        لوحة المدرس
+                    </p>
+
                     <h1 id="nb-login-title" class="nb-login__title">أهلاً بيك تاني</h1>
-                    <p class="nb-login__subtitle">سجّل دخولك لمتابعة طلابك وحضورهم ومصاريفهم</p>
-                </header>
+                    <p class="nb-login__subtitle">سجّل دخولك وتابع حضور طلابك ودرجاتهم ومصاريفهم من مكان واحد.</p>
 
-                <div class="nb-reveal nb-reveal--3">
                     @livewire('teacher-panel.auth.login-form')
+
+                    <p class="nb-secure-note">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                            <path d="M12 3.5 5 6.25v5.5c0 4.25 2.9 7.6 7 8.75 4.1-1.15 7-4.5 7-8.75v-5.5L12 3.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                            <path d="m9 12 2.1 2.1L15.2 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        بياناتك محمية واتصالك مشفّر
+                    </p>
+
                 </div>
-
-                <footer class="nb-login__footer nb-reveal nb-reveal--4">
-                    <span>© نبذة {{ date('Y') }}</span>
-                </footer>
-
             </div>
+
+            <footer class="nb-login__footer">
+                <span>© نبذة {{ date('Y') }}</span>
+                <span>
+                    محتاج مساعدة؟
+                    <a href="#" class="nb-login__support">كلّم الدعم</a>
+                </span>
+            </footer>
+
         </section>
 
-        <!-- ================= Brand side ================= -->
-        <aside class="nb-login__brand" aria-label="نبذة بلمحة">
+        <!-- ================= Brand panel (end side) ================= -->
+        <aside class="nb-brand" aria-label="عن نبذة">
 
-            <!-- Decorative logo motifs -->
-            <svg class="nb-motif nb-motif--lines" viewBox="0 0 64 40" fill="none" aria-hidden="true" focusable="false">
-                <path d="M8 13 C 22 9, 42 9, 56 13" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
-                <path d="M8 28 C 22 24, 42 24, 56 28" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
-            </svg>
-            <svg class="nb-motif nb-motif--check" viewBox="0 0 48 48" fill="none" aria-hidden="true" focusable="false">
-                <path d="M10 25 L20 35 L38 13" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <!-- Hub illustration (decorative) -->
+            <div class="nb-hub" aria-hidden="true">
 
-            <div class="nb-brand">
-                <div class="nb-brand__intro nb-reveal">
-                    <h2 class="nb-brand__title">كل حاجة عن الطالب.. بلمحة</h2>
-                    <p class="nb-brand__text">الحضور والغياب والمصاريف والامتحانات في مكان واحد.</p>
+                <svg class="nb-hub__links" viewBox="0 0 460 340" fill="none" focusable="false">
+                    <path d="M306 94 Q322 80 336 64"/>
+                    <path d="M162 172 Q152 166 142 164"/>
+                    <path d="M298 246 Q308 260 320 274"/>
+                </svg>
+
+                <div class="nb-hub__tile">
+                    <svg class="nb-hub__mark" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                        <path class="nb-mark__book" d="M32 18c-6-5-15-6-24-4v34c9-2 18-1 24 4 6-5 15-6 24-4V14c-9-2-18-1-24 4z"/>
+                        <path class="nb-mark__book" d="M32 18v34"/>
+                        <path class="nb-mark__lines" d="M14 26c4-1 8-1 12 1M14 33c4-1 8-1 12 1"/>
+                        <path class="nb-mark__check" d="M37 32l5 5 9-11"/>
+                    </svg>
                 </div>
 
-                <!-- Smart preview collage (decorative) -->
-                <div class="nb-collage" aria-hidden="true">
+                <div class="nb-node nb-node--attendance">
+                    <span class="nb-node__icon">
+                        <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                            <path d="M5 12.5 10 17.5 19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="nb-node__text">
+                        <span class="nb-node__title">الحضور والغياب</span>
+                        <span class="nb-node__meta">٣٦ من ٤٠ حاضر</span>
+                    </span>
+                </div>
 
-                    <!-- 1. Attendance card -->
-                    <div class="nb-card nb-card--attendance nb-reveal nb-reveal--2">
-                        <div class="nb-card__head">
-                            <span class="nb-card__icon">
-                                <svg viewBox="0 0 24 24" fill="none" focusable="false">
-                                    <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </span>
-                            <div>
-                                <p class="nb-card__title">حضور اليوم</p>
-                                <p class="nb-card__meta">مجموعة السبت · ٤ طلاب</p>
-                            </div>
-                        </div>
+                <div class="nb-node nb-node--fees">
+                    <span class="nb-node__icon">
+                        <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                            <rect x="3.5" y="6.5" width="17" height="11" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+                            <circle cx="12" cy="12" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+                        </svg>
+                    </span>
+                    <span class="nb-node__text">
+                        <span class="nb-node__title">المصاريف</span>
+                        <span class="nb-node__meta">اتحصّل ٨٥٪</span>
+                    </span>
+                </div>
 
-                        <ul class="nb-roster">
-                            <li class="nb-roster__row">
-                                <span class="nb-avatar">١</span>
-                                <span class="nb-roster__name">طالب ١</span>
-                                <span class="nb-pill nb-pill--present">
-                                    <svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                    حاضر
-                                </span>
-                            </li>
-                            <li class="nb-roster__row">
-                                <span class="nb-avatar">٢</span>
-                                <span class="nb-roster__name">طالب ٢</span>
-                                <span class="nb-pill nb-pill--present">
-                                    <svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                    حاضر
-                                </span>
-                            </li>
-                            <li class="nb-roster__row">
-                                <span class="nb-avatar">٣</span>
-                                <span class="nb-roster__name">طالب ٣</span>
-                                <span class="nb-pill nb-pill--absent">غائب</span>
-                            </li>
-                            <li class="nb-roster__row">
-                                <span class="nb-avatar">٤</span>
-                                <span class="nb-roster__name">طالب ٤</span>
-                                <span class="nb-pill nb-pill--present">
-                                    <svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                    حاضر
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- 2. Weekly attendance dot grid -->
-                    <div class="nb-card nb-card--week nb-reveal nb-reveal--3">
-                        <p class="nb-card__title">حضور الأسبوع</p>
-                        <div class="nb-week">
-                            <span class="nb-week__day">س</span>
-                            <span class="nb-week__day">ح</span>
-                            <span class="nb-week__day">ن</span>
-                            <span class="nb-week__day">ث</span>
-                            <span class="nb-week__day">ر</span>
-                            <span class="nb-week__day">خ</span>
-
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                            <span class="nb-dot"></span>
-                            <span class="nb-dot nb-dot--on"></span>
-                        </div>
-                    </div>
-
-                    <!-- 3. Fees card -->
-                    <div class="nb-card nb-card--fees nb-reveal nb-reveal--4">
-                        <div class="nb-card__head">
-                            <span class="nb-card__icon">
-                                <svg viewBox="0 0 24 24" fill="none" focusable="false">
-                                    <rect x="3" y="6" width="18" height="12" rx="2.5" stroke="currentColor" stroke-width="2"/>
-                                    <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="2"/>
-                                </svg>
-                            </span>
-                            <p class="nb-card__title">تم تحصيل ٨٥٪ من المصاريف</p>
-                        </div>
-                        <div class="nb-progress">
-                            <span class="nb-progress__bar nb-progress__bar--85"></span>
-                        </div>
-                        <p class="nb-card__meta">٦ طلاب لسه مدفعوش الشهر ده</p>
-                    </div>
-
-                    <!-- 4. Exam chip -->
-                    <div class="nb-chip nb-reveal nb-reveal--5">
-                        <span class="nb-chip__icon">
-                            <svg viewBox="0 0 24 24" fill="none" focusable="false">
-                                <path d="M7 4h7l4 4v12H7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                                <path d="M10 13l2 2 3-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </span>
-                        <span>متوسط الامتحان <strong>١٧/٢٠</strong></span>
-                    </div>
-
+                <div class="nb-node nb-node--exams">
+                    <span class="nb-node__icon">
+                        <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                            <path d="M7 3.75h6.5L18 8.25v12H7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                            <path d="M13.25 3.75v4.5H18M9.75 12.5h5.5M9.75 16h5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="nb-node__text">
+                        <span class="nb-node__title">الامتحانات</span>
+                        <span class="nb-node__meta">المتوسط ١٧ / ٢٠</span>
+                    </span>
                 </div>
             </div>
+
+            <!-- Text slider -->
+            <div class="nb-slider" data-nb-slider>
+                <div class="nb-slider__track">
+                    <div class="nb-slide is-active" data-nb-slide>
+                        <h2 class="nb-slide__title">كل حاجة عن الطالب.. بلمحة</h2>
+                        <p class="nb-slide__text">حضور، مصاريف، وامتحانات في مكان واحد، وولي الأمر بيوصله ملخص أول بأول.</p>
+                    </div>
+                    <div class="nb-slide" data-nb-slide aria-hidden="true">
+                        <h2 class="nb-slide__title">الحضور في ثواني</h2>
+                        <p class="nb-slide__text">سجّل حضور المجموعة كلها بسرعة، والغياب يتبلّغ لولي الأمر لوحده.</p>
+                    </div>
+                    <div class="nb-slide" data-nb-slide aria-hidden="true">
+                        <h2 class="nb-slide__title">مصاريفك متظبطة</h2>
+                        <p class="nb-slide__text">اعرف مين دفع ومين لسه، من غير كشكول ولا حسابات.</p>
+                    </div>
+                </div>
+
+                <div class="nb-dots">
+                    <button type="button" class="nb-dots__btn is-active" data-nb-dot="0" aria-label="الرسالة ١" aria-current="true"></button>
+                    <button type="button" class="nb-dots__btn" data-nb-dot="1" aria-label="الرسالة ٢"></button>
+                    <button type="button" class="nb-dots__btn" data-nb-dot="2" aria-label="الرسالة ٣"></button>
+                </div>
+            </div>
+
         </aside>
 
     </main>
