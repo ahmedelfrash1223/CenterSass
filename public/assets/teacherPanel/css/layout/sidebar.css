@@ -89,9 +89,10 @@ body.nb-app {
 
 /* ---------- Brand ---------- */
 .nb-sidebar__brand {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center; /* logo centered in the sidebar header */
     flex-shrink: 0;
     height: var(--nb-header-h);
     padding: 0 20px;
@@ -101,34 +102,72 @@ body.nb-app {
 .nb-sidebar__brand-link {
     display: flex;
     align-items: center;
-    gap: 10px;
     border-radius: 8px;
-    color: #FFFFFF;
     text-decoration: none;
 }
 
-.nb-sidebar__brand-link:hover {
-    color: #FFFFFF;
-    text-decoration: none;
+/* Logo box: holds the full logo and the book mark stacked; CSS cross-fades between them */
+.nb-sidebar__logo-box {
+    --nb-logo-h: 36px;
+    position: relative;
+    display: block;
+    width: calc(var(--nb-logo-h) * 382 / 143); /* artwork box of logo.png is 382x143 */
+    height: var(--nb-logo-h);
+    overflow: hidden;
+}
+
+/* logo.png has wide transparent margins: crop to the artwork (382x143 inside 612x408) */
+.nb-sidebar__logo {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+}
+
+.nb-sidebar__logo img {
+    position: absolute;
+    top: calc(var(--nb-logo-h) * -131 / 143);
+    right: calc(var(--nb-logo-h) * -110 / 143); /* 612 - 502 = 110px of right margin */
+    width: auto;
+    max-width: none;
+    height: calc(var(--nb-logo-h) * 408 / 143);
 }
 
 .nb-sidebar__mark {
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--nb-logo-h);
+    height: var(--nb-logo-h);
+    max-width: none;
+    opacity: 0;
+    visibility: hidden;
 }
 
-.nb-sidebar__wordmark {
-    color: #FFFFFF;
-    font-size: 1.375rem; /* 22px */
-    font-weight: var(--nb-weight-bold);
-    line-height: 1;
-    white-space: nowrap;
+@media (prefers-reduced-motion: no-preference) {
+    .nb-sidebar__logo-box {
+        transition: width var(--nb-duration-ui) ease;
+    }
+
+    .nb-sidebar__logo,
+    .nb-sidebar__mark {
+        transition: opacity 160ms ease, visibility 0s linear 160ms;
+    }
+
+    html.nb-sidebar-collapsed .nb-sidebar__mark,
+    html:not(.nb-sidebar-collapsed) .nb-sidebar__logo {
+        transition: opacity 160ms ease 60ms, visibility 0s;
+    }
 }
 
+/* Drawer close button sits on the end edge so the logo stays centered */
 .nb-sidebar__close {
+    position: absolute;
+    top: 50%;
+    left: 12px;
     display: none;
     color: var(--nb-side-muted);
+    transform: translateY(-50%);
 }
 
 .nb-sidebar__close:hover {
@@ -145,7 +184,7 @@ body.nb-app {
     padding: 12px;
     overscroll-behavior: contain;
     scrollbar-width: thin;
-    scrollbar-color: var(--nb-side-scrollbar) transparent;
+    scrollbar-color: var(--nb-side-scroll-thumb) transparent;
 }
 
 .nb-nav::-webkit-scrollbar {
@@ -158,7 +197,7 @@ body.nb-app {
 
 .nb-nav::-webkit-scrollbar-thumb {
     border-radius: 6px;
-    background-color: var(--nb-side-scrollbar);
+    background-color: var(--nb-side-scroll-thumb);
 }
 
 .nb-nav__group + .nb-nav__group {
@@ -537,13 +576,18 @@ body.nb-app {
         padding: 0;
     }
 
-    html.nb-sidebar-collapsed .nb-sidebar__wordmark {
-        display: none;
+    html.nb-sidebar-collapsed .nb-sidebar__logo-box {
+        width: var(--nb-logo-h);
+    }
+
+    html.nb-sidebar-collapsed .nb-sidebar__logo {
+        opacity: 0;
+        visibility: hidden;
     }
 
     html.nb-sidebar-collapsed .nb-sidebar__mark {
-        width: 38px;
-        height: 38px;
+        opacity: 1;
+        visibility: visible;
     }
 
     /* Group headers become a thin divider; every group is shown (icons only) */

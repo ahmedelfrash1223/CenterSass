@@ -109,13 +109,14 @@
     <!-- Brand -->
     <div class="nb-sidebar__brand">
         <a wire:navigate href="{{ route('teacher.dashboard') }}" class="nb-sidebar__brand-link" aria-label="نبذة - الصفحة الرئيسية">
-            <svg class="nb-sidebar__mark" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <path d="M32 18c-6-5-15-6-24-4v34c9-2 18-1 24 4 6-5 15-6 24-4V14c-9-2-18-1-24 4z" stroke="#FFFFFF" stroke-width="3.2"/>
-                <path d="M32 18v34" stroke="#FFFFFF" stroke-width="3.2"/>
-                <path d="M14 26c4-1 8-1 12 1M14 33c4-1 8-1 12 1" stroke="#A4B388" stroke-width="3"/>
-                <path d="M37 32l5 5 9-11" stroke="#A4B388" stroke-width="4"/>
-            </svg>
-            <span class="nb-sidebar__wordmark" aria-hidden="true">نبذة</span>
+            <span class="nb-sidebar__logo-box">
+                <!-- Full logo (expanded sidebar / drawer). The PNG has wide transparent margins, cropped in CSS. -->
+                <span class="nb-sidebar__logo">
+                    <img src="{{ asset('assets/teacherPanel/images/logo.png') }}" alt="نبذة" width="612" height="408">
+                </span>
+                <!-- Book mark only (collapsed sidebar) -->
+                <img class="nb-sidebar__mark" src="{{ asset('assets/teacherPanel/images/logo-mark.svg') }}" alt="نبذة" width="36" height="36">
+            </span>
         </a>
 
         <button type="button" class="nb-icon-btn nb-sidebar__close" data-nb-drawer-close aria-label="إغلاق القائمة">

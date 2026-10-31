@@ -62,23 +62,24 @@
     --nb-warning-soft-rgb:  243, 181, 98; /* amber fill for dark text (bg-warning text-dark) */
 
     /* ---------- Tooltip ---------- */
-    --nb-tooltip-bg:   #24402A;
-    --nb-tooltip-text: #FFFFFF;
+    --nb-tooltip-bg:     var(--nb-side-bg);
+    --nb-tooltip-border: var(--nb-side-border);
+    --nb-tooltip-text:   #FFFFFF;
 
-    /* ---------- Sidebar (fixed deep green, both modes) ---------- */
-    --nb-side-bg:          #1B2A20;
-    --nb-side-border:      #2A3B2F;
-    --nb-side-text:        #C9D3C6;
-    --nb-side-muted:       #8B9C8C; /* group labels, chevrons */
-    --nb-side-icon:        #A4B388;
-    --nb-side-hover:       #24362A;
-    --nb-side-active-bg:   #2E4535;
-    --nb-side-active-text: #FFFFFF;
-    --nb-side-indicator:   #A4B388; /* active bar + active child dot */
-    --nb-side-badge-bg:    #33503B;
-    --nb-side-badge-text:  #DCE8D6;
-    --nb-side-avatar-bg:   #2E4535;
-    --nb-side-scrollbar:   #33473A;
+    /* ---------- Sidebar (fixed muted forest green, identical in light and dark mode) ---------- */
+    --nb-side-bg:           #2F4A3E;
+    --nb-side-border:       #3A5649;
+    --nb-side-text:         #D5DFD6; /* item labels: 7.1:1 on --nb-side-bg */
+    --nb-side-muted:        #A7BCAE; /* group headers, chevrons, secondary line: 4.8:1 */
+    --nb-side-icon:         #A4B388; /* item icons */
+    --nb-side-hover:        #375547;
+    --nb-side-active-bg:    #3F5F50;
+    --nb-side-active-text:  #FFFFFF; /* 7.1:1 on --nb-side-active-bg */
+    --nb-side-indicator:    #A4B388; /* active bar + active child dot */
+    --nb-side-badge-bg:     #446553;
+    --nb-side-badge-text:   #E3ECE2; /* 5.4:1 on --nb-side-badge-bg */
+    --nb-side-avatar-bg:    #446553;
+    --nb-side-scroll-thumb: #46624F;
 
     /* ---------- Typography ---------- */
     --nb-font: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
@@ -191,11 +192,6 @@
     --nb-warning-rgb: 243, 181, 98;
     --nb-danger-rgb:  245, 154, 143;
     --nb-info-rgb:    142, 192, 240;
-
-    --nb-tooltip-bg:   #E4EAE2;
-    --nb-tooltip-text: #11261A;
-
-    --nb-side-bg: #141E17; /* sits just below the page background */
 
     --nb-shadow-sm: 0 4px 14px -8px rgba(0, 0, 0, 0.50);
     --nb-shadow-md: 0 12px 30px -16px rgba(0, 0, 0, 0.55);
@@ -576,6 +572,7 @@ html {
     max-width: 240px;
     padding: 6px 10px;
     border-radius: 8px;
+    border: 1px solid var(--nb-tooltip-border);
     background-color: var(--nb-tooltip-bg);
     color: var(--nb-tooltip-text);
     font-family: var(--nb-font);

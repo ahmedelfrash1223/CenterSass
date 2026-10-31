@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>نبذة</title>
+  <path d="M32 18c-6-5-15-6-24-4v34c9-2 18-1 24 4 6-5 15-6 24-4V14c-9-2-18-1-24 4z" stroke="#A4B388" stroke-width="3.4"/>
+  <path d="M32 18v34" stroke="#A4B388" stroke-width="3.4"/>
+  <path d="M14 26c4-1 8-1 12 1M14 33c4-1 8-1 12 1" stroke="#5E8F62" stroke-width="3"/>
+  <path d="M37 32l5 5 9-11" stroke="#A4B388" stroke-width="4"/>
+</svg>
