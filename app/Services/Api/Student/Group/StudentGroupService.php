@@ -12,7 +12,6 @@ class StudentGroupService
     public function allForAccount(StudentAccount $account): Collection
     {
         $students = $account->students()->with('teacher')->get();
-
         $groups = collect();
 
         foreach ($students as $student) {
@@ -31,6 +30,36 @@ class StudentGroupService
         }
 
         return $groups;
+    }
+
+
+    public function statsForAccount(StudentAccount $account): array
+    {
+        $groups = $this->allForAccount($account);
+
+        $totalGroups = $groups->count();
+
+        $totalSubjects = 0;
+        $totalSchedules = 0;
+
+        foreach ($groups as $group) {
+            $schedules = $group->schedules;
+            $totalSchedules += $schedules->count();
+
+            $subjectIds = $schedules->pluck('subject_id')->unique()->filter();
+            $totalSubjects += $subjectIds->count();
+        }
+
+        $totalTeachers = $account->students()
+            ->distinct('teacher_id')
+            ->count('teacher_id');
+
+        return [
+            'total_groups' => $totalGroups,
+            'total_teachers' => $totalTeachers,
+            'total_subjects' => $totalSubjects,
+            'total_schedules' => $totalSchedules,
+        ];
     }
 
 
