@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Student\Group;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\Student\Group\StudentGroupCollectionResource;
 use App\Http\Resources\Api\Student\Group\StudentGroupResource;
 use App\Services\Api\Student\Group\StudentGroupService;
 use App\Support\Api\ApiResponse;
@@ -20,9 +21,13 @@ class StudentGroupController extends Controller
         $account = auth('student_account')->user();
 
         $groups = $this->groupService->allForAccount($account);
+        $stats = $this->groupService->statsForAccount($account);
+
+        $resource = (new StudentGroupCollectionResource($groups))
+            ->additional($stats);
 
         return ApiResponse::collection(
-            resource: StudentGroupResource::collection($groups),
+            resource: $resource,
             message: 'قائمة المجموعات.',
         );
     }
