@@ -32,6 +32,7 @@ class OtpController extends Controller
         );
     }
 
+
     public function resend(ResendOtpRequest $request): JsonResponse
     {
         $this->otpService->resend(
@@ -42,8 +43,9 @@ class OtpController extends Controller
         return ApiResponse::success(
             data: [
                 'expires_in' => OtpService::OTP_TTL_MINUTES * 60,
+                'cooldown'   => OtpService::RESEND_COOLDOWN_SECONDS,
             ],
-            message: 'تم إرسال كود التحقق.',
+            message: 'تم إرسال كود تحقق جديد بنجاح.',
         );
     }
 }

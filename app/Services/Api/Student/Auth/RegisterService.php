@@ -22,9 +22,9 @@ class RegisterService
     {
         return DB::transaction(function () use ($data, $deviceName) {
             $account = StudentAccount::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'] ?? null,
+                'name'     => $data['name'],
+                'email'    => $data['email'],
+                'phone'    => $data['phone'] ?? null,
                 'password' => $data['password'],
             ]);
 
@@ -35,7 +35,7 @@ class RegisterService
             );
 
             return [
-                'token' => $this->tokenHelper->createToken($account, $deviceName),
+                'token'   => $this->tokenHelper->createToken($account, $deviceName),
                 'account' => $account,
             ];
         });

@@ -15,6 +15,7 @@ class StudentOtpMail extends Mailable
 
     public function __construct(
         public StudentOtp $otp,
+        public int $expiresInMinutes = 5,
     ) {}
 
     public function envelope(): Envelope
@@ -29,10 +30,10 @@ class StudentOtpMail extends Mailable
         return new Content(
             view: 'emails.api.student.auth.otp',
             with: [
-                'otp' => $this->otp,
-                'code' => $this->otp->code,
-                'expiresInMinutes' => StudentOtp::class::OTP_TTL_MINUTES ?? 5,
-                'purposeLabel' => $this->otp->purpose?->label() ?? '',
+                'otp'              => $this->otp,
+                'code'             => $this->otp->code,
+                'expiresInMinutes' => $this->expiresInMinutes,
+                'purposeLabel'     => $this->otp->purpose?->label() ?? '',
             ],
         );
     }

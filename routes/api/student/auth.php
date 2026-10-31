@@ -30,7 +30,7 @@ Route::post('auth/otp/resend', [OtpController::class, 'resend'])
     ->name('auth.otp.resend');
 
 // ─── Protected ─────────────────────────────────────────
-Route::middleware(['auth:sanctum', 'student.active'])->group(function () {
+Route::middleware(['auth:sanctum', 'student.active', 'student.verified'])->group(function () {
     Route::get('me', [LoginController::class, 'me'])->name('me');
     Route::post('auth/logout', [LogoutController::class, 'logout'])->name('auth.logout');
 });

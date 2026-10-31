@@ -15,7 +15,7 @@ Route::prefix('student')->name('student.')->group(function () {
     require __DIR__ . '/student/auth.php';
 
     // Protected Routes
-    Route::middleware(['auth:sanctum', 'student.active'])->group(function () {
+    Route::middleware(['auth:sanctum', 'student.active', 'student.verified'])->group(function () {
 
         // Link Accounts Routes
         require __DIR__ . '/student/links.php';
