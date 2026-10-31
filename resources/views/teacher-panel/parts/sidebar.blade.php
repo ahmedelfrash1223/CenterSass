@@ -1,5 +1,5 @@
 @php
-    use App\Enums\Teacher\TeacherPermissionEnum;
+    use App\Enums\Teacher\TeacherPermissionEnum as Perm;
     use App\Models\SupportTicketMessage;
     use Illuminate\Support\Facades\Auth;
 
@@ -12,357 +12,207 @@
             ->whereHas('ticket', fn($q) => $q->where('teacher_id', $user->getOwnerId()))
             ->count()
         : 0;
+
+    $can = fn ($permission) => $user && $user->hasPermission($permission);
+
+    /*
+     * Menu definition. Same items, order, permissions and @yield('*-active') sections as before.
+     * An item may also define 'children' => [...] (same shape) to render as an accordion.
+     */
+    $menuGroups = [
+        [
+            'label' => null,
+            'items' => [
+                ['label' => 'الصفحة الرئيسية', 'route' => 'teacher.dashboard', 'icon' => 'ph-squares-four', 'active' => 'home-active', 'visible' => true],
+            ],
+        ],
+        [
+            'label' => 'الإدارة',
+            'items' => [
+                ['label' => 'الأفرع', 'route' => 'teacher.branches.index', 'icon' => 'ph-map-pin-line', 'active' => 'branches-active', 'visible' => $can(Perm::BRANCH_VIEW)],
+                ['label' => 'فريق العمل', 'route' => 'teacher.staff.index', 'icon' => 'ph-users-four', 'active' => 'staff-active', 'visible' => $can(Perm::STAFF_VIEW)],
+            ],
+        ],
+        [
+            'label' => 'التشغيل اليومي',
+            'items' => [
+                ['label' => 'جدول الأسبوع', 'route' => 'teacher.timetable.index', 'icon' => 'ph-calendar', 'active' => 'timetable-active', 'visible' => $can(Perm::TIMETABLE_VIEW)],
+                ['label' => 'الحضور', 'route' => 'teacher.attendance.index', 'icon' => 'ph-scan', 'active' => 'attendance-active', 'visible' => $can(Perm::ATTENDANCE_VIEW)],
+                ['label' => 'تقفيل اليوم', 'route' => 'teacher.attendance.close-day.index', 'icon' => 'ph-lock', 'active' => 'attendance-close-day-active', 'visible' => $can(Perm::ATTENDANCE_CLOSE_DAY)],
+                ['label' => 'الحجوزات', 'route' => 'teacher.bookings.index', 'icon' => 'ph-clipboard-text', 'active' => 'bookings-active', 'visible' => $can(Perm::BOOKING_VIEW)],
+            ],
+        ],
+        [
+            'label' => 'الأكاديمي',
+            'items' => [
+                ['label' => 'المواد الدراسية', 'route' => 'teacher.subjects.index', 'icon' => 'ph-notebook', 'active' => 'subjects-active', 'visible' => $can(Perm::SUBJECT_VIEW)],
+                ['label' => 'المجموعات', 'route' => 'teacher.groups.index', 'icon' => 'ph-user-list', 'active' => 'groups-active', 'visible' => $can(Perm::GROUP_VIEW)],
+                ['label' => 'الطلاب', 'route' => 'teacher.students.index', 'icon' => 'ph-student', 'active' => 'students-active', 'visible' => $can(Perm::STUDENT_VIEW)],
+                ['label' => 'المتابعة', 'route' => 'teacher.assignments.index', 'icon' => 'ph-check-square', 'active' => 'assignments-active', 'visible' => $can(Perm::ASSIGNMENT_VIEW)],
+                ['label' => 'الامتحانات', 'route' => 'teacher.exams.index', 'icon' => 'ph-exam', 'active' => 'exams-active', 'visible' => $can(Perm::EXAM_VIEW)],
+            ],
+        ],
+        [
+            'label' => 'المالية',
+            'items' => [
+                ['label' => 'المدفوعات', 'route' => 'teacher.payments.index', 'icon' => 'ph-currency-circle-dollar', 'active' => 'payments-active', 'visible' => $can(Perm::PAYMENT_VIEW)],
+                ['label' => 'الإيرادات', 'route' => 'teacher.revenues.index', 'icon' => 'ph-chart-line-up', 'active' => 'revenues-active', 'visible' => $can(Perm::REVENUE_VIEW)],
+                ['label' => 'حسابات المدرسين', 'route' => 'teacher.payrolls.index', 'icon' => 'ph-user-circle-gear', 'active' => 'payrolls-active', 'visible' => $can(Perm::PAYROLL_VIEW)],
+                ['label' => 'المصروفات', 'route' => 'teacher.expenses.index', 'icon' => 'ph-arrow-circle-down', 'active' => 'expenses-active', 'visible' => $can(Perm::EXPENSE_VIEW)],
+                ['label' => 'تقفيل الشهر', 'route' => 'teacher.monthly-closing.index', 'icon' => 'ph-lock', 'active' => 'monthly-closing-active', 'visible' => $can(Perm::REVENUE_VIEW)],
+            ],
+        ],
+        [
+            'label' => 'الخدمات',
+            'items' => [
+                ['label' => 'طلبات الكروت', 'route' => 'teacher.card-requests.index', 'icon' => 'ph-identification-card', 'active' => 'card-requests-active', 'visible' => $can(Perm::CARD_REQUEST_VIEW)],
+                ['label' => 'الدعم الفني', 'route' => 'teacher.support.index', 'icon' => 'ph-lifebuoy', 'active' => 'support-active', 'visible' => $can(Perm::SUPPORT_VIEW), 'badge' => $unreadSupport],
+            ],
+        ],
+    ];
+
+    $isActive = fn (array $item) => trim($__env->yieldContent($item['active'] ?? '')) !== '';
+
+    $teacherName = $user?->name ?? '';
+    $nameParts = preg_split('/\s+/u', trim($teacherName), -1, PREG_SPLIT_NO_EMPTY);
+    $initials = collect($nameParts)->take(2)->map(fn ($part) => mb_substr($part, 0, 1))->implode('');
 @endphp
 
-<nav class="pc-sidebar">
-    <div class="navbar-wrapper">
-        <div class="m-header">
-            <a href="{{ route('teacher.dashboard') }}" class="b-brand text-primary">
-                <img style="max-height: 95px;" src="{{ asset('assets/brand.svg') }}"
-                     alt="نبذة"/>
-            </a>
-        </div>
-        <div class="navbar-content">
-            <ul class="pc-navbar">
+<aside class="nb-sidebar" id="nb-sidebar" data-nb-sidebar aria-label="الشريط الجانبي">
 
-                {{-- ══════════════════════════════════════════
-                     الرئيسية
-                ══════════════════════════════════════════ --}}
-                <li class="pc-item @yield('home-active')">
-                    <a wire:navigate href="{{ route('teacher.dashboard') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-squares-four"></i>
-                        </span>
-                        <span class="pc-mtext">الصفحة الرئيسية</span>
-                    </a>
-                </li>
+    <!-- Brand -->
+    <div class="nb-sidebar__brand">
+        <a wire:navigate href="{{ route('teacher.dashboard') }}" class="nb-sidebar__brand-link" aria-label="نبذة - الصفحة الرئيسية">
+            <span class="nb-sidebar__logo">
+                <img src="{{ asset('assets/teacherPanel/images/logo.png') }}" alt="نبذة" width="612" height="408">
+            </span>
+            <svg class="nb-sidebar__mark" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M32 18c-6-5-15-6-24-4v34c9-2 18-1 24 4 6-5 15-6 24-4V14c-9-2-18-1-24 4z" stroke="#A4B388" stroke-width="3.2"/>
+                <path d="M32 18v34" stroke="#A4B388" stroke-width="3.2"/>
+                <path d="M14 26c4-1 8-1 12 1M14 33c4-1 8-1 12 1" stroke="#6A9268" stroke-width="3"/>
+                <path d="M37 32l5 5 9-11" stroke="#4A7350" stroke-width="4"/>
+            </svg>
+        </a>
 
+        <button type="button" class="nb-icon-btn nb-sidebar__close" data-nb-drawer-close aria-label="إغلاق القائمة">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
 
-                {{-- ══════════════════════════════════════════
-                     الإدارة
-                ══════════════════════════════════════════ --}}
-                @php
-                    $hasManagement =
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::BRANCH_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::STAFF_VIEW);
-                @endphp
+    <!-- Navigation -->
+    <nav class="nb-nav" aria-label="القائمة الرئيسية" data-nb-nav>
+        @foreach ($menuGroups as $groupIndex => $group)
+            @php
+                $visibleItems = array_values(array_filter($group['items'], fn ($item) => $item['visible']));
+            @endphp
 
-                @if($hasManagement)
-                    <li class="pc-item pc-caption">
-                        <label>الإدارة</label>
-                    </li>
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::BRANCH_VIEW))
-                        <li class="pc-item @yield('branches-active')">
-                            <a wire:navigate href="{{ route('teacher.branches.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-map-pin-line"></i>
-                                </span>
-                                <span class="pc-mtext">الأفرع</span>
-                            </a>
-                        </li>
+            @if (count($visibleItems))
+                <div class="nb-nav__group">
+                    @if ($group['label'])
+                        <p class="nb-nav__label" id="nb-nav-group-{{ $groupIndex }}">{{ $group['label'] }}</p>
                     @endif
 
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::STAFF_VIEW))
-                        <li class="pc-item @yield('staff-active')">
-                            <a wire:navigate href="{{ route('teacher.staff.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-users-four"></i>
-                                </span>
-                                <span class="pc-mtext">فريق العمل</span>
-                            </a>
-                        </li>
-                    @endif
-                @endif
+                    <ul class="nb-nav__list" @if ($group['label']) aria-labelledby="nb-nav-group-{{ $groupIndex }}" @endif>
+                        @foreach ($visibleItems as $itemIndex => $item)
+                            @php
+                                $children = array_values(array_filter($item['children'] ?? [], fn ($child) => $child['visible'] ?? true));
+                            @endphp
 
-                {{-- ══════════════════════════════════════════
-                     التشغيل اليومي
-                ══════════════════════════════════════════ --}}
-                @php
-                    $hasOperational =
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::TIMETABLE_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::ATTENDANCE_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::ATTENDANCE_CLOSE_DAY) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::BOOKING_VIEW);
-                @endphp
+                            @if (count($children))
+                                @php
+                                    $hasActiveChild = collect($children)->contains(fn ($child) => $isActive($child));
+                                    $submenuId = 'nb-submenu-' . $groupIndex . '-' . $itemIndex;
+                                @endphp
+                                <li class="nb-nav__item nb-nav__item--parent {{ $hasActiveChild ? 'is-open is-active-parent' : '' }}" data-nb-accordion>
+                                    <button
+                                        type="button"
+                                        class="nb-nav__link"
+                                        aria-expanded="{{ $hasActiveChild ? 'true' : 'false' }}"
+                                        aria-controls="{{ $submenuId }}"
+                                        data-nb-accordion-toggle
+                                        data-nb-tooltip="{{ $item['label'] }}"
+                                    >
+                                        <i class="nb-nav__icon ph-duotone {{ $item['icon'] }}" aria-hidden="true"></i>
+                                        <span class="nb-nav__text">{{ $item['label'] }}</span>
+                                        <svg class="nb-nav__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                                            <path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
 
-                @if($hasOperational)
-                    <li class="pc-item pc-caption">
-                        <label>التشغيل اليومي</label>
-                    </li>
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::TIMETABLE_VIEW))
-                        <li class="pc-item @yield('timetable-active')">
-                            <a wire:navigate href="{{ route('teacher.timetable.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-calendar"></i>
-                                </span>
-                                <span class="pc-mtext">جدول الأسبوع</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::ATTENDANCE_VIEW))
-                        <li class="pc-item @yield('attendance-active')">
-                            <a wire:navigate href="{{ route('teacher.attendance.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-scan"></i>
-                                </span>
-                                <span class="pc-mtext">الحضور</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::ATTENDANCE_CLOSE_DAY))
-                        <li class="pc-item @yield('attendance-close-day-active')">
-                            <a wire:navigate href="{{ route('teacher.attendance.close-day.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-lock"></i>
-                                </span>
-                                <span class="pc-mtext">تقفيل اليوم</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::BOOKING_VIEW))
-                        <li class="pc-item @yield('bookings-active')">
-                            <a wire:navigate href="{{ route('teacher.bookings.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-clipboard-text"></i>
-                                </span>
-                                <span class="pc-mtext">الحجوزات</span>
-                            </a>
-                        </li>
-                    @endif
-                @endif
-
-                {{-- ══════════════════════════════════════════
-                     الأكاديمي
-                ══════════════════════════════════════════ --}}
-                @php
-                    $hasAcademic =
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::SUBJECT_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::GROUP_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::STUDENT_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::ASSIGNMENT_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::EXAM_VIEW);
-                @endphp
-
-                @if($hasAcademic)
-                    <li class="pc-item pc-caption">
-                        <label>الأكاديمي</label>
-                    </li>
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::SUBJECT_VIEW))
-                        <li class="pc-item @yield('subjects-active')">
-                            <a wire:navigate href="{{ route('teacher.subjects.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-notebook"></i>
-                                </span>
-                                <span class="pc-mtext">المواد الدراسية</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::GROUP_VIEW))
-                        <li class="pc-item @yield('groups-active')">
-                            <a wire:navigate href="{{ route('teacher.groups.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-user-list"></i>
-                                </span>
-                                <span class="pc-mtext">المجموعات</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::STUDENT_VIEW))
-                        <li class="pc-item @yield('students-active')">
-                            <a wire:navigate href="{{ route('teacher.students.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-student"></i>
-                                </span>
-                                <span class="pc-mtext">الطلاب</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::ASSIGNMENT_VIEW))
-                        <li class="pc-item @yield('assignments-active')">
-                            <a wire:navigate href="{{ route('teacher.assignments.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-check-square"></i>
-                                </span>
-                                <span class="pc-mtext">المتابعة</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::EXAM_VIEW))
-                        <li class="pc-item @yield('exams-active')">
-                            <a wire:navigate href="{{ route('teacher.exams.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-exam"></i>
-                                </span>
-                                <span class="pc-mtext">الامتحانات</span>
-                            </a>
-                        </li>
-                    @endif
-                @endif
-
-
-
-                {{-- ══════════════════════════════════════════
-                     المالية
-                ══════════════════════════════════════════ --}}
-                @php
-                    $hasFinancial =
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::PAYMENT_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::REVENUE_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::EXPENSE_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::PAYROLL_VIEW);
-                @endphp
-
-                @if($hasFinancial)
-                    <li class="pc-item pc-caption">
-                        <label>المالية</label>
-                    </li>
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::PAYMENT_VIEW))
-                        <li class="pc-item @yield('payments-active')">
-                            <a wire:navigate href="{{ route('teacher.payments.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-currency-circle-dollar"></i>
-                                </span>
-                                <span class="pc-mtext">المدفوعات</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::REVENUE_VIEW))
-                        <li class="pc-item @yield('revenues-active')">
-                            <a wire:navigate href="{{ route('teacher.revenues.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-chart-line-up"></i>
-                                </span>
-                                <span class="pc-mtext">الإيرادات</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::PAYROLL_VIEW))
-                        <li class="pc-item @yield('payrolls-active')">
-                            <a wire:navigate href="{{ route('teacher.payrolls.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-user-circle-gear"></i>
-                                </span>
-                                <span class="pc-mtext">حسابات المدرسين</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::EXPENSE_VIEW))
-                        <li class="pc-item @yield('expenses-active')">
-                            <a wire:navigate href="{{ route('teacher.expenses.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-arrow-circle-down"></i>
-                                </span>
-                                <span class="pc-mtext">المصروفات</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::REVENUE_VIEW))
-                        <li class="pc-item @yield('monthly-closing-active')">
-                            <a wire:navigate href="{{ route('teacher.monthly-closing.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-lock"></i>
-                                </span>
-                                <span class="pc-mtext">تقفيل الشهر</span>
-                            </a>
-                        </li>
-                    @endif
-                @endif
-
-                {{-- ══════════════════════════════════════════
-                     الخدمات
-                ══════════════════════════════════════════ --}}
-                @php
-                    $hasServices =
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::CARD_REQUEST_VIEW) ||
-                        auth('teacher')->user()->hasPermission(TeacherPermissionEnum::SUPPORT_VIEW);
-                @endphp
-
-                @if($hasServices)
-                    <li class="pc-item pc-caption">
-                        <label>الخدمات</label>
-                    </li>
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::CARD_REQUEST_VIEW))
-                        <li class="pc-item @yield('card-requests-active')">
-                            <a wire:navigate href="{{ route('teacher.card-requests.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-identification-card"></i>
-                                </span>
-                                <span class="pc-mtext">طلبات الكروت</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    @if(auth('teacher')->user()->hasPermission(TeacherPermissionEnum::SUPPORT_VIEW))
-                        <li class="pc-item @yield('support-active')">
-                            <a wire:navigate href="{{ route('teacher.support.index') }}" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ph-duotone ph-lifebuoy"></i>
-                                </span>
-                                <span>الدعم الفني</span>
-                                <span class="pc-mtext d-flex align-items-center">
-                                    @if($unreadSupport > 0)
-                                        <span class="badge bg-danger text-white ms-auto">{{ $unreadSupport }}</span>
-                                    @endif
-                                </span>
-                            </a>
-                        </li>
-                    @endif
-                @endif
-
-            </ul>
-        </div>
-
-        {{-- Footer --}}
-        <div class="pc-sidebar-footer">
-            <div class="card pc-user-card" dir="rtl">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="teacher-sidebar-avatar">
-                                {{ mb_substr(auth('teacher')->user()->name, 0, 1) }}
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 me-3">
-                            <div class="dropdown">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1 ms-2">
-                                        <h6 class="mb-0 teacher-sidebar-name">
-                                            {{ auth('teacher')->user()->name }}
-                                        </h6>
-                                        <small class="teacher-sidebar-role">
-                                            {{ auth('teacher')->user()->email }}
-                                        </small>
-                                        <div class="mt-1">
-                                            <span
-                                                class="badge bg-{{ auth('teacher')->user()->role->color() }} bg-opacity-10 text-{{ auth('teacher')->user()->role->color() }}"
-                                                style="font-size: 10px;">
-                                                <i class="ph-duotone {{ auth('teacher')->user()->role->icon() }} me-1"></i>
-                                                {{ auth('teacher')->user()->role->label() }}
-                                            </span>
-                                        </div>
+                                    <div class="nb-nav__submenu" id="{{ $submenuId }}" data-nb-accordion-panel @unless ($hasActiveChild) hidden @endunless>
+                                        <ul class="nb-nav__sublist">
+                                            @foreach ($children as $child)
+                                                @php $childActive = $isActive($child); @endphp
+                                                <li>
+                                                    <a
+                                                        wire:navigate
+                                                        href="{{ route($child['route']) }}"
+                                                        class="nb-nav__sublink {{ $childActive ? 'is-active' : '' }}"
+                                                        @if ($childActive) aria-current="page" @endif
+                                                    >
+                                                        <span class="nb-nav__dot" aria-hidden="true"></span>
+                                                        <span class="nb-nav__text">{{ $child['label'] }}</span>
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                </li>
+                            @else
+                                @php $active = $isActive($item); @endphp
+                                <li class="nb-nav__item">
+                                    <a
+                                        wire:navigate
+                                        href="{{ route($item['route']) }}"
+                                        class="nb-nav__link {{ $active ? 'is-active' : '' }}"
+                                        data-nb-tooltip="{{ $item['label'] }}"
+                                        @if ($active) aria-current="page" @endif
+                                    >
+                                        <i class="nb-nav__icon ph-duotone {{ $item['icon'] }}" aria-hidden="true"></i>
+                                        <span class="nb-nav__text">{{ $item['label'] }}</span>
+
+                                        @if (! empty($item['badge']))
+                                            <span class="nb-badge nb-nav__badge" aria-label="{{ $item['badge'] }} رسالة جديدة">{{ $item['badge'] }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
                 </div>
+            @endif
+        @endforeach
+    </nav>
+
+    <!-- Teacher card -->
+    @if ($user)
+        <div class="nb-sidebar__footer">
+            <div class="nb-user-card">
+                <span class="nb-avatar" aria-hidden="true">{{ $initials }}</span>
+
+                <div class="nb-user-card__text">
+                    <p class="nb-user-card__name">{{ $user->name }}</p>
+                    <p class="nb-user-card__meta">{{ $user->role?->label() }}</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="nb-icon-btn nb-user-card__logout"
+                    aria-label="تسجيل الخروج"
+                    data-nb-tooltip="تسجيل الخروج"
+                    data-nb-tooltip-always
+                    data-nb-logout
+                >
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                        <path d="M14 4.75h3.25a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        <path d="M10.5 8 6.5 12l4 4M7 12h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
             </div>
         </div>
-    </div>
-</nav>
+    @endif
+</aside>
+
+<div class="nb-sidebar-overlay" data-nb-drawer-overlay hidden></div>

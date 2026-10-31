@@ -20,9 +20,11 @@
         rel="stylesheet"
         href="{{ asset('assets/teacherPanel') }}/css/plugins/jsvectormap.min.css"
     >
-    <!-- [Google Font : Public Sans] icon -->
+    <!-- [Font: IBM Plex Sans Arabic] -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
@@ -57,15 +59,15 @@
         href="{{ asset('assets/teacherPanel') }}/css/style-preset.css"
     >
     @livewireStyles
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap');
 
-        html,
-        body,
-        * {
-            font-family: 'Cairo', sans-serif !important;
-            font-weight: 600 !important;
-        }
-    </style>
+    <!-- [Nabza design system: loaded after the template CSS so it wins] -->
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/nabza-theme.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/header.css') }}">
+
+    <!-- Applies the saved collapsed-sidebar state before first paint (no layout jump) -->
+    <script src="{{ asset('assets/teacherPanel/js/layout/sidebar-init.js') }}"></script>
+    <script src="{{ asset('assets/teacherPanel/js/layout/sidebar.js') }}" defer></script>
+    <script src="{{ asset('assets/teacherPanel/js/layout/header.js') }}" defer></script>
 
 </head>

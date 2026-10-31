@@ -1,0 +1,281 @@
+/* ==========================================================================
+   Teacher dashboard: top header (نبذة)
+   Depends on: ../nabza-theme.css and layout/sidebar.css (--nb-sidebar-current).
+   ========================================================================== */
+
+.nb-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: var(--nb-sidebar-current);
+    z-index: var(--nb-z-header);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: var(--nb-header-h);
+    padding: 0 24px;
+    background-color: var(--nb-surface);
+    border-bottom: 1px solid var(--nb-border);
+    color: var(--nb-ink);
+    direction: rtl;
+    text-align: right;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .nb-header {
+        transition: right var(--nb-duration-ui) ease;
+    }
+}
+
+.nb-header__start,
+.nb-header__end {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.nb-header__start {
+    gap: 12px;
+}
+
+.nb-header__end {
+    flex-shrink: 0;
+    gap: 6px;
+}
+
+.nb-header__title {
+    margin: 0;
+    overflow: hidden;
+    color: var(--nb-green-900);
+    font-size: 1.125rem; /* 18px */
+    font-weight: var(--nb-weight-bold);
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nb-header .nb-icon-btn > i {
+    font-size: 20px;
+}
+
+/* ---------- Profile trigger ---------- */
+.nb-profile__trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 4px;
+    padding-left: 10px;
+    border: 0;
+    border-radius: var(--nb-radius-item);
+    background-color: transparent;
+    color: var(--nb-ink);
+    cursor: pointer;
+    transition: background-color var(--nb-duration-fast) ease;
+}
+
+.nb-profile__trigger:hover,
+.nb-profile__trigger[aria-expanded="true"] {
+    background-color: var(--nb-sage-50);
+}
+
+.nb-profile__trigger:focus-visible {
+    outline: var(--nb-focus-outline);
+    outline-offset: 2px;
+}
+
+.nb-profile__name {
+    max-width: 160px;
+    overflow: hidden;
+    font-size: var(--nb-text-base);
+    font-weight: var(--nb-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nb-profile__chevron {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--nb-muted);
+    transition: transform var(--nb-duration-fast) ease;
+}
+
+.nb-profile__trigger[aria-expanded="true"] .nb-profile__chevron {
+    transform: rotate(180deg);
+}
+
+/* ---------- Dropdown panels in the header ---------- */
+.nb-header .nb-menu {
+    direction: rtl;
+    text-align: right;
+}
+
+:where(.nb-header .nb-menu) p {
+    margin: 0;
+}
+
+.nb-profile__menu {
+    width: 300px;
+    max-width: calc(100vw - 32px);
+}
+
+.nb-profile__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.nb-profile__info {
+    min-width: 0;
+}
+
+.nb-profile__email {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: ltr;
+    text-align: right;
+}
+
+.nb-profile__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+/* ---------- Settings menu ---------- */
+.nb-settings {
+    width: 300px;
+    max-width: calc(100vw - 32px);
+}
+
+.nb-settings__section {
+    padding: 6px 10px 10px;
+}
+
+.nb-settings__label {
+    margin-bottom: 8px;
+    color: var(--nb-muted);
+    font-size: var(--nb-text-xs);
+    font-weight: var(--nb-weight-semibold);
+}
+
+.nb-segmented {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.nb-segmented__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 6px;
+    border: 1px solid var(--nb-border);
+    border-radius: var(--nb-radius-menu-item);
+    background-color: var(--nb-surface);
+    color: var(--nb-ink);
+    font-size: var(--nb-text-sm);
+    font-weight: var(--nb-weight-medium);
+    cursor: pointer;
+    transition: background-color var(--nb-duration-fast) ease, border-color var(--nb-duration-fast) ease, color var(--nb-duration-fast) ease;
+}
+
+.nb-segmented__btn > i {
+    color: var(--nb-muted);
+    font-size: 16px;
+}
+
+.nb-segmented__btn:hover {
+    background-color: var(--nb-sage-50);
+}
+
+.nb-segmented__btn.is-active {
+    border-color: var(--nb-green-700);
+    background-color: var(--nb-sage-100);
+    color: var(--nb-green-800);
+    font-weight: var(--nb-weight-semibold);
+}
+
+.nb-segmented__btn.is-active > i {
+    color: var(--nb-green-700);
+}
+
+.nb-segmented__btn:focus-visible,
+.nb-swatch:focus-visible {
+    outline: var(--nb-focus-outline);
+    outline-offset: 2px;
+}
+
+.nb-swatches {
+    display: grid;
+    grid-template-columns: repeat(5, 32px);
+    gap: 10px;
+}
+
+.nb-swatch {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: var(--nb-surface);
+    cursor: pointer;
+    transition: transform var(--nb-duration-fast) ease, box-shadow var(--nb-duration-fast) ease;
+}
+
+.nb-swatch svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+}
+
+.nb-swatch:hover {
+    transform: scale(1.06);
+}
+
+.nb-swatch.is-active {
+    box-shadow: 0 0 0 2px var(--nb-surface), 0 0 0 4px var(--nb-sage-300);
+}
+
+.nb-swatch.is-active svg {
+    opacity: 1;
+}
+
+/* Same colors the template uses for its accent presets (style.css .preset-color) */
+.nb-swatch[data-value="preset-1"] { background-color: #04A9F5; }
+.nb-swatch[data-value="preset-2"] { background-color: #6610F2; }
+.nb-swatch[data-value="preset-3"] { background-color: #673AB7; }
+.nb-swatch[data-value="preset-4"] { background-color: #E83E8C; }
+.nb-swatch[data-value="preset-5"] { background-color: #F44236; }
+.nb-swatch[data-value="preset-6"] { background-color: #FD7E14; }
+.nb-swatch[data-value="preset-7"] { background-color: #F4C22B; }
+.nb-swatch[data-value="preset-8"] { background-color: #1DE9B6; }
+.nb-swatch[data-value="preset-9"] { background-color: #008080; }
+.nb-swatch[data-value="preset-10"] { background-color: #3EBFEA; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 767.98px) {
+    .nb-header {
+        padding: 0 16px;
+    }
+
+    .nb-profile__name {
+        display: none;
+    }
+
+    .nb-profile__trigger {
+        padding-left: 6px;
+    }
+
+    .nb-header__title {
+        font-size: var(--nb-text-md);
+    }
+}

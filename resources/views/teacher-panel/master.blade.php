@@ -3,7 +3,7 @@
     $themeSettings = $teacher?->themeSettings;
 @endphp
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 
 <!-- [Head] start -->
 @include('teacher-panel.parts.head')
@@ -12,8 +12,8 @@
 <!-- [Body] Start -->
 
 <body
+    class="nb-app"
     data-pc-preset="{{ $themeSettings?->accent_color ?? 'preset-1' }}"
-    data-pc-sidebar-theme="{{ $themeSettings?->sidebar_theme ?? 'light' }}"
     data-pc-theme="{{ $themeSettings?->theme_mode ?? 'light' }}"
     data-pc-sidebar-caption="true"
     data-pc-direction="rtl"
@@ -27,11 +27,11 @@
     </div>
     <!-- [ Pre-loader ] End -->
 
-    <!-- [ Sidebar Menu ] start -->
+    <!-- [ Sidebar ] start -->
     @include('teacher-panel.parts.sidebar')
-    <!-- [ Sidebar Menu ] end -->
+    <!-- [ Sidebar ] end -->
 
-    <!-- [ Header Topbar ] start -->
+    <!-- [ Header ] start -->
     @include('teacher-panel.parts.header')
     <!-- [ Header ] end -->
 

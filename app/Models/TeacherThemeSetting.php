@@ -10,7 +10,6 @@ class TeacherThemeSetting extends Model
     protected $fillable = [
         'teacher_id',
         'theme_mode',
-        'sidebar_theme',
         'accent_color',
         'layout_width',
     ];

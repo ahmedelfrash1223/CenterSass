@@ -68,14 +68,6 @@ File: style.css
   --pc-header-submenu-color: #39465F;
 }
 
-[data-pc-sidebar-theme=dark] {
-  --pc-sidebar-background: #1D2630;
-  --pc-sidebar-color: #FFFFFF;
-  --pc-sidebar-color-rgb: 255, 255, 255;
-  --pc-sidebar-submenu-border-color: var(--bs-gray-600);
-  --pc-sidebar-caption-color: #748892;
-}
-
 [class=layout-3],
 [class=layout-nested] {
   --pc-sidebar-background: #1D2630;

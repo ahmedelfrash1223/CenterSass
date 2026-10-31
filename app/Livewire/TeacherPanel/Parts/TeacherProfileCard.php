@@ -3,6 +3,7 @@
 namespace App\Livewire\TeacherPanel\Parts;
 
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class TeacherProfileCard extends Component
@@ -24,6 +25,7 @@ class TeacherProfileCard extends Component
         $this->open = false;
     }
 
+    #[On('nb-teacher-logout')]
     public function logout()
     {
         Auth::guard('teacher')->logout();

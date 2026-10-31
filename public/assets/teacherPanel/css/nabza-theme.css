@@ -75,7 +75,21 @@
     /* ---------- Motion ---------- */
     --nb-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     --nb-duration-fast: 150ms;
+    --nb-duration-ui: 200ms;
     --nb-duration: 300ms;
+
+    /* ---------- App layout ---------- */
+    --nb-sidebar-w: 272px;
+    --nb-sidebar-w-collapsed: 84px;
+    --nb-header-h: 68px;
+    --nb-overlay: rgba(20, 30, 22, 0.45);
+    --nb-radius-item: 12px;   /* nav items, icon buttons */
+    --nb-radius-menu: 14px;   /* dropdown panels */
+    --nb-radius-menu-item: 10px;
+    --nb-z-header: 1020;
+    --nb-z-sidebar: 1030;
+    --nb-z-overlay: 1025;
+    --nb-z-popover: 1050;
 }
 
 /* ---------- Base (low specificity via :where so components always win) ---------- */
@@ -185,5 +199,286 @@ html {
 @media (prefers-reduced-motion: reduce) {
     .nb-spinner {
         animation-duration: 1.6s;
+    }
+}
+
+/* ==========================================================================
+   Shared components (reused across the dashboard)
+   ========================================================================== */
+
+/* ---------- Icon button (ghost) ---------- */
+.nb-icon-btn {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--nb-radius-item);
+    background-color: transparent;
+    color: var(--nb-muted);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color var(--nb-duration-fast) ease, color var(--nb-duration-fast) ease;
+}
+
+.nb-icon-btn:hover,
+.nb-icon-btn[aria-haspopup][aria-expanded="true"] {
+    background-color: var(--nb-sage-50);
+    color: var(--nb-green-700);
+}
+
+.nb-icon-btn:focus-visible {
+    outline: var(--nb-focus-outline);
+    outline-offset: 2px;
+}
+
+.nb-icon-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.nb-icon-btn > i,
+.nb-menu__item > i,
+.nb-segmented__btn > i {
+    display: inline-block;
+    direction: ltr;
+    line-height: 1;
+}
+
+/* ---------- Avatar ---------- */
+.nb-avatar {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: var(--nb-sage-100);
+    color: var(--nb-green-800);
+    font-size: var(--nb-text-base);
+    font-weight: var(--nb-weight-semibold);
+    line-height: 1;
+}
+
+.nb-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nb-avatar--lg {
+    width: 44px;
+    height: 44px;
+    font-size: var(--nb-text-md);
+}
+
+/* ---------- Badge ---------- */
+.nb-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 7px;
+    border-radius: var(--nb-radius-pill);
+    background-color: var(--nb-sage-100);
+    color: var(--nb-green-800);
+    font-size: var(--nb-text-xs);
+    font-weight: var(--nb-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.nb-badge--neutral {
+    background-color: var(--nb-sage-50);
+    color: var(--nb-muted);
+    box-shadow: inset 0 0 0 1px var(--nb-border);
+}
+
+.nb-badge--danger {
+    background-color: var(--nb-danger-bg);
+    color: var(--nb-danger);
+}
+
+/* Dot badge on top of an icon button */
+.nb-dot-badge {
+    position: absolute;
+    top: 8px;
+    inset-inline-end: 8px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--nb-surface);
+    border-radius: 50%;
+    background-color: var(--nb-danger);
+    box-sizing: content-box;
+}
+
+/* ---------- Dropdown ---------- */
+.nb-dropdown {
+    position: relative;
+}
+
+.nb-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    inset-inline-end: 0;
+    z-index: var(--nb-z-popover);
+    min-width: 240px;
+    padding: 8px;
+    border: 1px solid var(--nb-border);
+    border-radius: var(--nb-radius-menu);
+    background-color: var(--nb-surface);
+    box-shadow: var(--nb-shadow-md), var(--nb-shadow-sm);
+    color: var(--nb-ink);
+    font-size: var(--nb-text-base);
+    text-align: start;
+    transform-origin: top right;
+}
+
+[dir="rtl"] .nb-menu {
+    transform-origin: top left;
+}
+
+.nb-menu__header {
+    padding: 8px 10px 12px;
+}
+
+.nb-menu__title {
+    color: var(--nb-green-900);
+    font-size: var(--nb-text-base);
+    font-weight: var(--nb-weight-semibold);
+}
+
+.nb-menu__meta {
+    color: var(--nb-muted);
+    font-size: var(--nb-text-xs);
+}
+
+.nb-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 40px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: var(--nb-radius-menu-item);
+    background-color: transparent;
+    color: var(--nb-ink);
+    font-size: var(--nb-text-base);
+    font-weight: var(--nb-weight-medium);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--nb-duration-fast) ease, color var(--nb-duration-fast) ease;
+}
+
+.nb-menu__item:hover,
+.nb-menu__item:focus-visible {
+    background-color: var(--nb-sage-50);
+    color: var(--nb-green-800);
+    text-decoration: none;
+}
+
+.nb-menu__item:focus-visible {
+    outline: var(--nb-focus-outline);
+    outline-offset: 0;
+}
+
+.nb-menu__item > i,
+.nb-menu__item > svg {
+    width: 20px;
+    flex-shrink: 0;
+    color: var(--nb-muted);
+    font-size: 18px;
+    text-align: center;
+}
+
+.nb-menu__item--danger,
+.nb-menu__item--danger > i {
+    color: var(--nb-danger);
+}
+
+.nb-menu__item--danger:hover,
+.nb-menu__item--danger:focus-visible {
+    background-color: var(--nb-danger-bg);
+    color: var(--nb-danger);
+}
+
+.nb-menu__item--disabled {
+    color: var(--nb-muted);
+    cursor: not-allowed;
+}
+
+.nb-menu__item--disabled:hover {
+    background-color: transparent;
+    color: var(--nb-muted);
+}
+
+.nb-menu__item-end {
+    margin-inline-start: auto;
+}
+
+.nb-menu__divider {
+    height: 1px;
+    margin: 6px 4px;
+    border: 0;
+    background-color: var(--nb-border);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .nb-menu.is-open {
+        animation: nb-menu-in var(--nb-duration-ui) var(--nb-ease);
+    }
+}
+
+@keyframes nb-menu-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---------- Tooltip (floating, positioned by JS) ---------- */
+.nb-tooltip {
+    position: fixed;
+    z-index: var(--nb-z-popover);
+    max-width: 240px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background-color: var(--nb-green-900);
+    color: var(--nb-surface);
+    font-family: var(--nb-font);
+    font-size: var(--nb-text-sm);
+    font-weight: var(--nb-weight-medium);
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: var(--nb-shadow-sm);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .nb-tooltip {
+        animation: nb-fade-in var(--nb-duration-fast) ease;
+    }
+}
+
+@keyframes nb-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
