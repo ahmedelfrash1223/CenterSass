@@ -1,45 +1,31 @@
-@php
-    $themeSettings = session('admin_theme_settings', [
-        'theme_mode' => 'light',
-        'sidebar_theme' => 'light',
-        'accent_color' => 'preset-1',
-        'layout_width' => 'full',
-    ]);
-@endphp
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 
-<!-- [Head] start -->
-@include('admin-panel.auth.parts.head')
-<!-- [Head] end -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#FFFFFF">
+    <title>نبذة | @yield('title')</title>
 
-<!-- [Body] Start -->
+    <link rel="icon" href="{{ asset('assets/teacherPanel/images/favicon.png') }}" type="image/png">
 
-<body
-    data-pc-preset="{{ $themeSettings['accent_color'] ?? 'preset-1' }}"
-    data-pc-sidebar-theme="{{ $themeSettings['sidebar_theme'] ?? 'light' }}"
-    data-pc-theme="{{ $themeSettings['theme_mode'] ?? 'light' }}"
-    data-pc-sidebar-caption="true"
-    data-pc-direction="rtl"
->
+    <!-- Font: IBM Plex Sans Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- [ Pre-loader ] start -->
-    <div class="loader-bg">
-        <div class="loader-track">
-            <div class="loader-fill"></div>
-        </div>
-    </div>
-    <!-- [ Pre-loader ] End -->
+    <!-- Nabza design tokens -->
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/nabza-theme.css') }}">
+    @stack('styles')
+</head>
 
-    <!-- [ Main Content ] start -->
+<body class="nb-body">
+
     @yield('main')
-    <!-- [ Main Content ] end -->
 
-    @include('admin-panel.auth.parts.scripts')
     @livewireScripts
+    @stack('scripts')
 
 </body>
-<!-- [Body] end -->
 
 </html>
