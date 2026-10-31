@@ -19,8 +19,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->string('theme_mode')->default('light');
-            $table->string('sidebar_theme')->default('light');
-            $table->string('accent_color')->default('preset-1');
             $table->string('layout_width')->default('full');
             $table->timestamps();
         });
