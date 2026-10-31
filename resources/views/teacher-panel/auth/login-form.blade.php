@@ -1,84 +1,152 @@
-<form wire:submit.prevent="submit">
+@php
+    // Wrong credentials are reported by LoginForm as a "login" error while the field is filled;
+    // an empty field means it's the "required" validation message instead.
+    $hasCredentialsError = $errors->has('login') && filled($login);
+@endphp
 
-    <!------- Username / Email ------->
-    <div class="mb-3">
-        <input
-            type="text"
-            class="form-control"
-            placeholder="اسم المستخدم أو البريد الإلكتروني أو رقم هاتفك"
-            wire:model="login"
-        >
+<form class="nb-form" wire:submit.prevent="submit" data-nb-login-form>
+
+    <!------- General error (wrong credentials) ------->
+    @if ($hasCredentialsError)
+        <div class="nb-alert nb-alert--danger" role="alert">
+            <svg class="nb-alert__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 7.5v5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="16.5" r="1.2" fill="currentColor"/>
+            </svg>
+            <p class="nb-alert__text">{{ $errors->first('login') }}</p>
+        </div>
+    @endif
+
+    <!------- Username / Email / Phone ------->
+    <div class="nb-field @if ($errors->has('login')) nb-field--invalid @endif">
+        <label class="nb-field__label" for="nb-login-identifier">
+            اسم المستخدم أو البريد الإلكتروني أو رقم الهاتف
+        </label>
+
+        <div class="nb-field__control">
+            <span class="nb-field__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                    <circle cx="12" cy="8.5" r="3.75" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M4.75 19.25c1.3-3.1 4-4.75 7.25-4.75s5.95 1.65 7.25 4.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </span>
+
+            <input
+                id="nb-login-identifier"
+                type="text"
+                name="login"
+                class="nb-input"
+                wire:model="login"
+                autocomplete="username"
+                autocapitalize="none"
+                spellcheck="false"
+                @if ($errors->has('login'))
+                    aria-invalid="true"
+                    @unless ($hasCredentialsError) aria-describedby="nb-login-identifier-error" @endunless
+                @endif
+            >
+        </div>
 
         @error('login')
-            <span class="text-danger">{{ $message }}</span>
+            @unless ($hasCredentialsError)
+                <p class="nb-field__error" id="nb-login-identifier-error">{{ $message }}</p>
+            @endunless
         @enderror
     </div>
 
     <!------- Password ------->
-    <div class="mb-3">
-        <input
-            type="password"
-            class="form-control"
-            placeholder="كلمة المرور"
-            wire:model="password"
-        >
+    <div class="nb-field @error('password') nb-field--invalid @enderror">
+        <label class="nb-field__label" for="nb-login-password">كلمة المرور</label>
+
+        <div class="nb-field__control">
+            <span class="nb-field__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                    <rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M8.25 10.5V8a3.75 3.75 0 0 1 7.5 0v2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </span>
+
+            <input
+                id="nb-login-password"
+                type="password"
+                name="password"
+                class="nb-input nb-input--with-action"
+                wire:model="password"
+                autocomplete="current-password"
+                data-nb-password
+                @error('password')
+                    aria-invalid="true"
+                    aria-describedby="nb-login-password-error"
+                @enderror
+            >
+
+            <button
+                type="button"
+                class="nb-field__action"
+                aria-label="إظهار كلمة المرور"
+                aria-controls="nb-login-password"
+                aria-pressed="false"
+                data-nb-password-toggle
+                wire:ignore
+            >
+                <svg class="nb-icon-eye" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M2.75 12S6 5.75 12 5.75 21.25 12 21.25 12 18 18.25 12 18.25 2.75 12 2.75 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+                <svg class="nb-icon-eye-off" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M3.5 3.5l17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M10.6 6.9c.45-.1.92-.15 1.4-.15 6 0 9.25 5.25 9.25 5.25s-.9 1.5-2.65 3M6.6 7.9C4 9.7 2.75 12 2.75 12S6 18.25 12 18.25c1.55 0 2.9-.4 4.05-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <p class="nb-field__hint nb-field__hint--warning" id="nb-login-capslock" data-nb-capslock hidden wire:ignore>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path d="M12 4 4 12h4.5v4h7v-4H20L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M8.5 19.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            زرار Caps Lock شغّال
+        </p>
 
         @error('password')
-            <span class="text-danger">{{ $message }}</span>
+            <p class="nb-field__error" id="nb-login-password-error">{{ $message }}</p>
         @enderror
     </div>
 
     <!------- Remember Me ------->
-    <div class="d-flex mt-1 justify-content-between align-items-center">
-        <div class="form-check">
+    <div class="nb-form__row">
+        <label class="nb-check" for="rememberMe">
             <input
-                class="form-check-input input-primary"
+                class="nb-check__input"
                 type="checkbox"
                 id="rememberMe"
+                name="remember"
                 wire:model="remember"
             >
-
-            <label
-                class="form-check-label text-muted"
-                for="rememberMe"
-            >
-                تذكرني
-            </label>
-        </div>
+            <span class="nb-check__box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                    <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span class="nb-check__label">تذكرني</span>
+        </label>
     </div>
 
     <!------- Submit Button ------->
-    <div class="d-grid mt-4">
-        <button
-            type="submit"
-            class="btn btn-primary"
-            wire:loading.attr="disabled"
-            wire:target="submit"
-        >
+    <button
+        type="submit"
+        class="nb-btn nb-btn--primary nb-btn--block"
+        wire:loading.attr="disabled"
+        wire:target="submit"
+    >
+        <span wire:loading.remove wire:target="submit">تسجيل الدخول</span>
 
-            <span
-                wire:loading.remove
-                wire:target="submit"
-            >
-                تسجيل الدخول
-            </span>
-
-            <div
-                wire:loading
-                wire:target="submit"
-            >
-                <span class="d-inline-flex align-items-center gap-2">
-                    <span
-                        class="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                    ></span>
-
-                    جاري تسجيل الدخول...
-                </span>
-            </div>
-
-        </button>
-    </div>
+        <span class="nb-btn__loading" wire:loading.flex wire:target="submit">
+            <span class="nb-spinner" aria-hidden="true"></span>
+            جاري تسجيل الدخول...
+        </span>
+    </button>
 
 </form>

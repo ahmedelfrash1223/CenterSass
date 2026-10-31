@@ -1,0 +1,196 @@
+/* ==========================================================================
+   Nabza (نبذة) design tokens + base
+   Shared foundation for the teacher panel redesign.
+   Solid colors only. No gradients.
+   ========================================================================== */
+
+:root {
+    /* ---------- Brand colors ---------- */
+    --nb-green-900: #1F3A24; /* headings, strongest text */
+    --nb-green-800: #345A3A; /* primary hover */
+    --nb-green-700: #3F6B45; /* primary, links, focus ring */
+    --nb-green-600: #5A875C; /* logo deep green: icons, accents (not body text) */
+    --nb-sage-400:  #A4B388; /* logo sage: decorative only */
+    --nb-sage-200:  #D6DEC6; /* soft borders, dividers */
+    --nb-sage-100:  #EEF2E6; /* brand panel surface */
+    --nb-sage-50:   #F6F8F1; /* page background */
+
+    /* ---------- Neutrals ---------- */
+    --nb-surface:   #FFFFFF;
+    --nb-ink:       #1E2A22;
+    --nb-muted:     #5B6B5E;
+    --nb-border:    #DDE4D3;
+
+    /* ---------- Feedback ---------- */
+    --nb-danger:    #B42318;
+    --nb-danger-bg: #FEF3F2;
+    --nb-warning:   #B54708;
+    --nb-warning-bg: #FFFAEB;
+
+    /* ---------- Typography ---------- */
+    --nb-font-heading: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
+    --nb-font-body: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+
+    --nb-text-xs: 0.75rem;   /* 12 */
+    --nb-text-sm: 0.875rem;  /* 14 */
+    --nb-text-md: 1rem;      /* 16 */
+    --nb-text-lg: 1.125rem;  /* 18 */
+    --nb-text-xl: 1.5rem;    /* 24 */
+    --nb-text-2xl: 1.875rem; /* 30 */
+    --nb-text-3xl: 2.25rem;  /* 36 */
+
+    --nb-weight-regular: 400;
+    --nb-weight-medium: 500;
+    --nb-weight-semibold: 600;
+    --nb-weight-bold: 700;
+
+    --nb-leading-tight: 1.3;
+    --nb-leading-normal: 1.6;
+
+    /* ---------- Spacing scale (4px base) ---------- */
+    --nb-space-1: 0.25rem;  /* 4 */
+    --nb-space-2: 0.5rem;   /* 8 */
+    --nb-space-3: 0.75rem;  /* 12 */
+    --nb-space-4: 1rem;     /* 16 */
+    --nb-space-5: 1.25rem;  /* 20 */
+    --nb-space-6: 1.5rem;   /* 24 */
+    --nb-space-8: 2rem;     /* 32 */
+    --nb-space-10: 2.5rem;  /* 40 */
+    --nb-space-12: 3rem;    /* 48 */
+    --nb-space-16: 4rem;    /* 64 */
+
+    /* ---------- Radius ---------- */
+    --nb-radius-sm: 8px;
+    --nb-radius-md: 12px;
+    --nb-radius-lg: 16px;
+    --nb-radius-xl: 24px;
+    --nb-radius-pill: 999px;
+
+    /* ---------- Shadows (soft, green-tinted) ---------- */
+    --nb-shadow-sm: 0 1px 2px rgba(31, 58, 36, 0.06);
+    --nb-shadow-md: 0 4px 12px rgba(31, 58, 36, 0.08), 0 1px 3px rgba(31, 58, 36, 0.05);
+    --nb-shadow-lg: 0 16px 32px rgba(31, 58, 36, 0.10), 0 2px 6px rgba(31, 58, 36, 0.05);
+
+    /* ---------- Controls ---------- */
+    --nb-control-height: 48px;
+    --nb-focus-ring: 0 0 0 2px var(--nb-surface), 0 0 0 4px var(--nb-green-700);
+
+    /* ---------- Motion ---------- */
+    --nb-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --nb-duration-fast: 150ms;
+    --nb-duration: 240ms;
+    --nb-duration-slow: 520ms;
+}
+
+/* ---------- Base reset ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body.nb-body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--nb-sage-50);
+    color: var(--nb-ink);
+    font-family: var(--nb-font-body);
+    font-size: var(--nb-text-md);
+    font-weight: var(--nb-weight-regular);
+    line-height: var(--nb-leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+:where(.nb-body) h1,
+:where(.nb-body) h2,
+:where(.nb-body) h3,
+:where(.nb-body) h4,
+:where(.nb-body) p {
+    margin: 0;
+}
+
+:where(.nb-body) h1,
+:where(.nb-body) h2,
+:where(.nb-body) h3 {
+    font-family: var(--nb-font-heading);
+    color: var(--nb-green-900);
+    line-height: var(--nb-leading-tight);
+    font-weight: var(--nb-weight-bold);
+}
+
+:where(.nb-body) img,
+:where(.nb-body) svg {
+    display: block;
+    max-width: 100%;
+}
+
+:where(.nb-body) button,
+:where(.nb-body) input,
+:where(.nb-body) select,
+:where(.nb-body) textarea {
+    font: inherit;
+    color: inherit;
+}
+
+:where(.nb-body) a {
+    color: var(--nb-green-700);
+    text-decoration: none;
+}
+
+:where(.nb-body) a:hover {
+    color: var(--nb-green-800);
+    text-decoration: underline;
+}
+
+:where(.nb-body) :focus-visible {
+    outline: 2px solid var(--nb-green-700);
+    outline-offset: 2px;
+}
+
+/* ---------- Utilities ---------- */
+.nb-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* ---------- Spinner ---------- */
+.nb-spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: nb-spin 0.7s linear infinite;
+}
+
+@keyframes nb-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nb-spinner {
+        animation-duration: 1.6s;
+    }
+}
