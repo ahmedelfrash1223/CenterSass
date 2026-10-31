@@ -1,0 +1,607 @@
+/* ==========================================================================
+   Nabza bridge: maps the old dashboard template (Bootstrap 5 + "pc" template
+   variables + the app's own --pd-* variables) onto the Nabza tokens.
+
+   Everything here is mode-agnostic: the --nb-* tokens switch between light and
+   dark (nabza-theme.css), so these rules follow automatically.
+   Loaded after style.css / style-preset.css. Scoped to the teacher dashboard (.nb-app).
+   Dark-only fixes for hard-coded template rules live in nabza-dark.css.
+   ========================================================================== */
+
+/* ---------- Global variables ---------- */
+body.nb-app {
+    /* Bootstrap */
+    --bs-body-bg: var(--nb-bg);
+    --bs-body-color: var(--nb-ink);
+    --bs-emphasis-color: var(--nb-heading);
+    --bs-heading-color: var(--nb-heading);
+    --bs-secondary-color: var(--nb-muted);
+    --bs-tertiary-color: var(--nb-muted);
+    --bs-secondary-bg: var(--nb-surface-2);
+    --bs-tertiary-bg: var(--nb-surface-2);
+    --bs-border-color: var(--nb-border);
+    --bs-border-color-translucent: var(--nb-border);
+
+    --bs-primary: var(--nb-primary);
+    --bs-primary-rgb: var(--nb-primary-rgb);
+    --bs-primary-light: var(--nb-sage-100);
+    --bs-link-color: var(--nb-link);
+    --bs-link-color-rgb: var(--nb-primary-rgb);
+    --bs-link-hover-color: var(--nb-link-hover);
+    --bs-focus-ring-color: rgba(var(--nb-primary-rgb), 0.25);
+
+    /* Status colors: text-* / border-* / tinted backgrounds follow the mode */
+    --bs-success: var(--nb-success);
+    --bs-success-rgb: var(--nb-success-rgb);
+    --bs-warning: var(--nb-warning);
+    --bs-warning-rgb: var(--nb-warning-rgb);
+    --bs-danger: var(--nb-danger);
+    --bs-danger-rgb: var(--nb-danger-rgb);
+    --bs-info: var(--nb-info);
+    --bs-info-rgb: var(--nb-info-rgb);
+
+    /* Template ("pc") */
+    --pc-heading-color: var(--nb-heading);
+    --pc-active-background: var(--nb-surface-2);
+    --pc-card-box-shadow: var(--nb-shadow-md);
+    --pc-header-submenu-background: var(--nb-surface);
+    --pc-header-submenu-color: var(--nb-ink);
+    --dt-row-selected: var(--nb-primary-rgb);
+
+    /* App page components (--pd-*): solid colors only, no gradients */
+    --pd-bg-card: var(--nb-surface);
+    --pd-bg-page: var(--nb-bg);
+    --pd-bg-subtle: var(--nb-surface-2);
+    --pd-bg-soft: var(--nb-surface-2);
+    --pd-bg-hover: var(--nb-sage-100);
+    --pd-bg-selected: rgba(var(--nb-primary-rgb), 0.08);
+    --pd-bg-selected-hover: rgba(var(--nb-primary-rgb), 0.14);
+
+    --pd-border: var(--nb-border);
+    --pd-border-soft: var(--nb-border);
+    --pd-border-subtle: var(--nb-border);
+    --pd-border-dashed: var(--nb-border);
+
+    --pd-text-primary: var(--nb-ink);
+    --pd-text-secondary: var(--nb-muted);
+    --pd-text-muted: var(--nb-muted);
+    --pd-text-on-color: var(--nb-on-primary);
+
+    --pd-primary: var(--nb-primary);
+    --pd-primary-hover: var(--nb-primary-hover);
+    --pd-primary-start: var(--nb-primary);
+    --pd-primary-end: var(--nb-primary);
+    --pd-primary-bg-04: rgba(var(--nb-primary-rgb), 0.05);
+    --pd-primary-bg-08: rgba(var(--nb-primary-rgb), 0.08);
+    --pd-primary-bg-10: rgba(var(--nb-primary-rgb), 0.12);
+    --pd-primary-bg-15: rgba(var(--nb-primary-rgb), 0.16);
+    --pd-primary-shadow: rgba(var(--nb-primary-rgb), 0.25);
+
+    --pd-danger: var(--nb-danger);
+    --pd-danger-start: var(--nb-danger);
+    --pd-danger-end: var(--nb-danger);
+    --pd-success: var(--nb-success);
+    --pd-success-start: var(--nb-success);
+    --pd-success-end: var(--nb-success);
+    --pd-warning-text: var(--nb-warning);
+    --pd-info-text: var(--nb-info);
+
+    --pd-modal-bg: var(--nb-surface);
+    --pd-modal-backdrop: var(--nb-overlay);
+    --pd-card-shadow: var(--nb-shadow-sm);
+    --pd-card-shadow-md: var(--nb-shadow-md);
+    --pd-card-shadow-hover: var(--nb-shadow-lg);
+
+    /* the old gradient variables become solid tints */
+    --pd-current-bg: var(--nb-danger-bg);
+    --pd-next-bg: var(--nb-success-bg);
+    --pd-subscription-bg: var(--nb-warning-bg);
+    --pd-student-header-bg: var(--nb-green-700);
+    --pd-modal-icon-danger-bg: var(--nb-danger-bg);
+    --pd-modal-icon-warning-bg: var(--nb-warning-bg);
+    --pd-gdm-btn-confirm-bg: var(--nb-warning);
+    --pd-pricing-preview-bg: var(--nb-sage-100);
+
+    background-color: var(--nb-bg);
+    color: var(--nb-ink);
+}
+
+/* ---------- Text & links ---------- */
+.nb-app .text-muted {
+    /* the template forces .text-muted with !important (style.css + style-preset.css) */
+    color: var(--nb-muted) !important;
+}
+
+.nb-app .pc-footer {
+    color: var(--nb-muted);
+}
+
+/* ---------- Pre-loader ---------- */
+.nb-app .loader-bg {
+    background-color: var(--nb-bg);
+}
+
+.nb-app .loader-track {
+    background-color: var(--nb-sage-100);
+}
+
+.nb-app .loader-fill {
+    background-color: var(--nb-primary);
+}
+
+/* ---------- Cards ---------- */
+.nb-app .card {
+    --bs-card-bg: var(--nb-surface);
+    --bs-card-color: var(--nb-ink);
+    --bs-card-border-color: var(--nb-border);
+    --bs-card-cap-bg: var(--nb-surface);
+    --bs-card-cap-color: var(--nb-heading);
+    --bs-card-title-color: var(--nb-heading);
+    --bs-card-subtitle-color: var(--nb-muted);
+}
+
+/* ---------- Dropdowns (Bootstrap) ---------- */
+.nb-app .dropdown-menu {
+    --bs-dropdown-bg: var(--nb-surface);
+    --bs-dropdown-color: var(--nb-ink);
+    --bs-dropdown-border-color: var(--nb-border);
+    --bs-dropdown-link-color: var(--nb-ink);
+    --bs-dropdown-link-hover-color: var(--nb-ink);
+    --bs-dropdown-link-hover-bg: var(--nb-surface-2);
+    --bs-dropdown-link-active-color: var(--nb-on-primary);
+    --bs-dropdown-link-active-bg: var(--nb-primary);
+    --bs-dropdown-link-disabled-color: var(--nb-muted);
+    --bs-dropdown-divider-bg: var(--nb-border);
+    --bs-dropdown-header-color: var(--nb-muted);
+    --bs-dropdown-box-shadow: var(--nb-shadow-md);
+}
+
+/* ---------- Modals / offcanvas / toasts ---------- */
+.nb-app .modal {
+    --bs-modal-bg: var(--nb-surface);
+    --bs-modal-color: var(--nb-ink);
+    --bs-modal-border-color: var(--nb-border);
+    --bs-modal-header-border-color: var(--nb-border);
+    --bs-modal-footer-border-color: var(--nb-border);
+}
+
+.nb-app .modal-backdrop {
+    --bs-backdrop-bg: #0A100C;
+    --bs-backdrop-opacity: 0.55;
+}
+
+.nb-app .offcanvas,
+.nb-app .offcanvas-lg,
+.nb-app .offcanvas-md,
+.nb-app .offcanvas-sm,
+.nb-app .offcanvas-xl,
+.nb-app .offcanvas-xxl {
+    --bs-offcanvas-bg: var(--nb-surface);
+    --bs-offcanvas-color: var(--nb-ink);
+    --bs-offcanvas-border-color: var(--nb-border);
+}
+
+.nb-app .toast {
+    --bs-toast-bg: var(--nb-surface);
+    --bs-toast-color: var(--nb-ink);
+    --bs-toast-border-color: var(--nb-border);
+    --bs-toast-header-bg: var(--nb-surface-2);
+    --bs-toast-header-color: var(--nb-heading);
+}
+
+/* ---------- Tooltips / popovers (Bootstrap) ---------- */
+.nb-app .tooltip {
+    --bs-tooltip-bg: var(--nb-tooltip-bg);
+    --bs-tooltip-color: var(--nb-tooltip-text);
+}
+
+.nb-app .popover {
+    --bs-popover-bg: var(--nb-surface);
+    --bs-popover-border-color: var(--nb-border);
+    --bs-popover-header-bg: var(--nb-surface-2);
+    --bs-popover-header-color: var(--nb-heading);
+    --bs-popover-body-color: var(--nb-ink);
+}
+
+/* ---------- List groups ---------- */
+.nb-app .list-group {
+    --bs-list-group-bg: var(--nb-surface);
+    --bs-list-group-color: var(--nb-ink);
+    --bs-list-group-border-color: var(--nb-border);
+    --bs-list-group-action-color: var(--nb-ink);
+    --bs-list-group-action-hover-color: var(--nb-ink);
+    --bs-list-group-action-hover-bg: var(--nb-surface-2);
+    --bs-list-group-action-active-color: var(--nb-ink);
+    --bs-list-group-action-active-bg: var(--nb-sage-100);
+    --bs-list-group-disabled-color: var(--nb-muted);
+    --bs-list-group-disabled-bg: var(--nb-surface-2);
+    --bs-list-group-active-color: var(--nb-on-primary);
+    --bs-list-group-active-bg: var(--nb-primary);
+    --bs-list-group-active-border-color: var(--nb-primary);
+}
+
+/* ---------- Tables ---------- */
+.nb-app .table,
+.nb-app .datatable-table {
+    --bs-table-color: var(--nb-ink);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--nb-border);
+    --bs-table-striped-color: var(--nb-ink);
+    --bs-table-striped-bg: rgba(var(--nb-primary-rgb), 0.04);
+    --bs-table-active-color: var(--nb-ink);
+    --bs-table-active-bg: var(--nb-sage-100);
+    --bs-table-hover-color: var(--nb-ink);
+    --bs-table-hover-bg: var(--nb-surface-2);
+    color: var(--nb-ink);
+    border-color: var(--nb-border);
+}
+
+.nb-app .table thead th,
+.nb-app .datatable-table thead th {
+    background-color: var(--nb-surface-2);
+    color: var(--nb-muted);
+    border-color: var(--nb-border);
+}
+
+.nb-app .table > :not(caption) > * > *,
+.nb-app .table-bordered,
+.nb-app .table-bordered td,
+.nb-app .table-bordered th {
+    border-color: var(--nb-border);
+}
+
+.nb-app .table tbody td {
+    color: var(--nb-ink);
+}
+
+.nb-app .table tbody tr:hover > * {
+    --bs-table-bg-state: var(--nb-surface-2);
+}
+
+/* ---------- Forms ---------- */
+.nb-app .form-control,
+.nb-app .form-select,
+.nb-app .custom-select,
+.nb-app .datatable-input,
+.nb-app .datatable-selector {
+    background-color: var(--nb-input-bg);
+    border-color: var(--nb-border);
+    color: var(--nb-ink);
+}
+
+.nb-app .form-control:focus,
+.nb-app .form-select:focus,
+.nb-app .custom-select:focus,
+.nb-app .datatable-input:focus,
+.nb-app .datatable-selector:focus {
+    background-color: var(--nb-input-bg);
+    border-color: var(--nb-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--nb-primary-rgb), 0.18);
+    color: var(--nb-ink);
+}
+
+.nb-app .form-control::placeholder {
+    color: var(--nb-muted);
+    opacity: 1;
+}
+
+.nb-app .form-control:disabled,
+.nb-app .form-control[readonly],
+.nb-app .form-select:disabled {
+    background-color: var(--nb-input-disabled-bg);
+    color: var(--nb-muted);
+}
+
+.nb-app .form-control::file-selector-button {
+    background-color: var(--nb-surface-2);
+    border-color: var(--nb-border);
+    color: var(--nb-ink);
+}
+
+.nb-app .input-group-text {
+    background-color: var(--nb-surface-2);
+    border-color: var(--nb-border);
+    color: var(--nb-muted);
+}
+
+.nb-app .form-label,
+.nb-app .col-form-label {
+    color: var(--nb-ink);
+}
+
+.nb-app .form-text {
+    color: var(--nb-muted);
+}
+
+.nb-app .form-check-input {
+    background-color: var(--nb-input-bg);
+    border-color: var(--nb-sage-300);
+}
+
+.nb-app .form-check-input:checked,
+.nb-app .form-check .form-check-input.input-primary:checked {
+    background-color: var(--nb-primary);
+    border-color: var(--nb-primary);
+}
+
+.nb-app .form-check-input:focus {
+    border-color: var(--nb-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--nb-primary-rgb), 0.18);
+}
+
+.nb-app .form-range::-webkit-slider-thumb {
+    background-color: var(--nb-primary);
+}
+
+.nb-app .form-range::-moz-range-thumb {
+    background-color: var(--nb-primary);
+}
+
+/* ---------- Buttons ---------- */
+.nb-app .btn-primary {
+    --bs-btn-color: var(--nb-on-primary);
+    --bs-btn-bg: var(--nb-primary);
+    --bs-btn-border-color: var(--nb-primary);
+    --bs-btn-hover-color: var(--nb-on-primary);
+    --bs-btn-hover-bg: var(--nb-primary-hover);
+    --bs-btn-hover-border-color: var(--nb-primary-hover);
+    --bs-btn-focus-shadow-rgb: var(--nb-primary-rgb);
+    --bs-btn-active-color: var(--nb-on-primary);
+    --bs-btn-active-bg: var(--nb-primary-hover);
+    --bs-btn-active-border-color: var(--nb-primary-hover);
+    --bs-btn-disabled-color: var(--nb-on-primary);
+    --bs-btn-disabled-bg: var(--nb-primary);
+    --bs-btn-disabled-border-color: var(--nb-primary);
+}
+
+.nb-app .btn-outline-primary {
+    --bs-btn-color: var(--nb-link);
+    --bs-btn-border-color: var(--nb-primary);
+    --bs-btn-hover-color: var(--nb-on-primary);
+    --bs-btn-hover-bg: var(--nb-primary);
+    --bs-btn-hover-border-color: var(--nb-primary);
+    --bs-btn-focus-shadow-rgb: var(--nb-primary-rgb);
+    --bs-btn-active-color: var(--nb-on-primary);
+    --bs-btn-active-bg: var(--nb-primary);
+    --bs-btn-active-border-color: var(--nb-primary);
+    --bs-btn-disabled-color: var(--nb-muted);
+    --bs-btn-disabled-border-color: var(--nb-border);
+}
+
+.nb-app .btn-link {
+    --bs-btn-color: var(--nb-link);
+    --bs-btn-hover-color: var(--nb-link-hover);
+    --bs-btn-active-color: var(--nb-link-hover);
+}
+
+.nb-app .btn-light-primary,
+.nb-app .bg-light-primary {
+    background-color: var(--nb-sage-100);
+    border-color: var(--nb-sage-100);
+    color: var(--nb-on-tint);
+}
+
+.nb-app .btn-light-primary:hover,
+.nb-app .btn-light-primary:focus,
+.nb-app .btn-check:checked + .btn-light-primary {
+    background-color: var(--nb-primary);
+    border-color: var(--nb-primary);
+    color: var(--nb-on-primary);
+}
+
+.nb-app .btn-link-primary {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--nb-link);
+}
+
+.nb-app .btn-link-primary:hover,
+.nb-app .btn-link-primary:focus {
+    background-color: var(--nb-sage-100);
+    border-color: var(--nb-sage-100);
+    color: var(--nb-on-tint);
+}
+
+.nb-app .btn-secondary,
+.nb-app .btn-light,
+.nb-app .btn-light-secondary {
+    --bs-btn-color: var(--nb-ink);
+    --bs-btn-bg: var(--nb-surface-2);
+    --bs-btn-border-color: var(--nb-border);
+    --bs-btn-hover-color: var(--nb-ink);
+    --bs-btn-hover-bg: var(--nb-sage-100);
+    --bs-btn-hover-border-color: var(--nb-border);
+    --bs-btn-active-color: var(--nb-ink);
+    --bs-btn-active-bg: var(--nb-sage-100);
+    --bs-btn-active-border-color: var(--nb-border);
+    background-color: var(--bs-btn-bg);
+    border-color: var(--bs-btn-border-color);
+    color: var(--bs-btn-color);
+}
+
+.nb-app .btn-outline-secondary {
+    --bs-btn-color: var(--nb-ink);
+    --bs-btn-border-color: var(--nb-border);
+    --bs-btn-hover-color: var(--nb-ink);
+    --bs-btn-hover-bg: var(--nb-surface-2);
+    --bs-btn-hover-border-color: var(--nb-border);
+    --bs-btn-active-color: var(--nb-ink);
+    --bs-btn-active-bg: var(--nb-sage-100);
+}
+
+/* ---------- Alerts ---------- */
+.nb-app .alert-primary {
+    --bs-alert-color: var(--nb-on-tint);
+    --bs-alert-bg: var(--nb-sage-100);
+    --bs-alert-border-color: var(--nb-sage-200);
+    --bs-alert-link-color: var(--nb-on-tint);
+}
+
+.nb-app .alert-success {
+    --bs-alert-color: var(--nb-success);
+    --bs-alert-bg: var(--nb-success-bg);
+    --bs-alert-border-color: var(--nb-success-bg);
+    --bs-alert-link-color: var(--nb-success);
+}
+
+.nb-app .alert-warning {
+    --bs-alert-color: var(--nb-warning);
+    --bs-alert-bg: var(--nb-warning-bg);
+    --bs-alert-border-color: var(--nb-warning-bg);
+    --bs-alert-link-color: var(--nb-warning);
+}
+
+.nb-app .alert-danger {
+    --bs-alert-color: var(--nb-danger);
+    --bs-alert-bg: var(--nb-danger-bg);
+    --bs-alert-border-color: var(--nb-danger-border);
+    --bs-alert-link-color: var(--nb-danger);
+}
+
+.nb-app .alert-info {
+    --bs-alert-color: var(--nb-info);
+    --bs-alert-bg: var(--nb-info-bg);
+    --bs-alert-border-color: var(--nb-info-bg);
+    --bs-alert-link-color: var(--nb-info);
+}
+
+/* ---------- Pagination ---------- */
+.nb-app .pagination {
+    --bs-pagination-color: var(--nb-link);
+    --bs-pagination-bg: var(--nb-surface);
+    --bs-pagination-border-color: var(--nb-border);
+    --bs-pagination-hover-color: var(--nb-link-hover);
+    --bs-pagination-hover-bg: var(--nb-surface-2);
+    --bs-pagination-hover-border-color: var(--nb-border);
+    --bs-pagination-focus-color: var(--nb-link-hover);
+    --bs-pagination-focus-bg: var(--nb-surface-2);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.2rem rgba(var(--nb-primary-rgb), 0.2);
+    --bs-pagination-active-color: var(--nb-on-primary);
+    --bs-pagination-active-bg: var(--nb-primary);
+    --bs-pagination-active-border-color: var(--nb-primary);
+    --bs-pagination-disabled-color: var(--nb-muted);
+    --bs-pagination-disabled-bg: var(--nb-surface-2);
+    --bs-pagination-disabled-border-color: var(--nb-border);
+}
+
+/* ---------- Tabs / pills / breadcrumbs ---------- */
+.nb-app .nav {
+    --bs-nav-link-color: var(--nb-link);
+    --bs-nav-link-hover-color: var(--nb-link-hover);
+    --bs-nav-link-disabled-color: var(--nb-muted);
+}
+
+.nb-app .nav-tabs {
+    --bs-nav-tabs-border-color: var(--nb-border);
+    --bs-nav-tabs-link-hover-border-color: var(--nb-border) var(--nb-border) var(--nb-border);
+    --bs-nav-tabs-link-active-color: var(--nb-heading);
+    --bs-nav-tabs-link-active-bg: var(--nb-surface);
+    --bs-nav-tabs-link-active-border-color: var(--nb-border) var(--nb-border) var(--nb-surface);
+}
+
+.nb-app .nav-pills {
+    --bs-nav-pills-link-active-color: var(--nb-on-primary);
+    --bs-nav-pills-link-active-bg: var(--nb-primary);
+}
+
+.nb-app .breadcrumb {
+    --bs-breadcrumb-divider-color: var(--nb-muted);
+    --bs-breadcrumb-item-active-color: var(--nb-muted);
+}
+
+/* ---------- Progress / accordion ---------- */
+.nb-app .progress {
+    --bs-progress-bg: var(--nb-surface-2);
+    --bs-progress-bar-bg: var(--nb-primary);
+}
+
+.nb-app .accordion {
+    --bs-accordion-color: var(--nb-ink);
+    --bs-accordion-bg: var(--nb-surface);
+    --bs-accordion-border-color: var(--nb-border);
+    --bs-accordion-btn-color: var(--nb-heading);
+    --bs-accordion-btn-bg: var(--nb-surface);
+    --bs-accordion-active-color: var(--nb-on-tint);
+    --bs-accordion-active-bg: var(--nb-sage-100);
+    --bs-accordion-btn-focus-border-color: var(--nb-primary);
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem rgba(var(--nb-primary-rgb), 0.2);
+}
+
+/* ---------- Background utilities ----------
+   Bootstrap's .bg-* utilities are !important, so these must be too.
+   Filled backgrounds use deep colors that keep white text readable in both modes,
+   and still honour .bg-opacity-* (tinted chips). */
+.nb-app .bg-primary {
+    background-color: rgba(var(--nb-primary-solid-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.nb-app .bg-success {
+    background-color: rgba(var(--nb-success-solid-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.nb-app .bg-warning {
+    background-color: rgba(var(--nb-warning-solid-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.nb-app .bg-warning.text-dark {
+    background-color: rgba(var(--nb-warning-soft-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.nb-app .bg-danger {
+    background-color: rgba(var(--nb-danger-solid-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.nb-app .bg-info {
+    background-color: rgba(var(--nb-info-solid-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+/* Tinted chips (bg-* + bg-opacity-10 + text-*) in dark mode use the light text tokens via --bs-*-rgb */
+
+/* ---------- Status buttons ---------- */
+.nb-app .btn-success {
+    --bs-btn-color: #FFFFFF;
+    --bs-btn-bg: rgb(var(--nb-success-solid-rgb));
+    --bs-btn-border-color: rgb(var(--nb-success-solid-rgb));
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #256A42;
+    --bs-btn-hover-border-color: #256A42;
+    --bs-btn-active-bg: #256A42;
+    --bs-btn-active-border-color: #256A42;
+    --bs-btn-disabled-bg: rgb(var(--nb-success-solid-rgb));
+    --bs-btn-disabled-border-color: rgb(var(--nb-success-solid-rgb));
+}
+
+.nb-app .btn-danger {
+    --bs-btn-color: #FFFFFF;
+    --bs-btn-bg: rgb(var(--nb-danger-solid-rgb));
+    --bs-btn-border-color: rgb(var(--nb-danger-solid-rgb));
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #961D14;
+    --bs-btn-hover-border-color: #961D14;
+    --bs-btn-active-bg: #961D14;
+    --bs-btn-active-border-color: #961D14;
+    --bs-btn-disabled-bg: rgb(var(--nb-danger-solid-rgb));
+    --bs-btn-disabled-border-color: rgb(var(--nb-danger-solid-rgb));
+}
+
+.nb-app .btn-warning {
+    --bs-btn-color: #FFFFFF;
+    --bs-btn-bg: rgb(var(--nb-warning-solid-rgb));
+    --bs-btn-border-color: rgb(var(--nb-warning-solid-rgb));
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #963B06;
+    --bs-btn-hover-border-color: #963B06;
+    --bs-btn-active-bg: #963B06;
+    --bs-btn-active-border-color: #963B06;
+}
+
+.nb-app .btn-info {
+    --bs-btn-color: #FFFFFF;
+    --bs-btn-bg: rgb(var(--nb-info-solid-rgb));
+    --bs-btn-border-color: rgb(var(--nb-info-solid-rgb));
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #235A93;
+    --bs-btn-hover-border-color: #235A93;
+    --bs-btn-active-bg: #235A93;
+    --bs-btn-active-border-color: #235A93;
+}

@@ -4,7 +4,7 @@
  *   Esc + outside click to close, Arrow keys between items, Tab out closes.
  *   The Livewire components keep their actions (wire:click); open/close is client-side
  *   and the toggle/menu carry wire:ignore.self so re-renders don't reset them.
- * - Livewire theme events (moved here from the old inline <script> in theme-settings.blade.php).
+ * - Livewire theme events: light / dark / system via window.NbTheme (theme-mode.js).
  */
 (function () {
     'use strict';
@@ -164,31 +164,19 @@
         }
         themeEventsRegistered = true;
 
+        // Light / dark / system switch -> theme-mode.js (sets <html data-pc-theme>, animates, refreshes charts)
         window.Livewire.on('apply-theme', function (event) {
-            if (event.mode === 'system') {
-                if (typeof window.layout_change_default === 'function') {
-                    window.layout_change_default();
-                }
-            } else if (typeof window.layout_change === 'function') {
-                window.layout_change(event.mode);
-            }
-        });
-
-        window.Livewire.on('apply-accent-color', function (event) {
-            if (typeof window.preset_change === 'function') {
-                window.preset_change(event.preset);
+            if (window.NbTheme) {
+                window.NbTheme.apply(event.mode);
             }
         });
 
         window.Livewire.on('theme-settings-reset', function () {
-            if (typeof window.layout_change === 'function') {
-                window.layout_change('light');
+            if (window.NbTheme) {
+                window.NbTheme.apply('light');
             }
             if (typeof window.change_box_container === 'function') {
                 window.change_box_container('false');
-            }
-            if (typeof window.preset_change === 'function') {
-                window.preset_change('preset-1');
             }
         });
     }

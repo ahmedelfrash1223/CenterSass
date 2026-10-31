@@ -47,7 +47,7 @@
 .nb-header__title {
     margin: 0;
     overflow: hidden;
-    color: var(--nb-green-900);
+    color: var(--nb-heading);
     font-size: 1.125rem; /* 18px */
     font-weight: var(--nb-weight-bold);
     line-height: 1.4;
@@ -196,70 +196,20 @@
 }
 
 .nb-segmented__btn.is-active {
-    border-color: var(--nb-green-700);
+    border-color: var(--nb-primary);
     background-color: var(--nb-sage-100);
-    color: var(--nb-green-800);
+    color: var(--nb-on-tint);
     font-weight: var(--nb-weight-semibold);
 }
 
 .nb-segmented__btn.is-active > i {
-    color: var(--nb-green-700);
+    color: var(--nb-on-tint);
 }
 
-.nb-segmented__btn:focus-visible,
-.nb-swatch:focus-visible {
+.nb-segmented__btn:focus-visible {
     outline: var(--nb-focus-outline);
     outline-offset: 2px;
 }
-
-.nb-swatches {
-    display: grid;
-    grid-template-columns: repeat(5, 32px);
-    gap: 10px;
-}
-
-.nb-swatch {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    color: var(--nb-surface);
-    cursor: pointer;
-    transition: transform var(--nb-duration-fast) ease, box-shadow var(--nb-duration-fast) ease;
-}
-
-.nb-swatch svg {
-    width: 16px;
-    height: 16px;
-    opacity: 0;
-}
-
-.nb-swatch:hover {
-    transform: scale(1.06);
-}
-
-.nb-swatch.is-active {
-    box-shadow: 0 0 0 2px var(--nb-surface), 0 0 0 4px var(--nb-sage-300);
-}
-
-.nb-swatch.is-active svg {
-    opacity: 1;
-}
-
-/* Same colors the template uses for its accent presets (style.css .preset-color) */
-.nb-swatch[data-value="preset-1"] { background-color: #04A9F5; }
-.nb-swatch[data-value="preset-2"] { background-color: #6610F2; }
-.nb-swatch[data-value="preset-3"] { background-color: #673AB7; }
-.nb-swatch[data-value="preset-4"] { background-color: #E83E8C; }
-.nb-swatch[data-value="preset-5"] { background-color: #F44236; }
-.nb-swatch[data-value="preset-6"] { background-color: #FD7E14; }
-.nb-swatch[data-value="preset-7"] { background-color: #F4C22B; }
-.nb-swatch[data-value="preset-8"] { background-color: #1DE9B6; }
-.nb-swatch[data-value="preset-9"] { background-color: #008080; }
-.nb-swatch[data-value="preset-10"] { background-color: #3EBFEA; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 767.98px) {

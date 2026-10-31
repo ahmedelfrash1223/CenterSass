@@ -1,0 +1,394 @@
+/* ==========================================================================
+   Nabza dark mode: fixes for the old template's hard-coded dark rules.
+   Most of the dark theme comes from the tokens (nabza-theme.css) + the bridge
+   (nabza-bridge.css). This file only handles template rules that use fixed
+   blue-black hex colors or out-rank the bridge.
+   Scoped to <html data-pc-theme="dark"> + the teacher dashboard (.nb-app).
+   ========================================================================== */
+
+[data-pc-theme="dark"] .nb-app,
+[data-pc-theme="dark"] body.nb-app {
+    --bs-body-bg-rgb: 17, 24, 20;
+    --bs-body-color-rgb: 228, 234, 226;
+}
+
+/* ---------- Typography (the template forces #e9ecef / #bfbfbf) ---------- */
+[data-pc-theme="dark"] .nb-app h1,
+[data-pc-theme="dark"] .nb-app h2,
+[data-pc-theme="dark"] .nb-app h3,
+[data-pc-theme="dark"] .nb-app h4,
+[data-pc-theme="dark"] .nb-app h5,
+[data-pc-theme="dark"] .nb-app h6,
+[data-pc-theme="dark"] .nb-app .page-header-title {
+    color: var(--nb-heading);
+}
+
+[data-pc-theme="dark"] .nb-app strong,
+[data-pc-theme="dark"] .nb-app .fw-semibold {
+    color: inherit;
+}
+
+[data-pc-theme="dark"] .nb-app label:not(.btn) {
+    color: var(--nb-ink);
+}
+
+/* (not on filled/light backgrounds such as .bg-warning.text-dark, where dark text is correct) */
+[data-pc-theme="dark"] .nb-app .text-dark:not([class*="bg-"]),
+[data-pc-theme="dark"] .nb-app .text-black:not([class*="bg-"]) {
+    color: var(--nb-ink) !important; /* Bootstrap utility uses !important */
+}
+
+/* ---------- Buttons ----------
+   The template sets [data-pc-theme=dark] .btn:not(.btn-light) { --bs-btn-color: heading }
+   (specificity 0,3,0), which would put light text on the light-green primary button. */
+[data-pc-theme="dark"] .nb-app .btn-primary {
+    --bs-btn-color: var(--nb-on-primary);
+    --bs-btn-hover-color: var(--nb-on-primary);
+    --bs-btn-active-color: var(--nb-on-primary);
+    --bs-btn-disabled-color: var(--nb-on-primary);
+}
+
+[data-pc-theme="dark"] .nb-app .btn-outline-primary {
+    --bs-btn-color: var(--nb-link);
+    --bs-btn-hover-color: var(--nb-on-primary);
+    --bs-btn-active-color: var(--nb-on-primary);
+}
+
+[data-pc-theme="dark"] .nb-app .btn-secondary,
+[data-pc-theme="dark"] .nb-app .btn-light-secondary,
+[data-pc-theme="dark"] .nb-app .btn-outline-secondary {
+    --bs-btn-color: var(--nb-ink);
+    --bs-btn-hover-color: var(--nb-ink);
+    --bs-btn-active-color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .btn-link {
+    --bs-btn-color: var(--nb-link);
+}
+
+[data-pc-theme="dark"] .nb-app .btn-success,
+[data-pc-theme="dark"] .nb-app .btn-danger,
+[data-pc-theme="dark"] .nb-app .btn-warning,
+[data-pc-theme="dark"] .nb-app .btn-info {
+    --bs-btn-color: #FFFFFF;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-active-color: #FFFFFF;
+}
+
+/* ---------- Forms ---------- */
+[data-pc-theme="dark"] .nb-app .form-control:not(:focus),
+[data-pc-theme="dark"] .nb-app .form-select:not(:focus) {
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .form-check-input:not(:checked),
+[data-pc-theme="dark"] .nb-app .input-group-text {
+    background-color: var(--nb-input-bg);
+    border-color: var(--nb-sage-300);
+    color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .input-group-text {
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .form-control::file-selector-button {
+    background-color: var(--nb-surface-2);
+    border-color: var(--nb-border);
+    color: var(--nb-ink);
+}
+
+/* Select arrow in the muted tone (solid SVG icon, not a gradient) */
+[data-pc-theme="dark"] .nb-app select.form-control,
+[data-pc-theme="dark"] .nb-app .form-select:not([multiple]) {
+    background-color: var(--nb-input-bg);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239DAB9F' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Check / radio / switch marks in dark ink on the light-green primary */
+[data-pc-theme="dark"] .nb-app .form-check-input:checked[type="checkbox"] {
+    --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%2311261A' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+[data-pc-theme="dark"] .nb-app .form-check-input:checked[type="radio"] {
+    --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%2311261A'/%3e%3c/svg%3e");
+}
+
+[data-pc-theme="dark"] .nb-app .form-switch .form-check-input {
+    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%239DAB9F'/%3e%3c/svg%3e");
+}
+
+[data-pc-theme="dark"] .nb-app .form-switch .form-check-input:checked {
+    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2311261A'/%3e%3c/svg%3e");
+}
+
+/* ---------- Tables ---------- */
+[data-pc-theme="dark"] .nb-app .table tbody td,
+[data-pc-theme="dark"] .nb-app .table tbody th {
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .table tbody tr:hover {
+    background-color: var(--nb-surface-2);
+}
+
+/* ---------- Misc template pieces ---------- */
+[data-pc-theme="dark"] .nb-app .card-header {
+    border-bottom-color: var(--nb-border);
+    color: var(--nb-heading);
+}
+
+[data-pc-theme="dark"] .nb-app .dropdown-divider,
+[data-pc-theme="dark"] .nb-app hr {
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .list-group-item.border-primary {
+    background: rgba(var(--nb-primary-rgb), 0.1) !important; /* template rule uses !important */
+}
+
+/* Invoice summary box (template: #2a2b35 !important) */
+[data-pc-theme="dark"] .nb-app .invoice-items {
+    background: var(--nb-surface-2) !important;
+    color: var(--nb-ink) !important;
+}
+
+[data-pc-theme="dark"] .nb-app .invoice-item small {
+    color: var(--nb-muted) !important;
+}
+
+[data-pc-theme="dark"] .nb-app .invoice-item strong {
+    color: var(--nb-ink) !important;
+}
+
+[data-pc-theme="dark"] .nb-app .loader {
+    background-color: rgba(17, 24, 20, 0.6);
+}
+
+/* ApexCharts (if a page draws one): tooltip + legend follow the tokens */
+[data-pc-theme="dark"] .nb-app .apexcharts-tooltip.apexcharts-theme-dark,
+[data-pc-theme="dark"] .nb-app .apexcharts-tooltip {
+    background: var(--nb-surface);
+    border-color: var(--nb-border);
+    color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .apexcharts-legend-text {
+    color: var(--nb-muted) !important; /* ApexCharts writes an inline color */
+}
+
+/* ==========================================================================
+   App page components (style.css ships a slate / indigo / emerald dark palette
+   with gradients for these). Re-mapped to the green-tinted tokens, solid colors only.
+   The printable receipt (.receipt-paper / .receipt-barcode) intentionally stays white.
+   ========================================================================== */
+
+/* Status toggle (active / inactive) */
+[data-pc-theme="dark"] .nb-app .status-option {
+    background: var(--nb-surface-2);
+    border-color: var(--nb-border);
+    color: var(--nb-muted);
+}
+
+[data-pc-theme="dark"] .nb-app .status-option:hover {
+    background: var(--nb-sage-100);
+    border-color: var(--nb-primary);
+    color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .status-option.active {
+    background: var(--nb-success-bg);
+    border-color: var(--nb-success);
+    color: var(--nb-success);
+    box-shadow: none;
+}
+
+[data-pc-theme="dark"] .nb-app .status-option.active i {
+    color: var(--nb-success);
+}
+
+[data-pc-theme="dark"] .nb-app .status-option.inactive {
+    background: var(--nb-danger-bg);
+    border-color: var(--nb-danger);
+    color: var(--nb-danger);
+    box-shadow: none;
+}
+
+[data-pc-theme="dark"] .nb-app .status-option.inactive i {
+    color: var(--nb-danger);
+}
+
+/* Permissions (staff) */
+[data-pc-theme="dark"] .nb-app .permissions-section,
+[data-pc-theme="dark"] .nb-app .permission-view-group {
+    background: var(--nb-bg);
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-group {
+    border-bottom-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-content {
+    background: var(--nb-surface-2);
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-item:hover .permission-content {
+    background: var(--nb-sage-100);
+    border-color: var(--nb-primary);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-item.is-selected .permission-content {
+    background: var(--nb-sage-100);
+    border-color: var(--nb-primary);
+    box-shadow: none;
+}
+
+[data-pc-theme="dark"] .nb-app .permission-icon {
+    background: var(--nb-sage-100);
+    color: var(--nb-muted);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-item.is-selected .permission-icon {
+    background: var(--nb-primary);
+    color: var(--nb-on-primary);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-label {
+    color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-item.is-selected .permission-label {
+    color: var(--nb-on-tint);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-view-header {
+    background: var(--nb-surface-2);
+    border-bottom-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-view-item.is-granted {
+    background: var(--nb-success-bg);
+    color: var(--nb-success);
+}
+
+[data-pc-theme="dark"] .nb-app .permission-view-item.is-denied {
+    background: var(--nb-surface-2);
+    color: var(--nb-muted);
+}
+
+/* Stat cards */
+[data-pc-theme="dark"] .nb-app .stat-card {
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-primary {
+    background: var(--nb-sage-100);
+    border-color: var(--nb-sage-300);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-primary .stat-num {
+    color: var(--nb-on-tint);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-success {
+    background: var(--nb-success-bg);
+    border-color: rgba(var(--nb-success-rgb), 0.35);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-success .stat-num {
+    color: var(--nb-success);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-warning {
+    background: var(--nb-warning-bg);
+    border-color: rgba(var(--nb-warning-rgb), 0.35);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-warning .stat-num {
+    color: var(--nb-warning);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-info {
+    background: var(--nb-info-bg);
+    border-color: rgba(var(--nb-info-rgb), 0.35);
+}
+
+[data-pc-theme="dark"] .nb-app .stat-info .stat-num {
+    color: var(--nb-info);
+}
+
+/* Subjects page */
+[data-pc-theme="dark"] .nb-app .grade-header {
+    background: var(--nb-surface-2);
+    border-bottom-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .subject-chip {
+    background: var(--nb-surface-2);
+    border-color: var(--nb-border);
+    color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .subject-chip.is-active {
+    background: var(--nb-success-bg);
+    border-color: rgba(var(--nb-success-rgb), 0.5);
+}
+
+[data-pc-theme="dark"] .nb-app .btn-delete-all {
+    background: var(--nb-surface-2);
+    border-color: var(--nb-danger-border);
+    color: var(--nb-danger);
+}
+
+/* Alerts (style.css sets direct colors in dark, not Bootstrap variables) */
+[data-pc-theme="dark"] .nb-app .alert-success {
+    background: var(--nb-success-bg);
+    border-color: rgba(var(--nb-success-rgb), 0.3);
+    color: var(--nb-success);
+}
+
+[data-pc-theme="dark"] .nb-app .alert-warning {
+    background: var(--nb-warning-bg);
+    border-color: rgba(var(--nb-warning-rgb), 0.3);
+    color: var(--nb-warning);
+}
+
+[data-pc-theme="dark"] .nb-app .alert-danger {
+    background: var(--nb-danger-bg);
+    border-color: var(--nb-danger-border);
+    color: var(--nb-danger);
+}
+
+[data-pc-theme="dark"] .nb-app .alert-info {
+    background: var(--nb-info-bg);
+    border-color: rgba(var(--nb-info-rgb), 0.3);
+    color: var(--nb-info);
+}
+
+/* Payments / invoices / search */
+[data-pc-theme="dark"] .nb-app .summary-row,
+[data-pc-theme="dark"] .nb-app .invoice-item-row {
+    color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .search-result-item {
+    background: var(--nb-surface-2);
+    border-color: var(--nb-border);
+    color: var(--nb-ink);
+}
+
+[data-pc-theme="dark"] .nb-app .search-result-item:hover {
+    background: var(--nb-sage-100);
+    border-color: var(--nb-primary);
+}
+
+[data-pc-theme="dark"] .nb-app .payments-history {
+    border-color: var(--nb-border);
+}
+
+[data-pc-theme="dark"] .nb-app .payment-row {
+    border-bottom-color: var(--nb-border);
+    color: var(--nb-ink);
+}

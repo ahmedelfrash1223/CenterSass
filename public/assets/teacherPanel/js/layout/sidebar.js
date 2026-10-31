@@ -2,6 +2,8 @@
  * Teacher dashboard sidebar (نبذة)
  * - Desktop: collapse / expand (remembered in localStorage)
  * - < 1024px: off-canvas drawer with overlay, Esc, focus trap, scroll lock
+ * - Collapsible menu groups (open/closed state remembered in localStorage;
+ *   the group with the active page is always open)
  * - Accordion sub-menus (expanded) and flyouts (collapsed)
  * - Tooltips for icon-only items
  * - Sidebar logout button -> existing Livewire logout (TeacherProfileCard)
@@ -14,6 +16,7 @@
 
     var STORAGE_KEY = 'nb-sidebar-collapsed';
     var SCROLL_KEY = 'nb-sidebar-scroll';
+    var GROUPS_KEY = 'nb-sidebar-groups';
     var COLLAPSED_CLASS = 'nb-sidebar-collapsed';
     var DRAWER_CLASS = 'nb-drawer-open';
 
@@ -164,6 +167,82 @@
             event.preventDefault();
             first.focus();
         }
+    }
+
+    /* -------------------------------------------------------------- groups */
+    function readGroupState() {
+        try {
+            return JSON.parse(storageGet(GROUPS_KEY) || '{}') || {};
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function saveGroupState(id, open) {
+        var state = readGroupState();
+        state[id] = open;
+        storageSet(GROUPS_KEY, JSON.stringify(state));
+    }
+
+    function setGroupOpen(group, open, animate) {
+        var toggle = group.querySelector('[data-nb-group-toggle]');
+        var panel = group.querySelector('[data-nb-group-panel]');
+        if (!toggle || !panel) {
+            return;
+        }
+
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+        // In collapsed (icon-only) mode every group is shown; just record the state
+        var canAnimate = animate && !prefersReducedMotion() && !(isDesktop() && isCollapsed());
+        if (!canAnimate) {
+            group.classList.toggle('is-collapsed', !open);
+            panel.style.height = '';
+            return;
+        }
+
+        var done = false;
+        var finish = function (event) {
+            if (done || (event && (event.target !== panel || event.propertyName !== 'height'))) {
+                return;
+            }
+            done = true;
+            panel.removeEventListener('transitionend', finish);
+            panel.classList.remove('is-animating');
+            panel.style.height = '';
+            if (!open) {
+                group.classList.add('is-collapsed');
+            }
+        };
+        // Fallback when transitionend never fires (background tab, interrupted transition)
+        window.setTimeout(function () { finish(); }, 320);
+
+        if (open) {
+            group.classList.remove('is-collapsed');
+            var target = panel.scrollHeight;
+            panel.style.height = '0px';
+            void panel.offsetHeight; // reflow so the transition starts from 0
+            panel.classList.add('is-animating');
+            panel.addEventListener('transitionend', finish);
+            panel.style.height = target + 'px';
+        } else {
+            panel.style.height = panel.scrollHeight + 'px';
+            void panel.offsetHeight;
+            panel.classList.add('is-animating');
+            panel.addEventListener('transitionend', finish);
+            panel.style.height = '0px';
+        }
+    }
+
+    function restoreGroups() {
+        var state = readGroupState();
+        Array.prototype.forEach.call(document.querySelectorAll('[data-nb-group]'), function (group) {
+            if (!group.querySelector('[data-nb-group-toggle]')) {
+                return;
+            }
+            var open = group.hasAttribute('data-nb-group-active') || state[group.getAttribute('data-nb-group')] !== false;
+            setGroupOpen(group, open, false);
+        });
     }
 
     /* ----------------------------------------------------------- accordion */
@@ -359,6 +438,19 @@
             return;
         }
 
+        // Collapsible group header
+        var groupToggle = target.closest('[data-nb-group-toggle]');
+        if (groupToggle) {
+            event.preventDefault();
+            var group = groupToggle.closest('[data-nb-group]');
+            if (group) {
+                var willOpen = groupToggle.getAttribute('aria-expanded') !== 'true';
+                setGroupOpen(group, willOpen, true);
+                saveGroupState(group.getAttribute('data-nb-group'), willOpen);
+            }
+            return;
+        }
+
         // Accordion / flyout
         var accordionToggle = target.closest('[data-nb-accordion-toggle]');
         if (accordionToggle) {
@@ -470,6 +562,7 @@
         // <html> survives navigations, so re-apply the stored state defensively
         root.classList.toggle(COLLAPSED_CLASS, storageGet(STORAGE_KEY) === '1');
         closeDrawer({ skipFocus: true });
+        restoreGroups();
         syncToggleButton();
         restoreNavScroll();
     }

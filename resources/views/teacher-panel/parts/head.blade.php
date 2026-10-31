@@ -1,5 +1,8 @@
 <head>
     <title>نبذة | @yield('title')</title>
+
+    <!-- Resolves light / dark / system before first paint (no flash of the wrong theme) -->
+    <script src="{{ asset('assets/teacherPanel/js/theme-mode.js') }}"></script>
     <!-- [Meta] -->
     <meta charset="utf-8" />
     <meta
@@ -62,6 +65,8 @@
 
     <!-- [Nabza design system: loaded after the template CSS so it wins] -->
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/nabza-theme.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/nabza-bridge.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/nabza-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/header.css') }}">
 

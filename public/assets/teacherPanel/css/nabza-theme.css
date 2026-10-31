@@ -4,28 +4,81 @@
    ========================================================================== */
 
 :root {
-    /* ---------- Brand ---------- */
-    --nb-green-900: #24402A; /* headings */
-    --nb-green-800: #3A5E40; /* primary hover */
-    --nb-green-700: #4A7350; /* primary, links, focus, active */
-    --nb-green-600: #6A9268; /* icon accents */
+    /* ---------- Brand (fixed palette) ---------- */
+    --nb-green-900: #24402A;
+    --nb-green-800: #3A5E40;
+    --nb-green-700: #4A7350;
+    --nb-green-600: #6A9268;
     --nb-sage-400:  #A4B388; /* logo sage: decorative only, never text */
-    --nb-sage-300:  #C3CEAF; /* dashed connectors, inactive dots */
-    --nb-sage-200:  #DCE3D0;
-    --nb-sage-100:  #EDF1E6; /* brand panel, icon tiles */
-    --nb-sage-50:   #F7F8F4;
+    --nb-sage-300:  #C3CEAF; /* connectors, inactive dots */
+    --nb-sage-200:  #DCE3D0; /* soft dividers */
+    --nb-sage-100:  #EDF1E6; /* tinted backgrounds: chips, icon tiles, active items */
+    --nb-sage-50:   #F7F8F4; /* subtle hover */
 
-    /* ---------- Neutrals ---------- */
-    --nb-surface: #FFFFFF;
-    --nb-ink:     #1F2A22; /* body text */
-    --nb-muted:   #5E6B60; /* secondary text */
-    --nb-border:  #E1E6DA; /* input borders */
+    /* ---------- Semantic: surfaces & text (switch with the mode) ---------- */
+    --nb-bg:        #F7F8F4; /* page background */
+    --nb-surface:   #FFFFFF; /* cards, header, dropdowns, modals */
+    --nb-surface-2: #F7F8F4; /* inputs, table headers, hover rows */
+    --nb-ink:       #1F2A22; /* body text */
+    --nb-heading:   #24402A; /* headings, titles */
+    --nb-muted:     #5E6B60; /* secondary text */
+    --nb-border:    #E1E6DA;
+    --nb-on-tint:   #3A5E40; /* text/icons on --nb-sage-100 */
+    --nb-input-bg:          #FFFFFF;
+    --nb-input-disabled-bg: #F1F3EC;
+
+    /* ---------- Semantic: actions ---------- */
+    --nb-primary:       #4A7350;
+    --nb-primary-hover: #3A5E40;
+    --nb-primary-rgb:   74, 115, 80;
+    --nb-on-primary:    #FFFFFF;
+    --nb-link:          #4A7350;
+    --nb-link-hover:    #3A5E40;
+    --nb-focus:         #4A7350;
 
     /* ---------- Feedback ---------- */
-    --nb-danger:    #B42318;
-    --nb-danger-bg: #FEF3F2;
+    --nb-success:       #2E7D4F;
+    --nb-success-bg:    #E8F3EC;
+    --nb-warning:       #B54708;
+    --nb-warning-bg:    #FEF4E6;
+    --nb-danger:        #B42318;
+    --nb-danger-bg:     #FEF3F2;
     --nb-danger-border: #FECDCA;
-    --nb-warning:   #B54708;
+    --nb-info:          #2B6CB0;
+    --nb-info-bg:       #EAF2FB;
+
+    /* rgb triplets of the text/state colors above (for rgba() usage) */
+    --nb-success-rgb: 46, 125, 79;
+    --nb-warning-rgb: 181, 71, 8;
+    --nb-danger-rgb:  180, 35, 24;
+    --nb-info-rgb:    43, 108, 176;
+
+    /* Solid fills that carry white text: the same deep colors in both modes */
+    --nb-primary-solid-rgb: 74, 115, 80;
+    --nb-success-solid-rgb: 46, 125, 79;
+    --nb-warning-solid-rgb: 181, 71, 8;
+    --nb-danger-solid-rgb:  180, 35, 24;
+    --nb-info-solid-rgb:    43, 108, 176;
+    --nb-warning-soft-rgb:  243, 181, 98; /* amber fill for dark text (bg-warning text-dark) */
+
+    /* ---------- Tooltip ---------- */
+    --nb-tooltip-bg:   #24402A;
+    --nb-tooltip-text: #FFFFFF;
+
+    /* ---------- Sidebar (fixed deep green, both modes) ---------- */
+    --nb-side-bg:          #1B2A20;
+    --nb-side-border:      #2A3B2F;
+    --nb-side-text:        #C9D3C6;
+    --nb-side-muted:       #8B9C8C; /* group labels, chevrons */
+    --nb-side-icon:        #A4B388;
+    --nb-side-hover:       #24362A;
+    --nb-side-active-bg:   #2E4535;
+    --nb-side-active-text: #FFFFFF;
+    --nb-side-indicator:   #A4B388; /* active bar + active child dot */
+    --nb-side-badge-bg:    #33503B;
+    --nb-side-badge-text:  #DCE8D6;
+    --nb-side-avatar-bg:   #2E4535;
+    --nb-side-scrollbar:   #33473A;
 
     /* ---------- Typography ---------- */
     --nb-font: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
@@ -69,8 +122,8 @@
 
     /* ---------- Controls ---------- */
     --nb-control-height: 52px;
-    --nb-focus-ring: 0 0 0 4px rgba(74, 115, 80, 0.10);
-    --nb-focus-outline: 2px solid var(--nb-green-700);
+    --nb-focus-ring: 0 0 0 4px rgba(var(--nb-primary-rgb), 0.12);
+    --nb-focus-outline: 2px solid var(--nb-focus);
 
     /* ---------- Motion ---------- */
     --nb-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -82,7 +135,7 @@
     --nb-sidebar-w: 272px;
     --nb-sidebar-w-collapsed: 84px;
     --nb-header-h: 68px;
-    --nb-overlay: rgba(20, 30, 22, 0.45);
+    --nb-overlay: rgba(10, 16, 12, 0.55);
     --nb-radius-item: 12px;   /* nav items, icon buttons */
     --nb-radius-menu: 14px;   /* dropdown panels */
     --nb-radius-menu-item: 10px;
@@ -90,6 +143,73 @@
     --nb-z-sidebar: 1030;
     --nb-z-overlay: 1025;
     --nb-z-popover: 1050;
+}
+
+/* ==========================================================================
+   Dark mode: calm, green-tinted, never pure black.
+   Uses the project's existing switch: <html data-pc-theme="dark">.
+   ========================================================================== */
+[data-pc-theme="dark"] {
+    color-scheme: dark;
+
+    --nb-bg:        #111814;
+    --nb-surface:   #18211B;
+    --nb-surface-2: #1E2921;
+    --nb-border:    #2A372E;
+    --nb-ink:       #E4EAE2;
+    --nb-heading:   #EEF3EC;
+    --nb-muted:     #9DAB9F;
+    --nb-on-tint:   #A3CBA0;
+    --nb-input-bg:          #1E2921;
+    --nb-input-disabled-bg: #151D18;
+
+    --nb-primary:       #8CB98A;
+    --nb-primary-hover: #A3CBA0;
+    --nb-primary-rgb:   140, 185, 138;
+    --nb-on-primary:    #11261A;
+    --nb-link:          #A3CBA0;
+    --nb-link-hover:    #BCDBB9;
+    --nb-focus:         #A3CBA0;
+
+    /* tinted backgrounds re-mapped for dark surfaces */
+    --nb-sage-50:  #1E2921;
+    --nb-sage-100: #223026;
+    --nb-sage-200: #2A372E;
+    --nb-sage-300: #3A4A3E;
+
+    --nb-success:       #7FCB97;
+    --nb-success-bg:    #173022;
+    --nb-warning:       #F3B562;
+    --nb-warning-bg:    #33261A;
+    --nb-danger:        #F59A8F;
+    --nb-danger-bg:     #3A1E1B;
+    --nb-danger-border: #5A2C27;
+    --nb-info:          #8EC0F0;
+    --nb-info-bg:       #18283A;
+
+    --nb-success-rgb: 127, 203, 151;
+    --nb-warning-rgb: 243, 181, 98;
+    --nb-danger-rgb:  245, 154, 143;
+    --nb-info-rgb:    142, 192, 240;
+
+    --nb-tooltip-bg:   #E4EAE2;
+    --nb-tooltip-text: #11261A;
+
+    --nb-side-bg: #141E17; /* sits just below the page background */
+
+    --nb-shadow-sm: 0 4px 14px -8px rgba(0, 0, 0, 0.50);
+    --nb-shadow-md: 0 12px 30px -16px rgba(0, 0, 0, 0.55);
+    --nb-shadow-lg: 0 24px 50px -24px rgba(0, 0, 0, 0.60);
+}
+
+/* Smooth color change when the mode is switched (theme-mode.js adds the class for ~250ms; never on first load) */
+@media (prefers-reduced-motion: no-preference) {
+    html.nb-theme-switching,
+    html.nb-theme-switching *,
+    html.nb-theme-switching *::before,
+    html.nb-theme-switching *::after {
+        transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, fill 200ms ease, stroke 200ms ease, box-shadow 200ms ease;
+    }
 }
 
 /* ---------- Base (low specificity via :where so components always win) ---------- */
@@ -228,7 +348,7 @@ html {
 .nb-icon-btn:hover,
 .nb-icon-btn[aria-haspopup][aria-expanded="true"] {
     background-color: var(--nb-sage-50);
-    color: var(--nb-green-700);
+    color: var(--nb-link);
 }
 
 .nb-icon-btn:focus-visible {
@@ -259,7 +379,7 @@ html {
     overflow: hidden;
     border-radius: 50%;
     background-color: var(--nb-sage-100);
-    color: var(--nb-green-800);
+    color: var(--nb-on-tint);
     font-size: var(--nb-text-base);
     font-weight: var(--nb-weight-semibold);
     line-height: 1;
@@ -287,7 +407,7 @@ html {
     padding: 0 7px;
     border-radius: var(--nb-radius-pill);
     background-color: var(--nb-sage-100);
-    color: var(--nb-green-800);
+    color: var(--nb-on-tint);
     font-size: var(--nb-text-xs);
     font-weight: var(--nb-weight-semibold);
     line-height: 1;
@@ -349,7 +469,7 @@ html {
 }
 
 .nb-menu__title {
-    color: var(--nb-green-900);
+    color: var(--nb-heading);
     font-size: var(--nb-text-base);
     font-weight: var(--nb-weight-semibold);
 }
@@ -381,7 +501,7 @@ html {
 .nb-menu__item:hover,
 .nb-menu__item:focus-visible {
     background-color: var(--nb-sage-50);
-    color: var(--nb-green-800);
+    color: var(--nb-link-hover);
     text-decoration: none;
 }
 
@@ -456,8 +576,8 @@ html {
     max-width: 240px;
     padding: 6px 10px;
     border-radius: 8px;
-    background-color: var(--nb-green-900);
-    color: var(--nb-surface);
+    background-color: var(--nb-tooltip-bg);
+    color: var(--nb-tooltip-text);
     font-family: var(--nb-font);
     font-size: var(--nb-text-sm);
     font-weight: var(--nb-weight-medium);

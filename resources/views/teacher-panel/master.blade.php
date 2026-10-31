@@ -1,9 +1,15 @@
 @php
     $teacher = \Illuminate\Support\Facades\Auth::guard('teacher')->user();
     $themeSettings = $teacher?->themeSettings;
+
+    // Light / dark / system preference (DB). "system" is resolved before first paint by theme-mode.js.
+    $themePreference = in_array($themeSettings?->theme_mode, ['light', 'dark', 'system'], true)
+        ? $themeSettings->theme_mode
+        : 'light';
+    $themeMode = $themePreference === 'dark' ? 'dark' : 'light';
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-pc-theme="{{ $themeMode }}" data-nb-theme-pref="{{ $themePreference }}">
 
 <!-- [Head] start -->
 @include('teacher-panel.parts.head')
@@ -13,8 +19,6 @@
 
 <body
     class="nb-app"
-    data-pc-preset="{{ $themeSettings?->accent_color ?? 'preset-1' }}"
-    data-pc-theme="{{ $themeSettings?->theme_mode ?? 'light' }}"
     data-pc-sidebar-caption="true"
     data-pc-direction="rtl"
 >

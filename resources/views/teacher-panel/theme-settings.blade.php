@@ -29,7 +29,7 @@
     >
         <div class="nb-menu__header">
             <p class="nb-menu__title">الإعدادات</p>
-            <p class="nb-menu__meta">تخصيص المظهر والألوان</p>
+            <p class="nb-menu__meta">وضع العرض</p>
         </div>
 
         <div class="nb-settings__section">
@@ -47,27 +47,6 @@
                         {{ $meta['label'] }}
                     </button>
                 @endforeach
-            </div>
-        </div>
-
-        <div class="nb-settings__section">
-            <p class="nb-settings__label" id="nb-settings-color-label">لون الواجهة</p>
-            <div class="nb-swatches" role="group" aria-labelledby="nb-settings-color-label">
-                @for ($i = 1; $i <= 10; $i++)
-                    @php $preset = 'preset-' . $i; @endphp
-                    <button
-                        type="button"
-                        class="nb-swatch {{ $themePreset === $preset ? 'is-active' : '' }}"
-                        data-value="{{ $preset }}"
-                        aria-label="اللون {{ $i }}"
-                        aria-pressed="{{ $themePreset === $preset ? 'true' : 'false' }}"
-                        wire:click="setAccentColor('{{ $preset }}')"
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-                            <path d="M5.5 12.5 10 17l8.5-9.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                @endfor
             </div>
         </div>
 
