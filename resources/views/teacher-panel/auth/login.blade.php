@@ -24,9 +24,12 @@
             width="1280"
             height="860"
         >
+        <span class="nb-login__spine" aria-hidden="true"></span>
+        <span class="nb-login__ribbon" aria-hidden="true"></span>
 
         <!-- ================= Form column (start side) ================= -->
         <section class="nb-login__main" aria-labelledby="nb-login-title">
+        <div class="nb-page__inner" data-nb-page-inner>
 
             <header class="nb-login__top">
                 <div class="nb-logo">
@@ -71,10 +74,12 @@
                 </span>
             </footer>
 
+        </div>
         </section>
 
         <!-- ================= Brand panel (end side) ================= -->
         <aside class="nb-brand" aria-label="عن نبذة">
+        <div class="nb-page__inner" data-nb-page-inner>
 
             <!-- Hub illustration (decorative) -->
             <div class="nb-hub" aria-hidden="true">
@@ -157,6 +162,7 @@
                 </div>
             </div>
 
+        </div>
         </aside>
 
     </main>

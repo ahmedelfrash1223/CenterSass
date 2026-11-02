@@ -63,8 +63,15 @@ body.nb-body {
     pointer-events: none;
 }
 
-.nb-login__book {
+.nb-login__book,
+.nb-login__ribbon,
+.nb-login__spine {
     display: none;
+}
+
+/* content wrapper of each page: only used by the book (content scale) */
+.nb-page__inner {
+    display: contents;
 }
 
 /* ---------- Form page ---------- */
@@ -694,33 +701,35 @@ body.nb-body {
 
 /* ==========================================================================
    Open book
-   The book is built once at its design size (.nb-login = 1280x860, the SVG
-   size) with every page area in pixels from the SVG coordinates (the viewBox
-   is offset by -20/-20, so the pages start at x 20 / y 20). The whole book is
-   then scaled to the viewport: transform: scale(var(--nb-book-scale)).
-   .nb-book-fit takes the scaled size, so the layout around it stays correct.
+   The book is built at a design size of var(--nb-book-w) x 860px, then scaled
+   to the viewport with transform: scale(var(--nb-book-scale)).
+   - The scale comes from the height; the width stretches to fill the screen
+     (1280–2000 design px). The SVG has preserveAspectRatio="none", so the page
+     curves stretch horizontally and the spine stays at exactly 50%.
+   - .nb-book-fit takes the scaled size, so the book is centered with ~16px
+     around it.
 
    Who decides book vs card:
-   - JS (js/pages/teacher-login.js) sets --nb-book-scale on .nb-book-fit and
-     body.nb-login--book (scale >= 0.6) or body.nb-login--card (smaller).
-   - Before JS runs: book from 816px wide (the narrowest width where the scale
-     can reach 0.6), card below. A JS "card" result always wins
-     (:not(.nb-login--card)), so there is a single rule set, no duplicates.
+   - JS (js/pages/teacher-login.js) sets --nb-book-scale / --nb-book-w on
+     .nb-book-fit and body.nb-login--book or body.nb-login--card.
+   - Before JS runs: book from 900px wide, card below. A JS "card" result
+     always wins (:not(.nb-login--card)), so there is a single rule set.
    ========================================================================== */
-@media (min-width: 816px) {
+@media (min-width: 900px) {
     body:not(.nb-login--card) .nb-login-stage {
         height: 100vh;
         height: 100dvh;
         min-height: 0;
-        padding: 20px 24px;
+        padding: 16px;
         overflow: hidden;
     }
 
     body:not(.nb-login--card) .nb-book-fit {
         --nb-book-scale: 0.6;
+        --nb-book-w: 1280px;
         position: relative;
         flex-shrink: 0;
-        width: calc(1280px * var(--nb-book-scale));
+        width: calc(var(--nb-book-w) * var(--nb-book-scale));
         height: calc(860px * var(--nb-book-scale));
         margin-block: 0;
     }
@@ -729,9 +738,9 @@ body.nb-body {
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 1280px;
+        width: var(--nb-book-w);
         height: 860px;
-        margin: -430px 0 0 -640px;
+        margin: -430px 0 0 calc(var(--nb-book-w) / -2);
         padding: 0;
         border-radius: 0;
         background-color: transparent;
@@ -756,34 +765,125 @@ body.nb-body {
         user-select: none;
     }
 
-    /* Right page: the form */
-    body:not(.nb-login--card) .nb-login__main {
+    /* Bookmark ribbon: its own element so it never stretches with the SVG.
+       Same spot as in the original SVG: 56px right of the spine, y -8 in SVG
+       coordinates = 12px in the stage. */
+    body:not(.nb-login--card) .nb-login__ribbon {
         position: absolute;
-        top: 70px;
-        left: 640px;
-        width: 620px;
-        height: 700px;
-        padding: 30px 72px 24px;
-        overflow-y: auto; /* last resort only: the form fits the page at this size */
+        top: 12px;
+        left: calc(50% + 56px);
+        z-index: 1;
+        display: block;
+        width: 30px;
+        height: 120px;
+        background-color: #A4B388;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 90%, 0 100%);
+        pointer-events: none;
+    }
+
+    /* Spine: shading strips + line, fixed pixel widths so they never stretch
+       with the SVG. Starts/ends a little inside the page dip at the spine
+       (page top there is y 62, bottom y 812), so nothing shows outside the
+       curved edges. Strips are solid translucent layers (inset shadows). */
+    body:not(.nb-login--card) .nb-login__spine {
+        position: absolute;
+        top: 62px;
+        bottom: 60px;
+        left: calc(50% - 0.75px);
+        z-index: 0;
+        display: block;
+        width: 1.5px;
+        background-color: #CFD8C1;
+        pointer-events: none;
+    }
+
+    body:not(.nb-login--card) .nb-login__spine::before,
+    body:not(.nb-login--card) .nb-login__spine::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: -1;
+        width: 30px;
+        background-color: rgba(36, 64, 42, 0.03);
+    }
+
+    /* right of the spine (form page) */
+    body:not(.nb-login--card) .nb-login__spine::after {
+        left: 0.75px;
+        box-shadow:
+            inset 12px 0 0 rgba(36, 64, 42, 0.045),
+            inset 4px 0 0 rgba(36, 64, 42, 0.05);
+    }
+
+    /* left of the spine (brand page), mirrored */
+    body:not(.nb-login--card) .nb-login__spine::before {
+        right: 0.75px;
+        box-shadow:
+            inset -12px 0 0 rgba(36, 64, 42, 0.045),
+            inset -4px 0 0 rgba(36, 64, 42, 0.05);
+    }
+
+    /* Page areas. The content of each page sits in .nb-page__inner, laid out
+       at (page size / --nb-content-scale) and scaled up by it, so it fills the
+       page exactly: bigger content on wider books, never past the page edges.
+       JS sets --nb-content-scale (1–1.15, lowered if the content would not fit). */
+    body:not(.nb-login--card) .nb-login__main,
+    body:not(.nb-login--card) .nb-brand {
+        position: absolute;
+        top: 60px;
+        bottom: 90px;
+        display: block;
+        min-width: 0;
+        padding: 0;
+    }
+
+    body:not(.nb-login--card) .nb-page__inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(100% / var(--nb-content-scale, 1));
+        height: calc(100% / var(--nb-content-scale, 1));
+        transform: scale(var(--nb-content-scale, 1));
+        transform-origin: 0 0;
+    }
+
+    /* Right page: the form. One centered column (max 480px); the logo and the
+       footer row line up with it instead of drifting to the page edges. */
+    body:not(.nb-login--card) .nb-login__main {
+        right: 40px;
+        left: calc(50% + 20px);
+        overflow-y: auto; /* last resort only: JS keeps the content within the page */
         scrollbar-width: thin;
+    }
+
+    body:not(.nb-login--card) .nb-login__main > .nb-page__inner {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: minmax(0, 480px);
+        justify-content: center;
+        padding: 24px 72px;
     }
 
     body:not(.nb-login--card) .nb-login__center {
         padding: 12px 0;
     }
 
+    body:not(.nb-login--card) .nb-login__form-block {
+        max-width: 480px;
+    }
+
     /* Left page: the brand hub. No own background: the page color is in the SVG. */
     body:not(.nb-login--card) .nb-brand {
-        position: absolute;
-        top: 70px;
-        left: 20px;
-        width: 620px;
-        height: 700px;
+        right: calc(50% + 20px);
+        left: 40px;
+    }
+
+    body:not(.nb-login--card) .nb-brand > .nb-page__inner {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-width: 0;
         padding: 20px 52px;
     }
 
@@ -809,35 +909,36 @@ body.nb-body {
     }
 }
 
-/* Pre-JS scale steps (lower bounds, so the book never overflows before JS
-   sets the exact value). Scale s needs width >= 1280s + 48, height >= 860s + 40. */
-@media (min-width: 944px) and (min-height: 642px) {
+/* Pre-JS scale steps (lower bounds at the 1280px design width, so the book
+   never overflows before JS sets the exact values).
+   Scale s needs width >= 1280s + 32 and height >= 860s + 32. */
+@media (min-width: 928px) and (min-height: 634px) {
     body:not(.nb-login--card) .nb-book-fit {
         --nb-book-scale: 0.7;
     }
 }
 
-@media (min-width: 1072px) and (min-height: 728px) {
+@media (min-width: 1056px) and (min-height: 720px) {
     body:not(.nb-login--card) .nb-book-fit {
         --nb-book-scale: 0.8;
     }
 }
 
-@media (min-width: 1200px) and (min-height: 814px) {
+@media (min-width: 1184px) and (min-height: 806px) {
     body:not(.nb-login--card) .nb-book-fit {
         --nb-book-scale: 0.9;
     }
 }
 
-@media (min-width: 1328px) and (min-height: 900px) {
+@media (min-width: 1312px) and (min-height: 892px) {
     body:not(.nb-login--card) .nb-book-fit {
         --nb-book-scale: 1;
     }
 }
 
-@media (min-width: 1456px) and (min-height: 986px) {
+@media (min-width: 1472px) and (min-height: 1064px) {
     body:not(.nb-login--card) .nb-book-fit {
-        --nb-book-scale: 1.1;
+        --nb-book-scale: 1.125;
     }
 }
 
