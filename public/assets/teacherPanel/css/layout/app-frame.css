@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Teacher dashboard: app frame (نبذة)
+   Depends on: ../nabza-theme.css and layout/sidebar.css (--nb-sidebar-current).
+
+   Structure (master.blade.php):
+     body.nb-app            green page + star dust (images/stars.svg, no gradients)
+       aside.nb-sidebar     fixed on the right
+       .nb-frame            #F2F4EF, top corners 30px, next to the sidebar
+         .nb-panel          #F7F8F4, top corners 22px, scrolls internally (desktop)
+           header.nb-header sticky at the top of the panel
+           .pc-container    page content
+           .pc-footer
+
+   Stacking: .nb-frame / .nb-panel never set z-index, transform, filter or
+   position: fixed, so they don't create a stacking context. Bootstrap modals
+   rendered inside a page therefore still sit above their backdrop (appended to
+   <body>), the sidebar and the sticky header.
+   ========================================================================== */
+
+/* ---------- Green page ---------- */
+body.nb-app {
+    background-color: var(--nb-side-bg);
+    background-image: url("../../images/stars.svg");
+    background-repeat: repeat;
+    background-size: 360px 360px;
+}
+
+/* ---------- Frame + panel (desktop) ---------- */
+.nb-frame {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--nb-frame-gap));
+    height: calc(100dvh - var(--nb-frame-gap));
+    margin-top: var(--nb-frame-gap);
+    margin-right: var(--nb-sidebar-current);
+    margin-left: var(--nb-frame-gap);
+    padding: 20px 20px 0;
+    border-radius: 30px 30px 0 0;
+    background-color: var(--nb-frame-bg);
+    direction: rtl;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .nb-frame {
+        transition: margin-right var(--nb-duration-ui) ease;
+    }
+}
+
+.nb-panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid var(--nb-panel-border);
+    border-bottom: 0;
+    border-radius: 22px 22px 0 0;
+    background-color: var(--nb-panel-bg);
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--nb-sage-300) transparent;
+}
+
+.nb-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.nb-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.nb-panel::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: var(--nb-sage-300);
+}
+
+/* Desktop: only the panel scrolls, never the page */
+@media (min-width: 1024px) {
+    body.nb-app {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+    }
+}
+
+/* ---------- Page wrappers inside the panel ----------
+   The template positions .pc-container/.pc-footer for its own fixed header and
+   sidebar (top: 74px, margin-left: 280px, min-height: 100vh...). Inside the
+   panel they are plain blocks. */
+.nb-panel .pc-container {
+    position: relative;
+    top: 0;
+    flex: 1 0 auto;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+}
+
+.nb-panel .pc-container .pc-content {
+    max-width: 100%;
+    padding: 28px 26px;
+}
+
+.nb-panel .pc-container .page-header + .row,
+.nb-panel .pc-container .page-header + .pc-content {
+    padding-top: 24px;
+}
+
+.nb-panel .page-header {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* Rows with negative gutters can't push the panel sideways */
+.nb-panel .pc-content > .row,
+.nb-panel .pc-content .container-fluid {
+    max-width: 100%;
+}
+
+.nb-panel .pc-content .table-responsive {
+    max-width: 100%;
+}
+
+.nb-panel .pc-footer {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 14px 0 18px;
+}
+
+.nb-panel .pc-footer .footer-wrapper {
+    padding-right: 26px;
+    padding-left: 26px;
+}
+
+/* ---------- Mobile / tablet (< 1024px) ----------
+   The frame fills the screen (no gap, no corners) and the page scrolls normally;
+   the green stays inside the drawer. */
+@media (max-width: 1023.98px) {
+    body.nb-app {
+        background-color: var(--nb-panel-bg);
+        background-image: none;
+    }
+
+    .nb-frame {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        background-color: var(--nb-panel-bg);
+    }
+
+    /* The page (not the panel) scrolls here, so the sticky header sticks to the
+       viewport. overflow-x: clip (not hidden) still stops sideways overflow
+       without turning the panel into a scroll container. */
+    .nb-panel {
+        overflow: visible;
+        overflow-x: clip;
+        border: 0;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .nb-panel .pc-container .pc-content {
+        padding: 20px 16px;
+    }
+
+    .nb-panel .pc-footer .footer-wrapper {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+}

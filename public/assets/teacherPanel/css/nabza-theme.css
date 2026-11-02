@@ -67,19 +67,31 @@
     --nb-tooltip-text:   #FFFFFF;
 
     /* ---------- Sidebar (fixed muted forest green, identical in light and dark mode) ---------- */
-    --nb-side-bg:           #2F4A3E;
-    --nb-side-border:       #3A5649;
-    --nb-side-text:         #D5DFD6; /* item labels: 7.1:1 on --nb-side-bg */
-    --nb-side-muted:        #A7BCAE; /* group headers, chevrons, secondary line: 4.8:1 */
-    --nb-side-icon:         #A4B388; /* item icons */
-    --nb-side-hover:        #375547;
-    --nb-side-active-bg:    #3F5F50;
-    --nb-side-active-text:  #FFFFFF; /* 7.1:1 on --nb-side-active-bg */
-    --nb-side-indicator:    #A4B388; /* active bar + active child dot */
-    --nb-side-badge-bg:     #446553;
-    --nb-side-badge-text:   #E3ECE2; /* 5.4:1 on --nb-side-badge-bg */
-    --nb-side-avatar-bg:    #446553;
-    --nb-side-scroll-thumb: #46624F;
+    --nb-side-bg:            #2F4A3E; /* sidebar + the green page around the content frame */
+    --nb-side-border:        #45624F; /* card borders */
+    --nb-side-card-bg:       #365244; /* raised menu cards */
+    --nb-side-card-shadow:   inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 14px -10px rgba(14, 26, 19, 0.5);
+    --nb-side-text:          #DCE5DC; /* item labels */
+    --nb-side-muted:         #A7BCAE; /* chevrons, secondary line */
+    --nb-side-icon:          #A4B388; /* item icons */
+    --nb-side-hover:         #3B5849;
+    --nb-side-active-bg:     #41604F;
+    --nb-side-active-border: #56755F;
+    --nb-side-active-text:   #FFFFFF;
+    --nb-side-indicator:     #A4B388; /* active bar, sub-item dots, focus ring */
+    --nb-side-badge-bg:      #4B6B58;
+    --nb-side-badge-text:    #E3ECE2;
+    --nb-side-avatar-bg:     #41604F;
+    --nb-side-scroll-thumb:  #46624F;
+    --nb-star:               #A4B388; /* star-dust dots on the green page */
+
+    /* ---------- App frame (content area next to the sidebar) ---------- */
+    --nb-frame-bg:     #F2F4EF;
+    --nb-panel-bg:     #F7F8F4;
+    --nb-panel-border: #E7EBE2;
+    --nb-header-border: #D3DACB; /* dashed header bottom border */
+    --nb-header-icon:   #24402A;
+    --nb-header-title:  #24402A;
 
     /* ---------- Typography ---------- */
     --nb-font: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
@@ -133,9 +145,10 @@
     --nb-duration: 300ms;
 
     /* ---------- App layout ---------- */
-    --nb-sidebar-w: 272px;
-    --nb-sidebar-w-collapsed: 84px;
-    --nb-header-h: 68px;
+    --nb-sidebar-w: 300px;
+    --nb-sidebar-w-collapsed: 96px;
+    --nb-header-h: 96px;
+    --nb-frame-gap: 22px;
     --nb-overlay: rgba(10, 16, 12, 0.55);
     --nb-radius-item: 12px;   /* nav items, icon buttons */
     --nb-radius-menu: 14px;   /* dropdown panels */
@@ -196,6 +209,14 @@
     --nb-shadow-sm: 0 4px 14px -8px rgba(0, 0, 0, 0.50);
     --nb-shadow-md: 0 12px 30px -16px rgba(0, 0, 0, 0.55);
     --nb-shadow-lg: 0 24px 50px -24px rgba(0, 0, 0, 0.60);
+
+    /* app frame (the sidebar and the green page stay the same) */
+    --nb-frame-bg:      #16201A;
+    --nb-panel-bg:      #111814;
+    --nb-panel-border:  #2A372E;
+    --nb-header-border: #2A372E;
+    --nb-header-icon:   var(--nb-ink);
+    --nb-header-title:  var(--nb-ink);
 }
 
 /* Smooth color change when the mode is switched (theme-mode.js adds the class for ~250ms; never on first load) */

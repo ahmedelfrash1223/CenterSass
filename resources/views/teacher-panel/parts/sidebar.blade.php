@@ -17,22 +17,17 @@
 
     /*
      * Menu definition: the same items, labels, routes, permissions and @yield('*-active')
-     * sections as before, grouped into collapsible sections. Inside each group the items
-     * keep their original relative order. A group with 'label' => null has no header.
-     * An item may also define 'children' => [...] (same shape) to render as an accordion.
+     * sections as before. Single items render as plain cards. Each former section
+     * (group label) is now a parent card whose children render as collapsible sub-cards;
+     * its 'id' keys the open/closed state in localStorage (nb-sidebar-groups).
      */
-    $menuGroups = [
-        [
-            'id' => 'home',
-            'label' => null,
-            'items' => [
-                ['label' => 'الصفحة الرئيسية', 'route' => 'teacher.dashboard', 'icon' => 'ph-squares-four', 'active' => 'home-active', 'visible' => true],
-            ],
-        ],
+    $menu = [
+        ['label' => 'الصفحة الرئيسية', 'route' => 'teacher.dashboard', 'icon' => 'ph-squares-four', 'active' => 'home-active', 'visible' => true],
         [
             'id' => 'students',
             'label' => 'الطلاب والمجموعات',
-            'items' => [
+            'icon' => 'ph-users-three',
+            'children' => [
                 ['label' => 'الحجوزات', 'route' => 'teacher.bookings.index', 'icon' => 'ph-clipboard-text', 'active' => 'bookings-active', 'visible' => $can(Perm::BOOKING_VIEW)],
                 ['label' => 'المواد الدراسية', 'route' => 'teacher.subjects.index', 'icon' => 'ph-notebook', 'active' => 'subjects-active', 'visible' => $can(Perm::SUBJECT_VIEW)],
                 ['label' => 'المجموعات', 'route' => 'teacher.groups.index', 'icon' => 'ph-user-list', 'active' => 'groups-active', 'visible' => $can(Perm::GROUP_VIEW)],
@@ -42,7 +37,8 @@
         [
             'id' => 'attendance',
             'label' => 'الحضور والجدول',
-            'items' => [
+            'icon' => 'ph-calendar-check',
+            'children' => [
                 ['label' => 'جدول الأسبوع', 'route' => 'teacher.timetable.index', 'icon' => 'ph-calendar', 'active' => 'timetable-active', 'visible' => $can(Perm::TIMETABLE_VIEW)],
                 ['label' => 'الحضور', 'route' => 'teacher.attendance.index', 'icon' => 'ph-scan', 'active' => 'attendance-active', 'visible' => $can(Perm::ATTENDANCE_VIEW)],
                 ['label' => 'تقفيل اليوم', 'route' => 'teacher.attendance.close-day.index', 'icon' => 'ph-lock', 'active' => 'attendance-close-day-active', 'visible' => $can(Perm::ATTENDANCE_CLOSE_DAY)],
@@ -51,7 +47,8 @@
         [
             'id' => 'finance',
             'label' => 'المالية والمصاريف',
-            'items' => [
+            'icon' => 'ph-wallet',
+            'children' => [
                 ['label' => 'المدفوعات', 'route' => 'teacher.payments.index', 'icon' => 'ph-currency-circle-dollar', 'active' => 'payments-active', 'visible' => $can(Perm::PAYMENT_VIEW)],
                 ['label' => 'الإيرادات', 'route' => 'teacher.revenues.index', 'icon' => 'ph-chart-line-up', 'active' => 'revenues-active', 'visible' => $can(Perm::REVENUE_VIEW)],
                 ['label' => 'حسابات المدرسين', 'route' => 'teacher.payrolls.index', 'icon' => 'ph-user-circle-gear', 'active' => 'payrolls-active', 'visible' => $can(Perm::PAYROLL_VIEW)],
@@ -62,7 +59,8 @@
         [
             'id' => 'exams',
             'label' => 'الامتحانات والمتابعة',
-            'items' => [
+            'icon' => 'ph-graduation-cap',
+            'children' => [
                 ['label' => 'المتابعة', 'route' => 'teacher.assignments.index', 'icon' => 'ph-check-square', 'active' => 'assignments-active', 'visible' => $can(Perm::ASSIGNMENT_VIEW)],
                 ['label' => 'الامتحانات', 'route' => 'teacher.exams.index', 'icon' => 'ph-exam', 'active' => 'exams-active', 'visible' => $can(Perm::EXAM_VIEW)],
             ],
@@ -70,7 +68,8 @@
         [
             'id' => 'services',
             'label' => 'الخدمات والدعم',
-            'items' => [
+            'icon' => 'ph-headset',
+            'children' => [
                 ['label' => 'طلبات الكروت', 'route' => 'teacher.card-requests.index', 'icon' => 'ph-identification-card', 'active' => 'card-requests-active', 'visible' => $can(Perm::CARD_REQUEST_VIEW)],
                 ['label' => 'الدعم الفني', 'route' => 'teacher.support.index', 'icon' => 'ph-lifebuoy', 'active' => 'support-active', 'visible' => $can(Perm::SUPPORT_VIEW), 'badge' => $unreadSupport],
             ],
@@ -78,7 +77,8 @@
         [
             'id' => 'admin',
             'label' => 'الإدارة',
-            'items' => [
+            'icon' => 'ph-buildings',
+            'children' => [
                 ['label' => 'الأفرع', 'route' => 'teacher.branches.index', 'icon' => 'ph-map-pin-line', 'active' => 'branches-active', 'visible' => $can(Perm::BRANCH_VIEW)],
                 ['label' => 'فريق العمل', 'route' => 'teacher.staff.index', 'icon' => 'ph-users-four', 'active' => 'staff-active', 'visible' => $can(Perm::STAFF_VIEW)],
             ],
@@ -86,18 +86,6 @@
     ];
 
     $isActive = fn (array $item) => trim($__env->yieldContent($item['active'] ?? '')) !== '';
-
-    $itemIsActive = function (array $item) use ($isActive) {
-        if ($isActive($item)) {
-            return true;
-        }
-        foreach ($item['children'] ?? [] as $child) {
-            if ($isActive($child)) {
-                return true;
-            }
-        }
-        return false;
-    };
 
     $teacherName = $user?->name ?? '';
     $nameParts = preg_split('/\s+/u', trim($teacherName), -1, PREG_SPLIT_NO_EMPTY);
@@ -128,113 +116,96 @@
 
     <!-- Navigation -->
     <nav class="nb-nav" aria-label="القائمة الرئيسية" data-nb-nav>
-        @foreach ($menuGroups as $groupIndex => $group)
-            @php
-                $visibleItems = array_values(array_filter($group['items'], fn ($item) => $item['visible']));
-                $groupHasActive = collect($visibleItems)->contains(fn ($item) => $itemIsActive($item));
-                $groupPanelId = 'nb-nav-group-' . $group['id'];
-            @endphp
+        <ul class="nb-nav__list">
+            @foreach ($menu as $item)
+                @if (isset($item['children']))
+                    @php
+                        $children = array_values(array_filter($item['children'], fn ($child) => $child['visible'] ?? true));
+                        $hasActiveChild = collect($children)->contains(fn ($child) => $isActive($child));
+                        $childBadges = collect($children)->sum(fn ($child) => (int) ($child['badge'] ?? 0));
+                        $submenuId = 'nb-submenu-' . $item['id'];
+                    @endphp
 
-            @if (count($visibleItems))
-                <div
-                    class="nb-nav__group {{ $group['label'] ? 'nb-nav__group--collapsible' : '' }}"
-                    data-nb-group="{{ $group['id'] }}"
-                    @if ($groupHasActive) data-nb-group-active @endif
-                >
-                    @if ($group['label'])
-                        <button
-                            type="button"
-                            class="nb-nav__group-toggle"
-                            aria-expanded="true"
-                            aria-controls="{{ $groupPanelId }}"
-                            data-nb-group-toggle
+                    @if (count($children))
+                        <li
+                            class="nb-nav__item nb-nav__item--parent {{ $hasActiveChild ? 'is-open is-active-parent' : '' }}"
+                            data-nb-accordion
+                            data-nb-group="{{ $item['id'] }}"
+                            @if ($hasActiveChild) data-nb-group-active @endif
                         >
-                            <span class="nb-nav__group-label">{{ $group['label'] }}</span>
-                            <svg class="nb-nav__group-chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-                                <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    @endif
+                            <button
+                                type="button"
+                                class="nb-nav__link"
+                                aria-expanded="{{ $hasActiveChild ? 'true' : 'false' }}"
+                                aria-controls="{{ $submenuId }}"
+                                data-nb-accordion-toggle
+                                data-nb-tooltip="{{ $item['label'] }}"
+                            >
+                                <i class="nb-nav__icon ph-duotone {{ $item['icon'] }}" aria-hidden="true"></i>
+                                <span class="nb-nav__text">{{ $item['label'] }}</span>
 
-                    <div class="nb-nav__group-panel" id="{{ $groupPanelId }}" data-nb-group-panel>
-                        <ul class="nb-nav__list">
-                            @foreach ($visibleItems as $itemIndex => $item)
-                                @php
-                                    $children = array_values(array_filter($item['children'] ?? [], fn ($child) => $child['visible'] ?? true));
-                                @endphp
-
-                                @if (count($children))
-                                    @php
-                                        $hasActiveChild = collect($children)->contains(fn ($child) => $isActive($child));
-                                        $submenuId = 'nb-submenu-' . $group['id'] . '-' . $itemIndex;
-                                    @endphp
-                                    <li class="nb-nav__item nb-nav__item--parent {{ $hasActiveChild ? 'is-open is-active-parent' : '' }}" data-nb-accordion>
-                                        <button
-                                            type="button"
-                                            class="nb-nav__link"
-                                            aria-expanded="{{ $hasActiveChild ? 'true' : 'false' }}"
-                                            aria-controls="{{ $submenuId }}"
-                                            data-nb-accordion-toggle
-                                            data-nb-tooltip="{{ $item['label'] }}"
-                                        >
-                                            <i class="nb-nav__icon ph-duotone {{ $item['icon'] }}" aria-hidden="true"></i>
-                                            <span class="nb-nav__text">{{ $item['label'] }}</span>
-                                            <svg class="nb-nav__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-                                                <path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        </button>
-
-                                        <div class="nb-nav__submenu" id="{{ $submenuId }}" data-nb-accordion-panel @unless ($hasActiveChild) hidden @endunless>
-                                            <ul class="nb-nav__sublist">
-                                                @foreach ($children as $child)
-                                                    @php $childActive = $isActive($child); @endphp
-                                                    <li>
-                                                        <a
-                                                            wire:navigate
-                                                            href="{{ route($child['route']) }}"
-                                                            class="nb-nav__sublink {{ $childActive ? 'is-active' : '' }}"
-                                                            @if ($childActive) aria-current="page" @endif
-                                                        >
-                                                            <span class="nb-nav__dot" aria-hidden="true"></span>
-                                                            <span class="nb-nav__text">{{ $child['label'] }}</span>
-                                                        </a>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    </li>
-                                @else
-                                    @php $active = $isActive($item); @endphp
-                                    <li class="nb-nav__item">
-                                        <a
-                                            wire:navigate
-                                            href="{{ route($item['route']) }}"
-                                            class="nb-nav__link {{ $active ? 'is-active' : '' }}"
-                                            data-nb-tooltip="{{ $item['label'] }}"
-                                            @if ($active) aria-current="page" @endif
-                                        >
-                                            <i class="nb-nav__icon ph-duotone {{ $item['icon'] }}" aria-hidden="true"></i>
-                                            <span class="nb-nav__text">{{ $item['label'] }}</span>
-
-                                            @if (! empty($item['badge']))
-                                                <span class="nb-nav__badge" aria-label="{{ $item['badge'] }} رسالة جديدة">{{ $item['badge'] }}</span>
-                                            @endif
-                                        </a>
-                                    </li>
+                                @if ($childBadges > 0)
+                                    <!-- Sum of the children's counts; shown while the card is closed -->
+                                    <span class="nb-nav__badge nb-nav__badge--summary" aria-label="{{ $childBadges }} رسالة جديدة">{{ $childBadges }}</span>
                                 @endif
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            @endif
-        @endforeach
+
+                                <svg class="nb-nav__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                                    <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+
+                            <div class="nb-nav__submenu" id="{{ $submenuId }}" data-nb-accordion-panel @unless ($hasActiveChild) hidden @endunless>
+                                <ul class="nb-nav__sublist">
+                                    @foreach ($children as $child)
+                                        @php $childActive = $isActive($child); @endphp
+                                        <li>
+                                            <a
+                                                wire:navigate
+                                                href="{{ route($child['route']) }}"
+                                                class="nb-nav__sublink {{ $childActive ? 'is-active' : '' }}"
+                                                @if ($childActive) aria-current="page" @endif
+                                            >
+                                                <span class="nb-nav__dot" aria-hidden="true"></span>
+                                                <span class="nb-nav__text">{{ $child['label'] }}</span>
+
+                                                @if (! empty($child['badge']))
+                                                    <span class="nb-nav__badge" aria-label="{{ $child['badge'] }} رسالة جديدة">{{ $child['badge'] }}</span>
+                                                @endif
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </li>
+                    @endif
+                @elseif ($item['visible'])
+                    @php $active = $isActive($item); @endphp
+                    <li class="nb-nav__item">
+                        <a
+                            wire:navigate
+                            href="{{ route($item['route']) }}"
+                            class="nb-nav__link {{ $active ? 'is-active' : '' }}"
+                            data-nb-tooltip="{{ $item['label'] }}"
+                            @if ($active) aria-current="page" @endif
+                        >
+                            <i class="nb-nav__icon ph-duotone {{ $item['icon'] }}" aria-hidden="true"></i>
+                            <span class="nb-nav__text">{{ $item['label'] }}</span>
+
+                            @if (! empty($item['badge']))
+                                <span class="nb-nav__badge" aria-label="{{ $item['badge'] }} رسالة جديدة">{{ $item['badge'] }}</span>
+                            @endif
+                        </a>
+                    </li>
+                @endif
+            @endforeach
+        </ul>
     </nav>
 
     <!-- Teacher card -->
     @if ($user)
         <div class="nb-sidebar__footer">
             <div class="nb-user-card">
-                <span class="nb-user-card__avatar" aria-hidden="true">{{ $initials }}</span>
+                <span class="nb-user-card__avatar" aria-hidden="true" data-nb-tooltip="{{ $user->name }}">{{ $initials }}</span>
 
                 <div class="nb-user-card__text">
                     <p class="nb-user-card__name">{{ $user->name }}</p>
@@ -261,5 +232,5 @@
 
 <div class="nb-sidebar-overlay" data-nb-drawer-overlay hidden></div>
 
-<!-- Restores each group's open/closed state right after the markup (before first paint) -->
+<!-- Restores each parent card's open/closed state right after the markup (before first paint) -->
 <script src="{{ asset('assets/teacherPanel/js/layout/sidebar-groups-init.js') }}"></script>

@@ -1,30 +1,32 @@
 /* ==========================================================================
    Teacher dashboard: top header (نبذة)
-   Depends on: ../nabza-theme.css and layout/sidebar.css (--nb-sidebar-current).
+   Depends on: ../nabza-theme.css. Lives inside .nb-panel (layout/app-frame.css)
+   and sticks to the top of it.
    ========================================================================== */
 
 .nb-header {
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
-    right: var(--nb-sidebar-current);
     z-index: var(--nb-z-header);
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     height: var(--nb-header-h);
-    padding: 0 24px;
-    background-color: var(--nb-surface);
-    border-bottom: 1px solid var(--nb-border);
+    padding: 0 26px;
+    /* the panel color (opaque, so content scrolls under it cleanly) */
+    background-color: var(--nb-panel-bg);
+    border-bottom: 1.5px dashed var(--nb-header-border);
     color: var(--nb-ink);
     direction: rtl;
     text-align: right;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+/* The panel's top corners are rounded: keep the sticky header inside them */
+@media (min-width: 1024px) {
     .nb-header {
-        transition: right var(--nb-duration-ui) ease;
+        border-radius: 21px 21px 0 0;
     }
 }
 
@@ -41,43 +43,98 @@
 
 .nb-header__end {
     flex-shrink: 0;
-    gap: 6px;
+    gap: 22px;
 }
 
 .nb-header__title {
     margin: 0;
     overflow: hidden;
-    color: var(--nb-heading);
-    font-size: 1.125rem; /* 18px */
+    color: var(--nb-header-title);
+    font-size: 1.625rem; /* 26px */
     font-weight: var(--nb-weight-bold);
-    line-height: 1.4;
+    line-height: 1.3;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.nb-header .nb-icon-btn > i {
-    font-size: 20px;
+/* ---------- Menu toggle + refresh (ghost) ---------- */
+.nb-header__toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    color: var(--nb-muted);
+}
+
+.nb-header__toggle svg {
+    width: 22px;
+    height: 22px;
+}
+
+.nb-header__refresh {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    color: var(--nb-muted);
+}
+
+.nb-header__refresh svg {
+    width: 20px;
+    height: 20px;
+}
+
+.nb-header__toggle:hover,
+.nb-header__refresh:hover {
+    background-color: var(--nb-sage-100);
+    color: var(--nb-header-icon);
+}
+
+/* ---------- End-side icon buttons (settings, ...) ---------- */
+.nb-header__end .nb-icon-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--nb-header-icon);
+}
+
+.nb-header__end .nb-icon-btn > i {
+    font-size: 26px;
+}
+
+.nb-header__end .nb-icon-btn svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* Outline look, like the sidebar icons */
+.nb-header__end .nb-icon-btn > i.ph-duotone::before {
+    opacity: 0;
+}
+
+.nb-header__end .nb-icon-btn:hover,
+.nb-header__end .nb-icon-btn[aria-haspopup][aria-expanded="true"] {
+    background-color: var(--nb-sage-100);
+    color: var(--nb-header-icon);
 }
 
 /* ---------- Profile trigger ---------- */
 .nb-profile__trigger {
     display: flex;
     align-items: center;
-    gap: 8px;
-    height: 44px;
+    gap: 12px;
+    height: 54px;
     padding: 4px;
     padding-left: 10px;
     border: 0;
-    border-radius: var(--nb-radius-item);
+    border-radius: 14px;
     background-color: transparent;
-    color: var(--nb-ink);
+    color: var(--nb-header-title);
     cursor: pointer;
     transition: background-color var(--nb-duration-fast) ease;
 }
 
 .nb-profile__trigger:hover,
 .nb-profile__trigger[aria-expanded="true"] {
-    background-color: var(--nb-sage-50);
+    background-color: var(--nb-sage-100);
 }
 
 .nb-profile__trigger:focus-visible {
@@ -85,20 +142,34 @@
     outline-offset: 2px;
 }
 
+/* 46px avatar: 3px ring in the panel color (white in light mode) + 1px outer ring */
+.nb-profile__trigger .nb-avatar {
+    width: 46px;
+    height: 46px;
+    background-color: var(--nb-side-bg);
+    color: #FFFFFF;
+    font-size: var(--nb-text-md);
+    box-shadow: 0 0 0 3px #FFFFFF, 0 0 0 4px #DCE3D0;
+}
+
+[data-pc-theme="dark"] .nb-profile__trigger .nb-avatar {
+    box-shadow: 0 0 0 3px var(--nb-panel-bg), 0 0 0 4px var(--nb-border);
+}
+
 .nb-profile__name {
-    max-width: 160px;
+    max-width: 180px;
     overflow: hidden;
-    font-size: var(--nb-text-base);
+    font-size: 0.9375rem; /* 15px */
     font-weight: var(--nb-weight-semibold);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .nb-profile__chevron {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     flex-shrink: 0;
-    color: var(--nb-muted);
+    color: var(--nb-primary);
     transition: transform var(--nb-duration-fast) ease;
 }
 
@@ -212,9 +283,29 @@
 }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1199.98px) {
+    .nb-header__end {
+        gap: 12px;
+    }
+}
+
 @media (max-width: 767.98px) {
     .nb-header {
-        padding: 0 16px;
+        gap: 8px;
+        height: 72px;
+        padding: 0 12px;
+    }
+
+    .nb-header__start {
+        gap: 6px;
+    }
+
+    .nb-header__end {
+        gap: 6px;
+    }
+
+    .nb-header__title {
+        font-size: 1.25rem; /* 20px */
     }
 
     .nb-profile__name {
@@ -222,10 +313,22 @@
     }
 
     .nb-profile__trigger {
+        gap: 6px;
+        height: 48px;
         padding-left: 6px;
     }
 
-    .nb-header__title {
-        font-size: var(--nb-text-md);
+    .nb-profile__trigger .nb-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .nb-header__end .nb-icon-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .nb-header__end .nb-icon-btn > i {
+        font-size: 24px;
     }
 }

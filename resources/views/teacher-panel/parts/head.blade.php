@@ -67,6 +67,7 @@
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/nabza-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/header.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/app-frame.css') }}">
 
     <!-- Applies the saved collapsed-sidebar state before first paint (no layout jump) -->
     <script src="{{ asset('assets/teacherPanel/js/layout/sidebar-init.js') }}"></script>

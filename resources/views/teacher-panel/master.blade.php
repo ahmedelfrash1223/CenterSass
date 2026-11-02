@@ -35,15 +35,22 @@
     @include('teacher-panel.parts.sidebar')
     <!-- [ Sidebar ] end -->
 
-    <!-- [ Header ] start -->
-    @include('teacher-panel.parts.header')
-    <!-- [ Header ] end -->
+    <!-- [ App frame: content area next to the sidebar ] start -->
+    <div class="nb-frame">
+        <div class="nb-panel" data-nb-panel>
+            <!-- [ Header ] start -->
+            @include('teacher-panel.parts.header')
+            <!-- [ Header ] end -->
 
-    <!-- [ Main Content ] start -->
-    @yield('main')
-    <!-- [ Main Content ] end -->
+            <!-- [ Main Content ] start -->
+            @yield('main')
+            <!-- [ Main Content ] end -->
 
-    @include('teacher-panel.parts.footer')
+            @include('teacher-panel.parts.footer')
+        </div>
+    </div>
+    <!-- [ App frame ] end -->
+
     @include('teacher-panel.parts.scripts')
 </body>
 <!-- [Body] end -->

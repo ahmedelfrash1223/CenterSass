@@ -1,9 +1,10 @@
 /* ==========================================================================
-   Teacher dashboard: app shell + sidebar (نبذة)
+   Teacher dashboard: sidebar (نبذة)
    Depends on: ../nabza-theme.css. Loaded after the template CSS.
-   The sidebar is a fixed deep-green panel (same in light and dark mode, see --nb-side-*),
-   on the right (RTL). Physical "right" is used for the shell so it doesn't depend on
-   the document direction.
+   The sidebar sits on the green page (see layout/app-frame.css), on the right
+   (RTL). Its menu items are separate raised cards. Same colors in light and
+   dark mode (--nb-side-*). Physical "right" is used for the shell so it
+   doesn't depend on the document direction.
    ========================================================================== */
 
 /* ---------- Shell state ---------- */
@@ -37,24 +38,6 @@ body.nb-app {
     font-family: var(--nb-font) !important;
 }
 
-/* ---------- Content area: shift for the sidebar + header ---------- */
-.nb-app .pc-container,
-.nb-app .pc-footer {
-    margin-left: 0;
-    margin-right: var(--nb-sidebar-current);
-}
-
-.nb-app .pc-container {
-    top: var(--nb-header-h);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .nb-app .pc-container,
-    .nb-app .pc-footer {
-        transition: margin-right var(--nb-duration-ui) ease;
-    }
-}
-
 /* ==========================================================================
    Sidebar
    ========================================================================== */
@@ -67,8 +50,8 @@ body.nb-app {
     display: flex;
     flex-direction: column;
     width: var(--nb-sidebar-current);
-    background-color: var(--nb-side-bg);
-    border-left: 1px solid var(--nb-side-border);
+    padding: 26px 18px;
+    background-color: transparent; /* the green page (with its star dust) shows through */
     color: var(--nb-side-text);
     direction: rtl;
     text-align: right;
@@ -76,11 +59,11 @@ body.nb-app {
 
 @media (prefers-reduced-motion: no-preference) {
     .nb-sidebar {
-        transition: width var(--nb-duration-ui) ease;
+        transition: width var(--nb-duration-ui) ease, padding var(--nb-duration-ui) ease;
     }
 }
 
-/* Focus ring readable on the dark green panel */
+/* Focus ring readable on the dark green */
 .nb-sidebar :focus-visible,
 .nb-flyout :focus-visible {
     outline: 2px solid var(--nb-side-indicator);
@@ -92,11 +75,10 @@ body.nb-app {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center; /* logo centered in the sidebar header */
+    justify-content: center;
     flex-shrink: 0;
-    height: var(--nb-header-h);
-    padding: 0 20px;
-    border-bottom: 1px solid var(--nb-side-border);
+    min-height: 50px;
+    margin-bottom: 30px;
 }
 
 .nb-sidebar__brand-link {
@@ -108,7 +90,8 @@ body.nb-app {
 
 /* Logo box: holds the full logo and the book mark stacked; CSS cross-fades between them */
 .nb-sidebar__logo-box {
-    --nb-logo-h: 36px;
+    --nb-logo-h: 50px;
+    --nb-mark-size: 44px;
     position: relative;
     display: block;
     width: calc(var(--nb-logo-h) * 382 / 143); /* artwork box of logo.png is 382x143 */
@@ -135,10 +118,10 @@ body.nb-app {
 
 .nb-sidebar__mark {
     position: absolute;
-    top: 0;
+    top: calc((var(--nb-logo-h) - var(--nb-mark-size)) / 2);
     right: 0;
-    width: var(--nb-logo-h);
-    height: var(--nb-logo-h);
+    width: var(--nb-mark-size);
+    height: var(--nb-mark-size);
     max-width: none;
     opacity: 0;
     visibility: hidden;
@@ -164,7 +147,7 @@ body.nb-app {
 .nb-sidebar__close {
     position: absolute;
     top: 50%;
-    left: 12px;
+    left: 0;
     display: none;
     color: var(--nb-side-muted);
     transform: translateY(-50%);
@@ -175,13 +158,15 @@ body.nb-app {
     color: #FFFFFF;
 }
 
-/* ---------- Nav ---------- */
+/* ---------- Nav (scrolls on its own) ---------- */
 .nb-nav {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-height: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 12px;
+    /* room for focus rings, the active bar and card shadows inside the scroll box */
+    margin: -4px -6px 0;
+    padding: 4px 6px 12px;
     overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: var(--nb-side-scroll-thumb) transparent;
@@ -200,108 +185,55 @@ body.nb-app {
     background-color: var(--nb-side-scroll-thumb);
 }
 
-.nb-nav__group + .nb-nav__group {
-    margin-top: 10px;
-}
-
-/* Group header (collapsible section) */
-.nb-nav__group-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
-    height: 32px;
-    margin: 0 0 2px;
-    padding: 0 12px;
-    border: 0;
-    border-radius: 8px;
-    background-color: transparent;
-    color: var(--nb-side-muted);
-    font-size: 0.78125rem; /* 12.5px */
-    font-weight: var(--nb-weight-semibold);
-    letter-spacing: 0.3px;
-    text-align: right;
-    cursor: pointer;
-    transition: color var(--nb-duration-fast) ease, background-color var(--nb-duration-fast) ease;
-}
-
-.nb-nav__group-toggle:hover {
-    background-color: var(--nb-side-hover);
-    color: var(--nb-side-text);
-}
-
-.nb-nav__group-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.nb-nav__group-chevron {
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
-    transition: transform var(--nb-duration-ui) ease;
-}
-
-.nb-nav__group.is-collapsed .nb-nav__group-chevron {
-    transform: rotate(90deg); /* points to the reading direction (left) when closed */
-}
-
-.nb-nav__group-panel {
-    overflow: hidden;
-}
-
-.nb-nav__group.is-collapsed > .nb-nav__group-panel {
-    display: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .nb-nav__group-panel.is-animating {
-        transition: height var(--nb-duration-ui) ease;
-    }
-}
-
 .nb-nav__list,
 .nb-nav__sublist {
     display: flex;
     flex-direction: column;
-    gap: 2px;
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+.nb-nav__list {
+    gap: 12px;
 }
 
 .nb-nav__item {
     position: relative;
 }
 
-/* ---------- Items ---------- */
-.nb-nav__link {
+/* ---------- Cards ---------- */
+.nb-nav__link,
+.nb-nav__sublink {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
     width: 100%;
-    height: 44px;
-    padding: 0 12px;
-    border: 0;
-    border-radius: var(--nb-radius-item);
-    background-color: transparent;
+    padding: 0 18px;
+    border: 1px solid var(--nb-side-border);
+    border-radius: 16px;
+    background-color: var(--nb-side-card-bg);
+    box-shadow: var(--nb-side-card-shadow);
     color: var(--nb-side-text);
-    font-size: 0.90625rem; /* 14.5px */
-    font-weight: var(--nb-weight-medium);
     line-height: 1.3;
     text-align: right;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    transition: background-color var(--nb-duration-fast) ease, color var(--nb-duration-fast) ease;
+    transition: background-color var(--nb-duration-fast) ease, border-color var(--nb-duration-fast) ease, color var(--nb-duration-fast) ease;
 }
 
-.nb-nav__link:hover {
+.nb-nav__link {
+    gap: 14px;
+    height: 58px;
+    font-size: 0.96875rem; /* 15.5px */
+    font-weight: var(--nb-weight-semibold);
+}
+
+.nb-nav__link:hover,
+.nb-nav__sublink:hover {
     background-color: var(--nb-side-hover);
-    color: #FFFFFF;
+    color: var(--nb-side-text);
     text-decoration: none;
 }
 
@@ -309,13 +241,13 @@ body.nb-app {
    ltr keeps the -1em overlap working inside the RTL sidebar */
 .nb-nav__icon {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     flex-shrink: 0;
     direction: ltr;
     color: var(--nb-side-icon);
-    font-size: 20px;
-    line-height: 20px;
+    font-size: 22px;
+    line-height: 22px;
     text-align: center;
     transition: color var(--nb-duration-fast) ease;
 }
@@ -335,8 +267,8 @@ body.nb-app {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 20px;
-    height: 20px;
+    min-width: 22px;
+    height: 22px;
     margin-right: auto;
     padding: 0 7px;
     border-radius: var(--nb-radius-pill);
@@ -352,47 +284,55 @@ body.nb-app {
     color: #FFFFFF;
 }
 
-/* Active item */
-.nb-nav__link.is-active,
-.nb-nav__item--parent.is-active-parent > .nb-nav__link {
+/* The parent's summary count is only shown while its sub-cards are hidden */
+.nb-nav__item--parent.is-open > .nb-nav__link .nb-nav__badge--summary {
+    display: none;
+}
+
+/* Active card */
+.nb-nav__link.is-active {
+    border-color: var(--nb-side-active-border);
     background-color: var(--nb-side-active-bg);
     color: var(--nb-side-active-text);
-    font-weight: var(--nb-weight-semibold);
 }
 
-.nb-nav__link.is-active .nb-nav__icon,
-.nb-nav__item--parent.is-active-parent > .nb-nav__link .nb-nav__icon {
+.nb-nav__link.is-active .nb-nav__icon {
     color: var(--nb-side-active-text);
-}
-
-.nb-nav__link.is-active .nb-nav__icon.ph-duotone::before {
-    opacity: 0.25;
 }
 
 .nb-nav__link.is-active::before {
     content: "";
     position: absolute;
-    top: 50%;
-    right: -12px;
-    width: 3px;
-    height: 20px;
-    border-radius: 3px;
+    top: 12px;
+    right: -1px;
+    bottom: 12px;
+    width: 4px;
+    border-radius: 4px;
     background-color: var(--nb-side-indicator);
-    transform: translateY(-50%);
 }
 
-/* ---------- Accordion (items with children) ---------- */
+/* Parent of the active page: plain card with a white label (its child carries the active state) */
+.nb-nav__item--parent.is-active-parent > .nb-nav__link {
+    color: var(--nb-side-active-text);
+}
+
+/* ---------- Parent cards (accordion) ---------- */
 .nb-nav__chevron {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     flex-shrink: 0;
     margin-right: auto;
-    color: var(--nb-side-muted);
+    color: var(--nb-side-text);
+    opacity: 0.75;
     transition: transform var(--nb-duration-ui) ease;
 }
 
+.nb-nav__badge + .nb-nav__chevron {
+    margin-right: 0;
+}
+
 .nb-nav__item--parent.is-open > .nb-nav__link .nb-nav__chevron {
-    transform: rotate(-90deg);
+    transform: rotate(180deg);
 }
 
 .nb-nav__submenu {
@@ -406,68 +346,59 @@ body.nb-app {
 }
 
 .nb-nav__sublist {
-    padding: 2px 0 4px;
+    gap: 10px;
+    margin-inline-start: 24px;
+    padding: 10px 0 6px;
 }
 
+/* ---------- Sub-cards ---------- */
 .nb-nav__sublink {
-    display: flex;
-    align-items: center;
     gap: 12px;
-    height: 38px;
-    padding: 0 20px 0 12px;
-    border-radius: 10px;
-    color: var(--nb-side-text);
-    font-size: var(--nb-text-base);
+    height: 52px;
+    font-size: 0.90625rem; /* 14.5px */
     font-weight: var(--nb-weight-medium);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background-color var(--nb-duration-fast) ease, color var(--nb-duration-fast) ease;
-}
-
-.nb-nav__sublink:hover {
-    background-color: var(--nb-side-hover);
-    color: #FFFFFF;
-    text-decoration: none;
 }
 
 .nb-nav__dot {
-    width: 6px;
-    height: 6px;
-    margin-inline: 7px;
+    width: 8px;
+    height: 8px;
     flex-shrink: 0;
+    border: 2px solid var(--nb-side-indicator);
     border-radius: 50%;
-    background-color: var(--nb-side-muted);
+    background-color: transparent;
 }
 
 .nb-nav__sublink.is-active {
-    color: #FFFFFF;
-    font-weight: var(--nb-weight-semibold);
+    color: var(--nb-side-active-text);
 }
 
 .nb-nav__sublink.is-active .nb-nav__dot {
     background-color: var(--nb-side-indicator);
 }
 
-/* ---------- Footer / teacher card ---------- */
+/* ---------- Footer / teacher card (pinned to the bottom) ---------- */
 .nb-sidebar__footer {
     flex-shrink: 0;
-    padding: 12px;
-    border-top: 1px solid var(--nb-side-border);
+    margin-top: auto;
+    padding-top: 16px;
 }
 
 .nb-user-card {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px;
-    border-radius: var(--nb-radius-item);
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--nb-side-border);
+    border-radius: 16px;
+    background-color: var(--nb-side-card-bg);
+    box-shadow: var(--nb-side-card-shadow);
 }
 
 .nb-user-card__avatar {
     display: inline-grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
     overflow: hidden;
     border-radius: 50%;
@@ -499,26 +430,26 @@ body.nb-app {
 
 .nb-user-card__name {
     color: #FFFFFF;
-    font-size: var(--nb-text-base);
+    font-size: var(--nb-text-base); /* 14px */
     font-weight: var(--nb-weight-semibold);
     line-height: 1.4;
 }
 
 .nb-user-card__meta {
     color: var(--nb-side-muted);
-    font-size: var(--nb-text-xs);
+    font-size: var(--nb-text-sm); /* 13px */
     line-height: 1.5;
 }
 
 .nb-user-card__logout {
     display: inline-grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
     padding: 0;
     border: 0;
-    border-radius: var(--nb-radius-item);
+    border-radius: 10px;
     background-color: transparent;
     color: var(--nb-side-muted);
     cursor: pointer;
@@ -539,26 +470,27 @@ body.nb-app {
 .nb-flyout {
     position: fixed;
     z-index: var(--nb-z-popover);
-    min-width: 200px;
-    padding: 8px;
+    width: 250px;
+    padding: 12px;
     border: 1px solid var(--nb-side-border);
-    border-radius: 12px;
+    border-radius: 16px;
     background-color: var(--nb-side-bg);
-    box-shadow: 0 16px 36px -16px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--nb-side-card-shadow), 0 18px 40px -18px rgba(0, 0, 0, 0.6);
     direction: rtl;
     text-align: right;
 }
 
 .nb-flyout__title {
     margin: 0;
-    padding: 6px 10px 8px;
+    padding: 2px 6px 10px;
     color: #FFFFFF;
-    font-size: var(--nb-text-sm);
+    font-size: var(--nb-text-base);
     font-weight: var(--nb-weight-semibold);
 }
 
-.nb-flyout .nb-nav__sublink {
-    padding-right: 4px;
+.nb-flyout .nb-nav__sublist {
+    margin-inline-start: 0;
+    padding: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -568,16 +500,20 @@ body.nb-app {
 }
 
 /* ==========================================================================
-   Collapsed (desktop only)
+   Collapsed (desktop only): 96px rail of 56x56 icon cards
    ========================================================================== */
 @media (min-width: 1024px) {
-    html.nb-sidebar-collapsed .nb-sidebar__brand {
-        justify-content: center;
-        padding: 0;
+    html.nb-sidebar-collapsed .nb-sidebar {
+        padding-right: 20px;
+        padding-left: 20px;
     }
 
     html.nb-sidebar-collapsed .nb-sidebar__logo-box {
-        width: var(--nb-logo-h);
+        width: var(--nb-mark-size);
+    }
+
+    html.nb-sidebar-collapsed .nb-sidebar__mark {
+        right: 0;
     }
 
     html.nb-sidebar-collapsed .nb-sidebar__logo {
@@ -590,32 +526,11 @@ body.nb-app {
         visibility: visible;
     }
 
-    /* Group headers become a thin divider; every group is shown (icons only) */
-    html.nb-sidebar-collapsed .nb-nav__group-toggle {
-        height: 1px;
-        margin: 4px 14px 10px;
-        padding: 0;
-        overflow: hidden;
-        background-color: var(--nb-side-border);
-        color: transparent;
-        font-size: 0;
-        pointer-events: none;
-    }
-
-    html.nb-sidebar-collapsed .nb-nav__group-chevron {
-        display: none;
-    }
-
-    html.nb-sidebar-collapsed .nb-nav__group.is-collapsed > .nb-nav__group-panel {
-        display: block;
-    }
-
-    html.nb-sidebar-collapsed .nb-nav__group + .nb-nav__group {
-        margin-top: 4px;
-    }
-
     html.nb-sidebar-collapsed .nb-nav__link {
         justify-content: center;
+        width: 56px;
+        height: 56px;
+        margin-inline: auto;
         padding: 0;
     }
 
@@ -634,30 +549,55 @@ body.nb-app {
     }
 
     html.nb-sidebar-collapsed .nb-nav__chevron,
-    html.nb-sidebar-collapsed .nb-nav__submenu {
+    html.nb-sidebar-collapsed .nb-nav__submenu,
+    html.nb-sidebar-collapsed .nb-user-card__logout {
         display: none;
     }
 
-    /* Count badge becomes a small dot on the icon */
-    html.nb-sidebar-collapsed .nb-nav__badge {
+    /* Parent of the active page reads as active when its sub-cards are hidden */
+    html.nb-sidebar-collapsed .nb-nav__item--parent.is-active-parent > .nb-nav__link {
+        border-color: var(--nb-side-active-border);
+        background-color: var(--nb-side-active-bg);
+    }
+
+    html.nb-sidebar-collapsed .nb-nav__item--parent.is-active-parent > .nb-nav__link .nb-nav__icon {
+        color: var(--nb-side-active-text);
+    }
+
+    html.nb-sidebar-collapsed .nb-nav__item--parent.is-active-parent > .nb-nav__link::before {
+        content: "";
         position: absolute;
-        top: 9px;
-        left: 17px;
+        top: 12px;
+        right: -1px;
+        bottom: 12px;
+        width: 4px;
+        border-radius: 4px;
+        background-color: var(--nb-side-indicator);
+    }
+
+    /* Count badge becomes a small dot on the icon (also on a parent, open or not) */
+    html.nb-sidebar-collapsed .nb-nav__badge,
+    html.nb-sidebar-collapsed .nb-nav__item--parent.is-open > .nb-nav__link .nb-nav__badge--summary {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: block;
         min-width: 0;
         width: 8px;
         height: 8px;
         padding: 0;
         margin: 0;
-        border: 2px solid var(--nb-side-bg);
+        border: 2px solid var(--nb-side-card-bg);
         background-color: var(--nb-side-indicator);
         font-size: 0;
         box-sizing: content-box;
     }
 
     html.nb-sidebar-collapsed .nb-user-card {
-        flex-direction: column;
-        gap: 6px;
-        padding: 0;
+        justify-content: center;
+        width: 56px;
+        margin-inline: auto;
+        padding: 8px;
     }
 }
 
@@ -667,7 +607,9 @@ body.nb-app {
 @media (max-width: 1023.98px) {
     .nb-sidebar {
         width: min(var(--nb-sidebar-w), 86vw);
-        border-left: 0;
+        background-color: var(--nb-side-bg);
+        background-image: url("../../images/stars.svg");
+        background-size: 360px 360px;
         box-shadow: none;
         transform: translateX(100%);
         visibility: hidden;
