@@ -19,6 +19,7 @@ class GoogleController extends Controller
     {
         $result = $this->googleAuthService->authenticateWithIdToken(
             idToken: $request->input('id_token'),
+            accountType: $request->input('account_type'),
             deviceName: $request->input('device_name', 'mobile'),
         );
 

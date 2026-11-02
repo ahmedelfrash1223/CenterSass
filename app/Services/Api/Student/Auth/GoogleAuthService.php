@@ -21,7 +21,7 @@ class GoogleAuthService
      *
      * @throws ValidationException
      */
-    public function authenticateWithIdToken(string $idToken, string $deviceName): array
+    public function authenticateWithIdToken(string $idToken, string $accountType, string $deviceName): array
     {
         $payload = $this->verifyGoogleIdToken($idToken);
 
@@ -31,18 +31,16 @@ class GoogleAuthService
             ]);
         }
 
-        return DB::transaction(function () use ($payload, $deviceName) {
+        return DB::transaction(function () use ($payload, $accountType, $deviceName) {
             $googleId = $payload['sub'];
             $email = $payload['email'] ?? null;
             $name = $payload['name'] ?? 'مستخدم Google';
             $avatar = $payload['picture'] ?? null;
             $emailVerified = (bool) ($payload['email_verified'] ?? false);
 
-            // 1) Match by google_id
             $account = StudentAccount::where('google_id', $googleId)->first();
             $isNew = false;
 
-            // 2) Fallback: match by email, link google_id
             if (! $account && $email) {
                 $account = StudentAccount::where('email', $email)->first();
 
@@ -56,9 +54,9 @@ class GoogleAuthService
                 }
             }
 
-            // 3) Create new account
             if (! $account) {
                 $account = StudentAccount::create([
+                    'account_type' => $accountType,
                     'name' => $name,
                     'email' => $email,
                     'google_id' => $googleId,
@@ -84,13 +82,12 @@ class GoogleAuthService
     }
 
     // =============================================
-    // Google ID Token Verification (via tokeninfo + proxy)
+    //  Google ID Token
     // =============================================
 
     protected function verifyGoogleIdToken(string $idToken): ?array
     {
         try {
-            // نستخدم نفس البروكسي بتاع Mailtrap عشان نعدي من الشبكة
             $proxy = config('services.mailtrap.proxy');
 
             $response = Http::withOptions(array_filter([
@@ -112,7 +109,6 @@ class GoogleAuthService
 
             $payload = $response->json();
 
-            // تأكد إن التوكن ده معمول للـ Client ID بتاعنا
             $expectedAudience = config('services.google.client_id');
 
             if (! $expectedAudience || ($payload['aud'] ?? null) !== $expectedAudience) {

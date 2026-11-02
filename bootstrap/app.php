@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'teacher.permission' => TeacherPermissionMiddleware::class,
             'student.active' => \App\Http\Middleware\Api\Student\EnsureAccountIsActive::class,
             'student.verified' => \App\Http\Middleware\Api\Student\EnsureAccountIsVerified::class,
-
+            'parent.only'      => \App\Http\Middleware\Api\Student\EnsureIsParent::class,
 
         ]);
     })

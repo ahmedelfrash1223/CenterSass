@@ -15,6 +15,7 @@ class GoogleCallbackRequest extends FormRequest
     {
         return [
             'id_token' => ['required', 'string'],
+            'account_type' => ['required', 'string', 'in:student,parent'],
             'device_name' => ['nullable', 'string', 'max:100'],
         ];
     }
@@ -23,6 +24,8 @@ class GoogleCallbackRequest extends FormRequest
     {
         return [
             'id_token.required' => 'Google ID token مطلوب.',
+            'account_type.required' => 'يجب تحديد نوع الحساب (طالب أو ولي أمر).',
+            'account_type.in' => 'نوع الحساب غير صالح.',
         ];
     }
 }

@@ -22,6 +22,7 @@ class StudentAccount extends Authenticatable
 
     protected $fillable = [
         'uuid',
+        'account_type',
         'name',
         'email',
         'phone',
@@ -115,6 +116,16 @@ class StudentAccount extends Authenticatable
             ->join('students', 'student_account_student.student_id', '=', 'students.id')
             ->join('teachers', 'students.teacher_id', '=', 'teachers.id')
             ->select('teachers.*', 'student_account_student.linked_at as subscription_started_at');
+    }
+
+    public function children(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Student::class,
+            'parent_student',
+            'parent_id',
+            'student_id'
+        )->withTimestamps();
     }
 
 
