@@ -466,11 +466,18 @@ body.nb-app {
     color: #FFFFFF;
 }
 
-/* ---------- Collapsed-mode flyout (sub-menus) ---------- */
+/* ---------- Collapsed-mode flyout (sub-menus) ----------
+   Built by sidebar.js (a clone of the parent's sub-list) and appended to <body>,
+   i.e. outside .nb-sidebar, so the collapsed-rail rules (scoped to
+   ".nb-sidebar ...") never hide its labels or turn its badges into dots.
+   max-height is set by JS to the space left in the viewport; the list scrolls. */
 .nb-flyout {
     position: fixed;
     z-index: var(--nb-z-popover);
+    display: flex;
+    flex-direction: column;
     width: 250px;
+    max-height: calc(100vh - 16px);
     padding: 12px;
     border: 1px solid var(--nb-side-border);
     border-radius: 16px;
@@ -488,9 +495,34 @@ body.nb-app {
     font-weight: var(--nb-weight-semibold);
 }
 
+.nb-flyout__title {
+    flex-shrink: 0;
+}
+
 .nb-flyout .nb-nav__sublist {
-    margin-inline-start: 0;
-    padding: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: -4px -6px 0;
+    padding: 4px 6px 4px; /* room for focus rings inside the scroll box */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--nb-side-scroll-thumb) transparent;
+}
+
+.nb-flyout .nb-nav__sublink {
+    flex-shrink: 0;
+}
+
+.nb-flyout .nb-nav__text {
+    flex: 1 1 auto;
+    color: inherit;
+}
+
+.nb-flyout .nb-nav__sublink.is-active {
+    border-color: var(--nb-side-active-border);
+    background-color: var(--nb-side-active-bg);
+    color: var(--nb-side-active-text);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -526,7 +558,7 @@ body.nb-app {
         visibility: visible;
     }
 
-    html.nb-sidebar-collapsed .nb-nav__link {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__link {
         justify-content: center;
         width: 56px;
         height: 56px;
@@ -535,8 +567,8 @@ body.nb-app {
     }
 
     /* Labels stay in the accessibility tree (visually hidden), so links keep their names */
-    html.nb-sidebar-collapsed .nb-nav__text,
-    html.nb-sidebar-collapsed .nb-user-card__text {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__text,
+    html.nb-sidebar-collapsed .nb-sidebar .nb-user-card__text {
         position: absolute;
         width: 1px;
         height: 1px;
@@ -548,23 +580,23 @@ body.nb-app {
         border: 0;
     }
 
-    html.nb-sidebar-collapsed .nb-nav__chevron,
-    html.nb-sidebar-collapsed .nb-nav__submenu,
-    html.nb-sidebar-collapsed .nb-user-card__logout {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__chevron,
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__submenu,
+    html.nb-sidebar-collapsed .nb-sidebar .nb-user-card__logout {
         display: none;
     }
 
     /* Parent of the active page reads as active when its sub-cards are hidden */
-    html.nb-sidebar-collapsed .nb-nav__item--parent.is-active-parent > .nb-nav__link {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__item--parent.is-active-parent > .nb-nav__link {
         border-color: var(--nb-side-active-border);
         background-color: var(--nb-side-active-bg);
     }
 
-    html.nb-sidebar-collapsed .nb-nav__item--parent.is-active-parent > .nb-nav__link .nb-nav__icon {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__item--parent.is-active-parent > .nb-nav__link .nb-nav__icon {
         color: var(--nb-side-active-text);
     }
 
-    html.nb-sidebar-collapsed .nb-nav__item--parent.is-active-parent > .nb-nav__link::before {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__item--parent.is-active-parent > .nb-nav__link::before {
         content: "";
         position: absolute;
         top: 12px;
@@ -576,8 +608,8 @@ body.nb-app {
     }
 
     /* Count badge becomes a small dot on the icon (also on a parent, open or not) */
-    html.nb-sidebar-collapsed .nb-nav__badge,
-    html.nb-sidebar-collapsed .nb-nav__item--parent.is-open > .nb-nav__link .nb-nav__badge--summary {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__badge,
+    html.nb-sidebar-collapsed .nb-sidebar .nb-nav__item--parent.is-open > .nb-nav__link .nb-nav__badge--summary {
         position: absolute;
         top: 10px;
         left: 10px;
@@ -593,7 +625,7 @@ body.nb-app {
         box-sizing: content-box;
     }
 
-    html.nb-sidebar-collapsed .nb-user-card {
+    html.nb-sidebar-collapsed .nb-sidebar .nb-user-card {
         justify-content: center;
         width: 56px;
         margin-inline: auto;

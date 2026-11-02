@@ -279,23 +279,110 @@
 
         var list = panel.querySelector('.nb-nav__sublist');
         if (list) {
-            flyoutEl.appendChild(list.cloneNode(true));
+            var clone = list.cloneNode(true);
+            cleanFlyoutClone(clone);
+            flyoutEl.appendChild(clone);
         }
 
         document.body.appendChild(flyoutEl);
-
-        var rect = toggle.getBoundingClientRect();
-        var top = Math.min(rect.top, window.innerHeight - flyoutEl.offsetHeight - 8);
-        flyoutEl.style.top = Math.max(8, top) + 'px';
-        flyoutEl.style.left = Math.max(8, rect.left - flyoutEl.offsetWidth - 10) + 'px';
+        positionFlyout(toggle);
 
         flyoutOwner = toggle;
         toggle.setAttribute('aria-expanded', 'true');
 
-        var firstLink = flyoutEl.querySelector('a');
+        // Focus the active child (or the first one) so the keyboard lands in the flyout
+        var firstLink = flyoutEl.querySelector('a.is-active') || flyoutEl.querySelector('a');
         if (firstLink) {
-            firstLink.focus();
+            firstLink.focus({ preventScroll: true });
         }
+    }
+
+    // The clone must not carry hidden / inert state from the source list
+    function cleanFlyoutClone(node) {
+        var all = [node].concat(Array.prototype.slice.call(node.querySelectorAll('*')));
+        all.forEach(function (el) {
+            el.removeAttribute('hidden');
+            el.removeAttribute('id');
+            el.removeAttribute('style');
+            el.removeAttribute('inert');
+            if (el.getAttribute('aria-hidden') === 'true' && !el.classList.contains('nb-nav__dot')) {
+                el.removeAttribute('aria-hidden');
+            }
+            if (el.getAttribute('tabindex') === '-1') {
+                el.removeAttribute('tabindex');
+            }
+        });
+    }
+
+    // Next to the parent card; flips upward / shrinks (and scrolls) so it never leaves the viewport
+    function positionFlyout(toggle) {
+        if (!flyoutEl) {
+            return;
+        }
+        var margin = 8;
+        var rect = toggle.getBoundingClientRect();
+        var viewportH = window.innerHeight;
+
+        flyoutEl.style.maxHeight = (viewportH - margin * 2) + 'px';
+        var height = flyoutEl.offsetHeight;
+
+        var top = rect.top;
+        if (top + height > viewportH - margin) {
+            // Not enough room below: align the flyout's bottom with the card's bottom (flip up)
+            top = rect.bottom - height;
+        }
+        top = Math.max(margin, Math.min(top, viewportH - margin - height));
+
+        flyoutEl.style.top = top + 'px';
+        flyoutEl.style.left = Math.max(margin, rect.left - flyoutEl.offsetWidth - 10) + 'px';
+    }
+
+    // Tab / Shift+Tab / arrows inside the flyout (it lives at the end of <body>)
+    function handleFlyoutKeys(event) {
+        if (!flyoutEl || !flyoutOwner) {
+            return false;
+        }
+        var links = Array.prototype.slice.call(flyoutEl.querySelectorAll('a[href]'));
+        var index = links.indexOf(document.activeElement);
+        var owner = flyoutOwner;
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            if (event.target === owner || index !== -1) {
+                event.preventDefault();
+                var step = event.key === 'ArrowDown' ? 1 : -1;
+                var next = index === -1 ? (step === 1 ? 0 : links.length - 1) : (index + step + links.length) % links.length;
+                if (links[next]) {
+                    links[next].focus();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        if (event.key !== 'Tab' || index === -1) {
+            return false;
+        }
+
+        if (event.shiftKey && index === 0) {
+            // Back out to the parent card
+            event.preventDefault();
+            closeFlyout();
+            owner.focus();
+            return true;
+        }
+
+        if (!event.shiftKey && index === links.length - 1) {
+            // Continue with the rail item after the parent card
+            event.preventDefault();
+            closeFlyout();
+            var sidebar = owner.closest('[data-nb-sidebar]');
+            var items = sidebar ? focusableIn(sidebar) : [];
+            var ownerIndex = items.indexOf(owner);
+            (items[ownerIndex + 1] || owner).focus();
+            return true;
+        }
+
+        return false;
     }
 
     /* ------------------------------------------------------------- tooltip */
@@ -444,6 +531,9 @@
             }
             hideTooltip();
         }
+        if (handleFlyoutKeys(event)) {
+            return;
+        }
         trapFocus(event);
     });
 
@@ -474,12 +564,26 @@
         if (event.target.closest && event.target.closest('[data-nb-tooltip]')) {
             hideTooltip();
         }
+        // Keyboard focus moved somewhere other than the flyout or its parent card: close it
+        var next = event.relatedTarget;
+        if (flyoutEl && next && !flyoutEl.contains(next) && next !== flyoutOwner) {
+            closeFlyout();
+        }
     });
 
-    document.addEventListener('scroll', function () {
+    document.addEventListener('scroll', function (event) {
         hideTooltip();
+        // Scrolling inside the flyout's own list must not close it
+        if (flyoutEl && event.target instanceof Node && flyoutEl.contains(event.target)) {
+            return;
+        }
         closeFlyout();
     }, true);
+
+    window.addEventListener('resize', function () {
+        hideTooltip();
+        closeFlyout();
+    });
 
     function onViewportChange() {
         if (isDesktop() && isDrawerOpen()) {
