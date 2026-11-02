@@ -148,7 +148,8 @@
     --nb-sidebar-w: 300px;
     --nb-sidebar-w-collapsed: 96px;
     --nb-header-h: 96px;
-    --nb-frame-gap: 22px;
+    --nb-frame-gap: 8px;     /* green gap above and on the outer (left) side of the content frame */
+    --nb-frame-radius: 24px; /* top corners of the content frame */
     --nb-overlay: rgba(10, 16, 12, 0.55);
     --nb-radius-item: 12px;   /* nav items, icon buttons */
     --nb-radius-menu: 14px;   /* dropdown panels */
