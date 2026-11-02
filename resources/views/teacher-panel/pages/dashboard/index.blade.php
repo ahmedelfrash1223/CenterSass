@@ -2,70 +2,52 @@
 @section('title', 'لوحة التحكم')
 @extends('teacher-panel.master')
 
+@php
+    use App\Enums\Teacher\TeacherPermissionEnum as Perm;
+
+    $homeUser = auth('teacher')->user();
+    $homeNow = now();
+    // Same rule as teacher-home.js (which refreshes it on the client in the app timezone)
+    $greeting = $homeNow->hour < 12 ? 'صباح الخير' : 'مساء الخير';
+    $canTakeAttendance = $homeUser?->hasPermission(Perm::ATTENDANCE_VIEW);
+    $canAddStudent = $homeUser?->hasPermission(Perm::STUDENT_CREATE);
+@endphp
+
 @section('main')
 
     <div class="pc-container">
-        <div class="pc-content">
+        <div class="pc-content nb-home" data-nb-home data-nb-tz="{{ config('app.timezone') }}">
 
-            <!-- Breadcrumb -->
-            <div class="page-header">
-                <div class="page-block">
-                    <div class="row align-items-center g-3">
-                        <!-- Breadcrumb -->
-                        <div class="col-md-12">
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb mb-2">
-                                    <li class="breadcrumb-item">
-                                        <a
-                                            wire:navigate
-                                            href="{{ route('teacher.dashboard') }}"
-                                            class="text-decoration-none"
-                                        >
-                                            <i class="ph-duotone ph-house me-1"></i>
-                                            الرئيسية
-                                        </a>
-                                    </li>
-                                    <li
-                                        class="breadcrumb-item active"
-                                        aria-current="page"
-                                    >
-                                        <i class="ph-duotone ph-gauge me-1"></i>
-                                        لوحة التحكم
-                                    </li>
-                                </ol>
-                            </nav>
-                        </div>
-
-                        <!-- Title with Icon and Stats -->
-                        <div class="col-md-12">
-                            <div class="d-flex align-items-center gap-3 flex-wrap">
-                                <div class="page-header-icon-wrapper">
-                                    <div class="page-header-icon">
-                                        <i class="ph-duotone ph-gauge fs-1"></i>
-                                    </div>
-                                </div>
-
-                                <div class="flex-grow-1">
-                                    <h1 class="page-header-title mb-1">
-                                        لوحة التحكم
-                                        <span class="badge bg-primary bg-opacity-10 text-primary ms-2 fs-6 fw-normal">
-                                            <i class="ph-duotone ph-check-circle me-1"></i>
-                                            مرحباً بعودتك
-                                        </span>
-                                    </h1>
-                                    <p class="text-muted mb-0">
-                                        <i class="ph-duotone ph-calendar-blank me-1"></i>
-                                        {{ now()->format('l، d F Y') }}
-                                        <span class="mx-2">|</span>
-                                        <i class="ph-duotone ph-clock me-1"></i>
-                                        {{ now()->format('h:i A') }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Page head: greeting + today + quick actions -->
+            <section class="nb-home__head" aria-labelledby="nb-home-greeting">
+                <div class="nb-home__hello">
+                    <h2 class="nb-home__greeting" id="nb-home-greeting">
+                        <span data-nb-greeting>{{ $greeting }}</span>، أ. {{ $homeUser?->name }}
+                    </h2>
+                    <p class="nb-home__date">
+                        <i class="ph-duotone ph-calendar-blank" aria-hidden="true"></i>
+                        <time datetime="{{ $homeNow->toDateString() }}">{{ $homeNow->locale('ar')->translatedFormat('l، j F Y') }}</time>
+                    </p>
                 </div>
-            </div>
+
+                @if ($canTakeAttendance || $canAddStudent)
+                    <div class="nb-home__actions">
+                        @if ($canTakeAttendance)
+                            <a href="{{ route('teacher.attendance.index') }}" wire:navigate class="nb-btn nb-btn--primary">
+                                <i class="ph-duotone ph-scan" aria-hidden="true"></i>
+                                تسجيل حضور
+                            </a>
+                        @endif
+                        @if ($canAddStudent)
+                            <a href="{{ route('teacher.students.create') }}" wire:navigate class="nb-btn nb-btn--ghost">
+                                <i class="ph-duotone ph-user-plus" aria-hidden="true"></i>
+                                إضافة طالب
+                            </a>
+                        @endif
+                    </div>
+                @endif
+            </section>
+
             @livewire('teacher-panel.pages.dashboard.parts.data')
         </div>
     </div>

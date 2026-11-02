@@ -2,9 +2,9 @@
  * Teacher dashboard sidebar (نبذة)
  * - Desktop: collapse / expand (remembered in localStorage)
  * - < 1024px: off-canvas drawer with overlay, Esc, focus trap, scroll lock
- * - Collapsible menu groups (open/closed state remembered in localStorage;
- *   the group with the active page is always open)
- * - Accordion sub-menus (expanded) and flyouts (collapsed)
+ * - Parent cards with sub-cards: accordion when expanded (open/closed state
+ *   remembered in localStorage, the parent of the active page is always open),
+ *   flyout card when collapsed
  * - Tooltips for icon-only items
  * - Sidebar logout button -> existing Livewire logout (TeacherProfileCard)
  *
@@ -116,7 +116,7 @@
         sidebar.setAttribute('aria-modal', 'true');
         syncToggleButton();
 
-        var target = sidebar.querySelector('.nb-nav__link.is-active') || sidebar.querySelector('[data-nb-drawer-close]');
+        var target = sidebar.querySelector('.nb-nav__link.is-active, .nb-nav__sublink.is-active') || sidebar.querySelector('[data-nb-drawer-close]');
         if (target) {
             window.setTimeout(function () { target.focus(); }, 50);
         }
@@ -169,7 +169,8 @@
         }
     }
 
-    /* -------------------------------------------------------------- groups */
+    /* ------------------------------------------- parent cards (accordion) */
+    // Open/closed state per parent card, keyed by data-nb-group (closed by default)
     function readGroupState() {
         try {
             return JSON.parse(storageGet(GROUPS_KEY) || '{}') || {};
@@ -179,24 +180,27 @@
     }
 
     function saveGroupState(id, open) {
+        if (!id) {
+            return;
+        }
         var state = readGroupState();
         state[id] = open;
         storageSet(GROUPS_KEY, JSON.stringify(state));
     }
 
-    function setGroupOpen(group, open, animate) {
-        var toggle = group.querySelector('[data-nb-group-toggle]');
-        var panel = group.querySelector('[data-nb-group-panel]');
+    function setAccordion(item, open, animate) {
+        var toggle = item.querySelector('[data-nb-accordion-toggle]');
+        var panel = item.querySelector('[data-nb-accordion-panel]');
         if (!toggle || !panel) {
             return;
         }
 
+        item.classList.toggle('is-open', open);
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
 
-        // In collapsed (icon-only) mode every group is shown; just record the state
-        var canAnimate = animate && !prefersReducedMotion() && !(isDesktop() && isCollapsed());
-        if (!canAnimate) {
-            group.classList.toggle('is-collapsed', !open);
+        // No animation when reduced motion is on or the sidebar is icon-only (panel hidden by CSS)
+        if (!animate || prefersReducedMotion() || (isDesktop() && isCollapsed())) {
+            panel.hidden = !open;
             panel.style.height = '';
             return;
         }
@@ -208,71 +212,17 @@
             }
             done = true;
             panel.removeEventListener('transitionend', finish);
-            panel.classList.remove('is-animating');
-            panel.style.height = '';
-            if (!open) {
-                group.classList.add('is-collapsed');
+            // Only apply the end state if it wasn't toggled again meanwhile
+            if (item.classList.contains('is-open') === open) {
+                if (!open) {
+                    panel.hidden = true;
+                }
+                panel.style.height = '';
             }
         };
+        panel.addEventListener('transitionend', finish);
         // Fallback when transitionend never fires (background tab, interrupted transition)
         window.setTimeout(function () { finish(); }, 320);
-
-        if (open) {
-            group.classList.remove('is-collapsed');
-            var target = panel.scrollHeight;
-            panel.style.height = '0px';
-            void panel.offsetHeight; // reflow so the transition starts from 0
-            panel.classList.add('is-animating');
-            panel.addEventListener('transitionend', finish);
-            panel.style.height = target + 'px';
-        } else {
-            panel.style.height = panel.scrollHeight + 'px';
-            void panel.offsetHeight;
-            panel.classList.add('is-animating');
-            panel.addEventListener('transitionend', finish);
-            panel.style.height = '0px';
-        }
-    }
-
-    function restoreGroups() {
-        var state = readGroupState();
-        Array.prototype.forEach.call(document.querySelectorAll('[data-nb-group]'), function (group) {
-            if (!group.querySelector('[data-nb-group-toggle]')) {
-                return;
-            }
-            var open = group.hasAttribute('data-nb-group-active') || state[group.getAttribute('data-nb-group')] !== false;
-            setGroupOpen(group, open, false);
-        });
-    }
-
-    /* ----------------------------------------------------------- accordion */
-    function setAccordion(item, open) {
-        var toggle = item.querySelector('[data-nb-accordion-toggle]');
-        var panel = item.querySelector('[data-nb-accordion-panel]');
-        if (!toggle || !panel) {
-            return;
-        }
-
-        item.classList.toggle('is-open', open);
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-
-        if (prefersReducedMotion()) {
-            panel.hidden = !open;
-            panel.style.height = '';
-            return;
-        }
-
-        var onEnd = function (event) {
-            if (event.target !== panel || event.propertyName !== 'height') {
-                return;
-            }
-            panel.removeEventListener('transitionend', onEnd);
-            if (!open) {
-                panel.hidden = true;
-            }
-            panel.style.height = '';
-        };
-        panel.addEventListener('transitionend', onEnd);
 
         if (open) {
             panel.hidden = false;
@@ -285,6 +235,15 @@
             void panel.offsetHeight;
             panel.style.height = '0px';
         }
+    }
+
+    function restoreAccordions() {
+        var state = readGroupState();
+        Array.prototype.forEach.call(document.querySelectorAll('[data-nb-accordion]'), function (item) {
+            var id = item.getAttribute('data-nb-group');
+            var open = item.hasAttribute('data-nb-group-active') || (!!id && state[id] === true);
+            setAccordion(item, open, false);
+        });
     }
 
     /* -------------------------------------------------------------- flyout */
@@ -320,23 +279,110 @@
 
         var list = panel.querySelector('.nb-nav__sublist');
         if (list) {
-            flyoutEl.appendChild(list.cloneNode(true));
+            var clone = list.cloneNode(true);
+            cleanFlyoutClone(clone);
+            flyoutEl.appendChild(clone);
         }
 
         document.body.appendChild(flyoutEl);
-
-        var rect = toggle.getBoundingClientRect();
-        var top = Math.min(rect.top, window.innerHeight - flyoutEl.offsetHeight - 8);
-        flyoutEl.style.top = Math.max(8, top) + 'px';
-        flyoutEl.style.left = Math.max(8, rect.left - flyoutEl.offsetWidth - 10) + 'px';
+        positionFlyout(toggle);
 
         flyoutOwner = toggle;
         toggle.setAttribute('aria-expanded', 'true');
 
-        var firstLink = flyoutEl.querySelector('a');
+        // Focus the active child (or the first one) so the keyboard lands in the flyout
+        var firstLink = flyoutEl.querySelector('a.is-active') || flyoutEl.querySelector('a');
         if (firstLink) {
-            firstLink.focus();
+            firstLink.focus({ preventScroll: true });
         }
+    }
+
+    // The clone must not carry hidden / inert state from the source list
+    function cleanFlyoutClone(node) {
+        var all = [node].concat(Array.prototype.slice.call(node.querySelectorAll('*')));
+        all.forEach(function (el) {
+            el.removeAttribute('hidden');
+            el.removeAttribute('id');
+            el.removeAttribute('style');
+            el.removeAttribute('inert');
+            if (el.getAttribute('aria-hidden') === 'true' && !el.classList.contains('nb-nav__dot')) {
+                el.removeAttribute('aria-hidden');
+            }
+            if (el.getAttribute('tabindex') === '-1') {
+                el.removeAttribute('tabindex');
+            }
+        });
+    }
+
+    // Next to the parent card; flips upward / shrinks (and scrolls) so it never leaves the viewport
+    function positionFlyout(toggle) {
+        if (!flyoutEl) {
+            return;
+        }
+        var margin = 8;
+        var rect = toggle.getBoundingClientRect();
+        var viewportH = window.innerHeight;
+
+        flyoutEl.style.maxHeight = (viewportH - margin * 2) + 'px';
+        var height = flyoutEl.offsetHeight;
+
+        var top = rect.top;
+        if (top + height > viewportH - margin) {
+            // Not enough room below: align the flyout's bottom with the card's bottom (flip up)
+            top = rect.bottom - height;
+        }
+        top = Math.max(margin, Math.min(top, viewportH - margin - height));
+
+        flyoutEl.style.top = top + 'px';
+        flyoutEl.style.left = Math.max(margin, rect.left - flyoutEl.offsetWidth - 10) + 'px';
+    }
+
+    // Tab / Shift+Tab / arrows inside the flyout (it lives at the end of <body>)
+    function handleFlyoutKeys(event) {
+        if (!flyoutEl || !flyoutOwner) {
+            return false;
+        }
+        var links = Array.prototype.slice.call(flyoutEl.querySelectorAll('a[href]'));
+        var index = links.indexOf(document.activeElement);
+        var owner = flyoutOwner;
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            if (event.target === owner || index !== -1) {
+                event.preventDefault();
+                var step = event.key === 'ArrowDown' ? 1 : -1;
+                var next = index === -1 ? (step === 1 ? 0 : links.length - 1) : (index + step + links.length) % links.length;
+                if (links[next]) {
+                    links[next].focus();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        if (event.key !== 'Tab' || index === -1) {
+            return false;
+        }
+
+        if (event.shiftKey && index === 0) {
+            // Back out to the parent card
+            event.preventDefault();
+            closeFlyout();
+            owner.focus();
+            return true;
+        }
+
+        if (!event.shiftKey && index === links.length - 1) {
+            // Continue with the rail item after the parent card
+            event.preventDefault();
+            closeFlyout();
+            var sidebar = owner.closest('[data-nb-sidebar]');
+            var items = sidebar ? focusableIn(sidebar) : [];
+            var ownerIndex = items.indexOf(owner);
+            (items[ownerIndex + 1] || owner).focus();
+            return true;
+        }
+
+        return false;
     }
 
     /* ------------------------------------------------------------- tooltip */
@@ -438,20 +484,7 @@
             return;
         }
 
-        // Collapsible group header
-        var groupToggle = target.closest('[data-nb-group-toggle]');
-        if (groupToggle) {
-            event.preventDefault();
-            var group = groupToggle.closest('[data-nb-group]');
-            if (group) {
-                var willOpen = groupToggle.getAttribute('aria-expanded') !== 'true';
-                setGroupOpen(group, willOpen, true);
-                saveGroupState(group.getAttribute('data-nb-group'), willOpen);
-            }
-            return;
-        }
-
-        // Accordion / flyout
+        // Parent card: accordion (expanded sidebar / drawer) or flyout (collapsed)
         var accordionToggle = target.closest('[data-nb-accordion-toggle]');
         if (accordionToggle) {
             event.preventDefault();
@@ -466,7 +499,9 @@
                     openFlyout(item, accordionToggle);
                 }
             } else {
-                setAccordion(item, !item.classList.contains('is-open'));
+                var willOpen = !item.classList.contains('is-open');
+                setAccordion(item, willOpen, true);
+                saveGroupState(item.getAttribute('data-nb-group'), willOpen);
             }
             return;
         }
@@ -495,6 +530,9 @@
                 return;
             }
             hideTooltip();
+        }
+        if (handleFlyoutKeys(event)) {
+            return;
         }
         trapFocus(event);
     });
@@ -526,12 +564,26 @@
         if (event.target.closest && event.target.closest('[data-nb-tooltip]')) {
             hideTooltip();
         }
+        // Keyboard focus moved somewhere other than the flyout or its parent card: close it
+        var next = event.relatedTarget;
+        if (flyoutEl && next && !flyoutEl.contains(next) && next !== flyoutOwner) {
+            closeFlyout();
+        }
     });
 
-    document.addEventListener('scroll', function () {
+    document.addEventListener('scroll', function (event) {
         hideTooltip();
+        // Scrolling inside the flyout's own list must not close it
+        if (flyoutEl && event.target instanceof Node && flyoutEl.contains(event.target)) {
+            return;
+        }
         closeFlyout();
     }, true);
+
+    window.addEventListener('resize', function () {
+        hideTooltip();
+        closeFlyout();
+    });
 
     function onViewportChange() {
         if (isDesktop() && isDrawerOpen()) {
@@ -562,7 +614,7 @@
         // <html> survives navigations, so re-apply the stored state defensively
         root.classList.toggle(COLLAPSED_CLASS, storageGet(STORAGE_KEY) === '1');
         closeDrawer({ skipFocus: true });
-        restoreGroups();
+        restoreAccordions();
         syncToggleButton();
         restoreNavScroll();
     }

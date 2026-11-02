@@ -1,93 +1,133 @@
-<div class="card border-0 shadow-sm h-100">
-    <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
-        <div>
-            <h6 class="mb-1 fw-bold">
-                <i class="ph-duotone ph-calendar-check me-1"></i>
-                جدول مواعيد النهارده
-            </h6>
-            <small class="text-muted">
-                <i class="ph-duotone ph-calendar-blank me-1"></i>
-                {{ now()->locale('ar')->translatedFormat('l، d F Y') }}
-            </small>
-        </div>
-        <span class="badge bg-primary bg-opacity-10 text-primary">
-            {{ $todaySchedules->count() }} حصة
-        </span>
-    </div>
-    <div class="card-body p-0">
-        @if($todaySchedules->count() > 0)
-            <div class="schedule-list">
-                @foreach($todaySchedules as $schedule)
-                    @php
-                        $isNow = $currentSchedules->contains('id', $schedule->id);
-                        $isPast = $schedule->end_time->format('H:i') < now()->format('H:i');
-                        $isUpcoming = !$isNow && !$isPast;
+@php
+    $homeUser = auth('teacher')->user();
+    $canViewTimetable = $homeUser?->hasPermission(\App\Enums\Teacher\TeacherPermissionEnum::TIMETABLE_VIEW);
 
-                        $subjectLabel = \App\Enums\Teacher\SubjectEnum::tryFrom($schedule->subject?->subject)?->label()
-                            ?? $schedule->subject?->subject_label
-                            ?? 'مادة';
-                    @endphp
-                    <div class="schedule-item {{ $isNow ? 'is-now' : ($isPast ? 'is-past' : 'is-upcoming') }}"
-                        wire:key="schedule-{{ $schedule->id }}">
-                        <div class="schedule-time">
-                            <div class="fw-bold">{{ $schedule->start_time->format('H:i') }}</div>
-                            <small class="text-muted">{{ $schedule->end_time->format('H:i') }}</small>
-                        </div>
+    // "5:00 – 7:00 م" (one period mark when both ends share it)
+    $timeRange = function ($start, $end) {
+        $s = $start->copy()->locale('ar');
+        $e = $end->copy()->locale('ar');
+        return $s->format('A') === $e->format('A')
+            ? $s->format('g:i') . ' – ' . $e->translatedFormat('g:i A')
+            : $s->translatedFormat('g:i A') . ' – ' . $e->translatedFormat('g:i A');
+    };
 
-                        <div class="schedule-content">
-                            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                                <h6 class="mb-0 fw-semibold">
-                                    {{ $subjectLabel }}
-                                </h6>
-                                @if($isNow)
-                                    <span class="badge bg-danger bg-opacity-10 text-danger">
-                                        <i class="ph-duotone ph-broadcast me-1"></i>الآن
-                                    </span>
-                                @elseif($isPast)
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                        <i class="ph-duotone ph-check me-1"></i>خلصت
-                                    </span>
-                                @endif
-                            </div>
-                            <div class="d-flex gap-3 flex-wrap">
-                                <small class="text-muted">
-                                    <i class="ph-duotone ph-users-three me-1"></i>
-                                    {{ $schedule->group?->name }}
-                                </small>
-                                <small class="text-muted">
-                                    <i class="ph-duotone ph-git-branch me-1"></i>
-                                    {{ $schedule->group?->branch?->name }}
-                                </small>
-                                @if($isOwner || $schedule->teacher_id !== auth('teacher')->id())
-                                    <small class="text-muted">
-                                        <i class="ph-duotone ph-chalkboard-teacher me-1"></i>
-                                        {{ $schedule->teacher?->name }}
-                                    </small>
-                                @endif
-                            </div>
-                        </div>
+    $visibleLimit = 6;
+    $totalToday = $todaySchedules->count();
+    $nowTime = now()->format('H:i');
+@endphp
 
-                        <div class="schedule-action">
-                            @if($canViewGroups)
-                                <a href="{{ route('teacher.groups.show', $schedule->group_id) }}" wire:navigate
-                                    class="btn btn-sm btn-light border">
-                                    <i class="ph-duotone ph-arrow-left"></i>
-                                </a>
-                            @else
-                                <span class="btn btn-sm btn-light border disabled" title="ليس لديك صلاحية">
-                                    <i class="ph-duotone ph-arrow-left"></i>
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
+<section class="nb-card nb-home__sessions" aria-labelledby="nb-sessions-title">
+    <header class="nb-card__head">
+        <div class="nb-card__heading">
+            <span class="nb-icon-tile nb-icon-tile--sm" aria-hidden="true">
+                <i class="ph-duotone ph-calendar-check"></i>
+            </span>
+            <div>
+                <h3 class="nb-card__title" id="nb-sessions-title">حصص النهارده</h3>
+                <p class="nb-card__subtitle">{{ $totalToday }} حصة</p>
             </div>
-        @else
-            <div class="text-center py-5">
-                <i class="ph-duotone ph-calendar-x fs-1 d-block text-muted mb-2"></i>
-                <h6 class="text-muted mb-1">لا توجد حصص اليوم</h6>
-                <small class="text-muted">استمتع بيومك 🌴</small>
+        </div>
+
+        @if ($canViewTimetable)
+            <a href="{{ route('teacher.timetable.index') }}" wire:navigate class="nb-card__link">
+                عرض الكل
+                <i class="ph-duotone ph-caret-left" aria-hidden="true"></i>
+            </a>
+        @endif
+    </header>
+
+    {{-- Now / next summary --}}
+    @include('teacher-panel.pages.dashboard.parts.schedule-card', [
+        'currentSchedules' => $currentSchedules,
+        'nextSchedule'     => $nextSchedule,
+        'todayCount'       => $totalToday,
+        'canViewGroups'    => $canViewGroups,
+        'showAllSchedules' => $showAllSchedules,
+    ])
+
+    @if ($totalToday > 0)
+        <ol class="nb-timeline" aria-label="مواعيد حصص النهارده">
+            @foreach ($todaySchedules as $index => $schedule)
+                @continue($index >= $visibleLimit && ! $showAllSchedules)
+                @php
+                    $isNow = $currentSchedules->contains('id', $schedule->id);
+                    $isPast = ! $isNow && $schedule->end_time->format('H:i') < $nowTime;
+                    $state = $isNow ? 'now' : ($isPast ? 'past' : 'upcoming');
+
+                    $subjectLabel = \App\Enums\Teacher\SubjectEnum::tryFrom($schedule->subject?->subject)?->label()
+                        ?? $schedule->subject?->subject_label
+                        ?? 'مادة';
+                    $gradeLabel = $schedule->subject?->grade_label;
+                    $showTeacher = $isOwner || $schedule->teacher_id !== auth('teacher')->id();
+                    $rowTag = $canViewGroups ? 'a' : 'div';
+                @endphp
+
+                <li
+                    class="nb-timeline__item is-{{ $state }}"
+                    data-nb-session
+                    data-start="{{ $schedule->start_time->format('H:i') }}"
+                    data-end="{{ $schedule->end_time->format('H:i') }}"
+                    wire:key="schedule-{{ $schedule->id }}"
+                >
+                    <span class="nb-timeline__node" aria-hidden="true"></span>
+
+                    <{{ $rowTag }}
+                        class="nb-timeline__row"
+                        @if ($canViewGroups) href="{{ route('teacher.groups.show', $schedule->group_id) }}" wire:navigate @endif
+                    >
+                        <span class="nb-timeline__time">{{ $timeRange($schedule->start_time, $schedule->end_time) }}</span>
+
+                        <span class="nb-timeline__main">
+                            <span class="nb-timeline__title">
+                                {{ $subjectLabel }}@if ($gradeLabel) – {{ $gradeLabel }}@endif
+                            </span>
+                            <span class="nb-timeline__meta">
+                                <span><i class="ph-duotone ph-users-three" aria-hidden="true"></i>{{ $schedule->group?->name ?? '—' }}</span>
+                                <span><i class="ph-duotone ph-map-pin" aria-hidden="true"></i>{{ $schedule->group?->branch?->name ?? '—' }}</span>
+                                @if ($showTeacher)
+                                    <span><i class="ph-duotone ph-chalkboard-teacher" aria-hidden="true"></i>{{ $schedule->teacher?->name ?? '—' }}</span>
+                                @endif
+                            </span>
+                        </span>
+
+                        <span class="nb-timeline__end">
+                            <span class="nb-pill {{ $isNow ? 'nb-pill--success' : ($isPast ? 'nb-pill--neutral' : 'nb-pill--info') }}" data-nb-session-pill>
+                                <span class="nb-live-dot" data-nb-session-dot @unless ($isNow) hidden @endunless aria-hidden="true"></span>
+                                <span data-nb-session-label>{{ $isNow ? 'شغالة دلوقتي' : ($isPast ? 'خلصت' : 'جاية') }}</span>
+                            </span>
+                            @if ($canViewGroups)
+                                <i class="ph-duotone ph-caret-left nb-timeline__chevron" aria-hidden="true"></i>
+                            @endif
+                        </span>
+                    </{{ $rowTag }}>
+                </li>
+            @endforeach
+        </ol>
+
+        @if ($totalToday > $visibleLimit)
+            <div class="nb-home__more">
+                <button type="button" wire:click="toggleShowAll" wire:loading.attr="disabled" class="nb-btn nb-btn--ghost nb-btn--sm">
+                    @if ($showAllSchedules)
+                        <i class="ph-duotone ph-caret-up" aria-hidden="true"></i>
+                        عرض أقل
+                    @else
+                        <i class="ph-duotone ph-caret-down" aria-hidden="true"></i>
+                        عرض باقي {{ $totalToday - $visibleLimit }} حصة
+                    @endif
+                </button>
             </div>
         @endif
-    </div>
-</div>
+    @else
+        <div class="nb-empty">
+            <span class="nb-empty__icon" aria-hidden="true"><i class="ph-duotone ph-calendar-x"></i></span>
+            <p class="nb-empty__title">مفيش حصص النهارده</p>
+            <p class="nb-empty__text">استمتع بيومك</p>
+            @if ($canViewTimetable)
+                <a href="{{ route('teacher.timetable.index') }}" wire:navigate class="nb-card__link">
+                    جدول الأسبوع
+                    <i class="ph-duotone ph-caret-left" aria-hidden="true"></i>
+                </a>
+            @endif
+        </div>
+    @endif
+</section>

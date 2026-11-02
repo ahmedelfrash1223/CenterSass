@@ -1,7 +1,8 @@
 /**
  * Runs synchronously right after the sidebar markup (included at the end of sidebar.blade.php):
- * restores each collapsible group's saved open/closed state before the first paint.
- * The group containing the active page is always open. Behaviour lives in sidebar.js.
+ * restores each parent card's saved open/closed state before the first paint.
+ * Parents are closed by default; the one containing the active page is always open
+ * (the server already renders it open). Behaviour lives in sidebar.js.
  */
 (function () {
     'use strict';
@@ -13,15 +14,17 @@
         state = {};
     }
 
-    var groups = document.querySelectorAll('[data-nb-group]');
-    for (var i = 0; i < groups.length; i++) {
-        var group = groups[i];
-        var toggle = group.querySelector('[data-nb-group-toggle]');
-        if (!toggle) {
+    var items = document.querySelectorAll('[data-nb-accordion][data-nb-group]');
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var toggle = item.querySelector('[data-nb-accordion-toggle]');
+        var panel = item.querySelector('[data-nb-accordion-panel]');
+        if (!toggle || !panel) {
             continue;
         }
-        var open = group.hasAttribute('data-nb-group-active') || state[group.getAttribute('data-nb-group')] !== false;
-        group.classList.toggle('is-collapsed', !open);
+        var open = item.hasAttribute('data-nb-group-active') || state[item.getAttribute('data-nb-group')] === true;
+        item.classList.toggle('is-open', open);
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        panel.hidden = !open;
     }
 })();

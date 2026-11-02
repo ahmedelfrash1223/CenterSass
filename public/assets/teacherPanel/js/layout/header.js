@@ -5,6 +5,7 @@
  *   The Livewire components keep their actions (wire:click); open/close is client-side
  *   and the toggle/menu carry wire:ignore.self so re-renders don't reset them.
  * - Livewire theme events: light / dark / system via window.NbTheme (theme-mode.js).
+ * - Refresh button ([data-nb-refresh]) next to the page title reloads the page.
  */
 (function () {
     'use strict';
@@ -71,6 +72,13 @@
 
     /* ---------------------------------------------------------------- click */
     document.addEventListener('click', function (event) {
+        // Header refresh button: full reload of the current page
+        if (event.target.closest('[data-nb-refresh]')) {
+            event.preventDefault();
+            window.location.reload();
+            return;
+        }
+
         var toggle = event.target.closest('[data-nb-dropdown-toggle]');
         if (toggle) {
             var dropdown = toggle.closest('[data-nb-dropdown]');

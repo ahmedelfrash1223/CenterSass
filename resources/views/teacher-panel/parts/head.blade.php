@@ -67,10 +67,16 @@
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/nabza-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/header.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/layout/app-frame.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/components.css') }}">
+    <!-- Page styles: scoped to their page root (.nb-home ...), safe to load everywhere with wire:navigate -->
+    <link rel="stylesheet" href="{{ asset('assets/teacherPanel/css/pages/teacher-home.css') }}">
 
     <!-- Applies the saved collapsed-sidebar state before first paint (no layout jump) -->
     <script src="{{ asset('assets/teacherPanel/js/layout/sidebar-init.js') }}"></script>
     <script src="{{ asset('assets/teacherPanel/js/layout/sidebar.js') }}" defer></script>
     <script src="{{ asset('assets/teacherPanel/js/layout/header.js') }}" defer></script>
+    <!-- Home page behaviour (greeting, live session status); does nothing on other pages -->
+    <script src="{{ asset('assets/teacherPanel/js/pages/teacher-home.js') }}" defer></script>
 
 </head>
