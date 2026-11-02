@@ -11,7 +11,19 @@
 @endpush
 
 @section('main')
+    <div class="nb-login-stage">
+    <div class="nb-book-fit" data-nb-book-fit>
     <main class="nb-login">
+
+        <!-- Open book shape (decorative): two curved pages + stacked page edges -->
+        <img
+            class="nb-login__book"
+            src="{{ asset('assets/teacherPanel/images/login-book.svg') }}"
+            alt=""
+            aria-hidden="true"
+            width="1280"
+            height="860"
+        >
 
         <!-- ================= Form column (start side) ================= -->
         <section class="nb-login__main" aria-labelledby="nb-login-title">
@@ -148,4 +160,6 @@
         </aside>
 
     </main>
+    </div>
+    </div>
 @endsection

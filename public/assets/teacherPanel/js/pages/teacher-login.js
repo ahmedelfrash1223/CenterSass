@@ -3,6 +3,7 @@
  * - Password show/hide toggle
  * - Caps Lock warning
  * - Brand panel text slider
+ * - Open book: scales the 1280x860 book to the viewport (body.nb-login--book / --card)
  * Submit loading/disabled state is handled by Livewire (wire:loading) on the button.
  * Vanilla JS, event delegation so it survives Livewire re-renders.
  */
@@ -231,6 +232,46 @@
     function initSliders() {
         Array.prototype.forEach.call(document.querySelectorAll('[data-nb-slider]'), initSlider);
     }
+
+    /* ======================================================================
+       Open book: scale the 1280x860 book to the viewport
+       Sets --nb-book-scale on [data-nb-book-fit] and body.nb-login--book /
+       body.nb-login--card (too small to read -> single page card).
+       ====================================================================== */
+    var BOOK_W = 1280;
+    var BOOK_H = 860;
+    var BOOK_MAX_SCALE = 1.1;
+    var BOOK_MIN_SCALE = 0.6;
+    var fitFrame = null;
+
+    function fitBook() {
+        fitFrame = null;
+        var fit = document.querySelector('[data-nb-book-fit]');
+        if (!fit || !document.body) {
+            return;
+        }
+
+        var scale = Math.min(
+            BOOK_MAX_SCALE,
+            (window.innerWidth - 48) / BOOK_W,
+            (window.innerHeight - 40) / BOOK_H
+        );
+        var isBook = scale >= BOOK_MIN_SCALE;
+
+        fit.style.setProperty('--nb-book-scale', scale.toFixed(4));
+        document.body.classList.toggle('nb-login--book', isBook);
+        document.body.classList.toggle('nb-login--card', !isBook);
+    }
+
+    function requestFit() {
+        if (fitFrame === null) {
+            fitFrame = window.requestAnimationFrame(fitBook);
+        }
+    }
+
+    fitBook();
+    window.addEventListener('resize', requestFit);
+    window.addEventListener('orientationchange', requestFit);
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initSliders);
