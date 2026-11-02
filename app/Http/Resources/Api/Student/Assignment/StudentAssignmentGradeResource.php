@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Api\Student\Assignment;
 
 use App\Enums\Teacher\AssignmentGradeEnum;
-use App\Enums\Teacher\AssignmentStatusEnum;
 use App\Enums\Teacher\GradeEnum;
 use App\Enums\Teacher\SubjectEnum;
 use Illuminate\Http\Request;
@@ -13,12 +12,12 @@ class StudentAssignmentGradeResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $assignment = $this->assignment;
-        $group = $assignment?->group;
+        $group = $this->group;
+
+        $studentGrade = $this->grades->first();
 
         $subjectValue = null;
         $subjectName = null;
-
         if ($group) {
             $schedule = $group->schedules?->first();
             if ($schedule && $schedule->subject) {
@@ -28,25 +27,22 @@ class StudentAssignmentGradeResource extends JsonResource
             }
         }
 
-        $gradeEnum = $this->grade
-            ? AssignmentGradeEnum::tryFrom($this->grade?->value ?? $this->grade)
-            : null;
+        $percentage = null;
+        $gradeEnum = null;
+
+        if ($studentGrade && $studentGrade->score !== null && $this->max_score > 0) {
+            $percentage = round(($studentGrade->score / $this->max_score) * 100, 2);
+            $gradeEnum = AssignmentGradeEnum::fromPercentage($percentage);
+        }
 
         return [
-            'id' => $this->id,
-            'assignment_id' => $this->assignment_id,
-
-            'assignment' => $assignment ? [
-                'id' => $assignment->id,
-                'title' => $assignment->title,
-                'description' => $assignment->description,
-                'type' => $assignment->type?->value,
-                'type_label' => $assignment->type?->label(),
-                'max_score' => (float) $assignment->max_score,
-                'due_date' => $assignment->due_date?->format('Y-m-d'),
-                'status' => $assignment->status?->value,
-                'status_label' => $assignment->status?->label(),
-            ] : null,
+            'assignment_id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'type' => $this->type?->value,
+            'type_label' => $this->type?->label(),
+            'max_score' => (float) $this->max_score,
+            'due_date' => $this->due_date?->format('Y-m-d'),
 
             'group' => $group ? [
                 'id' => $group->id,
@@ -59,16 +55,17 @@ class StudentAssignmentGradeResource extends JsonResource
                 ] : null,
             ] : null,
 
-            'score' => $this->score !== null ? (float) $this->score : null,
-            'percentage' => $this->percentage(),
-            'grade' => $this->grade?->value,
-            'grade_label' => $gradeEnum?->label(),
-            'notes' => $this->notes,
+            'is_graded' => $studentGrade !== null && $studentGrade->score !== null,
+            'score' => $studentGrade?->score !== null ? (float) $studentGrade->score : null,
+            'percentage' => $percentage,
+            'grade' => $studentGrade?->grade?->value,
+            'grade_label' => $gradeEnum?->label() ?? $studentGrade?->grade?->label(),
+            'notes' => $studentGrade?->notes,
 
-            'graded_at' => $this->graded_at?->toIso8601String(),
-            'graded_by' => $this->gradedBy ? [
-                'id' => $this->gradedBy->id,
-                'name' => $this->gradedBy->name,
+            'graded_at' => $studentGrade?->graded_at?->toIso8601String(),
+            'graded_by' => $studentGrade?->gradedBy ? [
+                'id' => $studentGrade->gradedBy->id,
+                'name' => $studentGrade->gradedBy->name,
             ] : null,
 
             'created_at' => $this->created_at?->toIso8601String(),

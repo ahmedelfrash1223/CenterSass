@@ -13,13 +13,19 @@ class AdminCreate extends Component
     private const DEFAULT_PASSWORD = '12345678';
 
     public string $name = '';
+
     public string $username = '';
+
     public string $email = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
+
     public int $is_active = 1;
 
     public bool $saving = false;
+
     public bool $savingAndNew = false;
 
     public function save(bool $createNew = false): void
@@ -36,7 +42,7 @@ class AdminCreate extends Component
             $this->password_confirmation = self::DEFAULT_PASSWORD;
         }
 
-        $request = new StoreAdminRequest();
+        $request = new StoreAdminRequest;
         $this->validate($request->rules(), $request->messages());
 
         Admin::create([
@@ -53,6 +59,7 @@ class AdminCreate extends Component
         if ($createNew) {
             $this->reset(['name', 'username', 'email', 'password', 'password_confirmation', 'is_active']);
             session()->flash('admin-success', 'تم إنشاء المدير بنجاح. يمكنك إضافة مدير آخر.');
+
             return;
         }
 

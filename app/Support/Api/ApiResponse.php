@@ -64,8 +64,9 @@ class ApiResponse
         LengthAwarePaginator $paginator,
         string $resourceClass,
         string $message = 'تمت العملية بنجاح',
+        array $extra = [] 
     ): JsonResponse {
-        return response()->json([
+        return response()->json(array_merge([
             'success' => true,
             'message' => $message,
             'data' => $resourceClass::collection($paginator->items())->resolve(),
@@ -77,7 +78,7 @@ class ApiResponse
                 'from' => $paginator->firstItem(),
                 'to' => $paginator->lastItem(),
             ],
-        ]);
+        ], $extra), 200);
     }
 
     // =============================================

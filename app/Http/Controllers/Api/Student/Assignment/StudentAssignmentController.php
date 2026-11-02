@@ -22,27 +22,29 @@ class StudentAssignmentController extends Controller
 
         $paginator = $this->assignmentService->listForAccount($account, $request->validated());
 
+        $stats = $this->assignmentService->statsForAccount(
+            $account,
+            $request->input('month') ?: now()->format('Y-m')
+        );
+
         return ApiResponse::paginated(
             paginator: $paginator,
             resourceClass: StudentAssignmentGradeResource::class,
             message: 'سجل التقييمات.',
+            extra: ['stats' => $stats]
         );
     }
-
 
     public function stats(ListAssignmentGradeRequest $request): JsonResponse
     {
         $account = auth('student_account')->user();
-
-        $stats = $this->assignmentService->statsForAccount(
-            $account,
-            $request->input('month')
-        );
+        $month = $request->input('month') ?: now()->format('Y-m');
+        $stats = $this->assignmentService->statsForAccount($account, $month);
 
         return ApiResponse::success(
             data: $stats,
             message: 'إحصائيات التقييمات.',
-            extra: ['month' => $request->input('month', now()->format('Y-m'))],
+            extra: ['month' => $month],
         );
     }
 }

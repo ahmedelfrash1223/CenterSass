@@ -15,34 +15,35 @@ class StudentInvoiceController extends Controller
         private readonly StudentInvoiceService $invoiceService,
     ) {}
 
-
     public function index(ListInvoiceRequest $request): JsonResponse
     {
         $account = auth('student_account')->user();
 
         $paginator = $this->invoiceService->listForAccount($account, $request->validated());
 
+        $stats = $this->invoiceService->statsForAccount(
+            $account,
+            $request->input('month') ?: now()->format('Y-m')
+        );
+
         return ApiResponse::paginated(
             paginator: $paginator,
             resourceClass: StudentInvoiceResource::class,
             message: 'سجل الفواتير.',
+            extra: ['stats' => $stats]
         );
     }
-
 
     public function stats(ListInvoiceRequest $request): JsonResponse
     {
         $account = auth('student_account')->user();
-
-        $stats = $this->invoiceService->statsForAccount(
-            $account,
-            $request->input('month')
-        );
+        $month = $request->input('month') ?: now()->format('Y-m');
+        $stats = $this->invoiceService->statsForAccount($account, $month);
 
         return ApiResponse::success(
             data: $stats,
             message: 'إحصائيات الفواتير.',
-            extra: ['month' => $request->input('month', now()->format('Y-m'))],
+            extra: ['month' => $month],
         );
     }
 }

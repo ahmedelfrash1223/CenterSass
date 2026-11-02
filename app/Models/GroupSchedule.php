@@ -6,6 +6,7 @@ use App\Enums\Teacher\ScheduleCancellationReasonEnum;
 use App\Traits\GroupSchedule\FormatsDuration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupSchedule extends Model
 {
@@ -53,5 +54,10 @@ class GroupSchedule extends Model
     public function canceller(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'cancelled_by');
+    }
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class, 'schedule_id');
     }
 }

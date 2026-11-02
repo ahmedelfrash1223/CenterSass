@@ -5,5 +5,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('schedules')->name('schedules.')->group(function () {
     Route::get('/', [StudentScheduleController::class, 'index'])->name('index');
-    Route::get('today', [StudentScheduleController::class, 'today'])->name('today');
 });

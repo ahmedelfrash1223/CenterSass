@@ -4,7 +4,6 @@ namespace App\Http\Resources\Api\Student\Invoice;
 
 use App\Enums\Teacher\DiscountTypeEnum;
 use App\Enums\Teacher\InvoiceStatusEnum;
-use App\Enums\Teacher\SubjectEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -36,7 +35,9 @@ class StudentInvoiceResource extends JsonResource
             'status' => $this->status,
             'status_label' => $statusEnum?->label() ?? $this->status,
             'status_color' => $statusEnum?->color() ?? 'secondary',
-
+            'is_paid' => $this->status === InvoiceStatusEnum::PAID->value,
+            'is_partial' => $this->status === InvoiceStatusEnum::PARTIAL->value,
+            'is_unpaid' => $this->status === InvoiceStatusEnum::UNPAID->value,
             'has_discount' => (bool) $this->has_discount,
             'has_remaining' => (bool) $this->has_remaining,
 

@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\Api\Student\Schedule;
 
-use App\Enums\Teacher\GradeEnum;
 use App\Enums\Teacher\SubjectEnum;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -11,72 +11,53 @@ class StudentScheduleResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return [
-            'group_id' => $this->id,
-            'group_name' => $this->name,
-            'grade' => $this->grade,
-            'grade_label' => GradeEnum::tryFrom($this->grade)?->label() ?? $this->grade,
+        $start = Carbon::parse($this->start_time->format('H:i'));
+        $end = Carbon::parse($this->end_time->format('H:i'));
+        $now = now();
 
-            'branch' => $this->branch ? [
-                'id' => $this->branch->id,
-                'name' => $this->branch->name,
-                'address' => $this->branch->address,
-                'phone' => $this->branch->phone,
-            ] : null,
+        $isCancelled = filter_var($this->is_cancelled, FILTER_VALIDATE_BOOLEAN);
 
-            'teacher' => $this->teacher ? [
-                'id' => $this->teacher->id,
-                'name' => $this->teacher->name,
-                'phone' => $this->teacher->phone,
-                'email' => $this->teacher->email,
-                'code' => $this->teacher->code,
-            ] : null,
+        if ($isCancelled) {
+            $timeStatus = 'cancelled';
+            $timeStatusLabel = 'ملغية';
+        } elseif ($now->lt($start)) {
+            $timeStatus = 'upcoming';
+            $timeStatusLabel = 'لم تبدأ';
+        } elseif ($now->between($start, $end)) {
+            $timeStatus = 'running';
+            $timeStatusLabel = 'جارية الآن';
+        } else {
+            $timeStatus = 'finished';
+            $timeStatusLabel = 'انتهت';
+        }
 
-            'schedules' => $this->schedules->map(function ($schedule) {
-                return $this->mapSchedule($schedule);
-            })->values(),
+        $attendance = $this->attendances->first();
 
-            'created_at' => $this->created_at?->toIso8601String(),
-        ];
-    }
+        $attendanceStatus = $attendance?->status ?? 'not_recorded';
+        $attendanceLabel = match($attendanceStatus) {
+            'present' => 'حضر',
+            'late' => 'متأخر',
+            'absent' => 'غايب',
+            'excused' => 'بعذر',
+            default => 'لم يتم التسجيل'
+        };
 
-    private function mapSchedule($schedule): array
-    {
-        $subjectValue = $schedule->subject?->subject;
+        $subjectValue = $this->subject?->subject;
         $subjectEnum = $subjectValue ? SubjectEnum::tryFrom($subjectValue) : null;
 
         return [
-            'id' => $schedule->id,
-            'day' => $schedule->day,
-            'day_label' => $this->getDayLabel($schedule->day),
-            'start_time' => $schedule->start_time?->format('H:i'),
-            'end_time' => $schedule->end_time?->format('H:i'),
-            'hours' => (float) $schedule->hours,
-            'is_cancelled' => (bool) $schedule->is_cancelled,
-            'subject' => $schedule->subject ? [
-                'id' => $schedule->subject->id,
-                'value' => $subjectValue,
-                'name' => $subjectEnum?->label() ?? $subjectValue,
-                'grade_label' => $schedule->subject->grade_label ?? null,
-            ] : null,
-            'teacher' => $schedule->teacher ? [
-                'id' => $schedule->teacher->id,
-                'name' => $schedule->teacher->name,
-            ] : null,
+            'schedule_id' => $this->id,
+            'group_name' => $this->group->name,
+            'subject_name' => $subjectEnum?->label() ?? $subjectValue ?? '—',
+            'teacher_name' => $this->teacher?->name,
+            'start_time' => $start->format('H:i'),
+            'end_time' => $end->format('H:i'),
+            'duration_hours' => (float) $this->hours,
+            'time_status' => $timeStatus,
+            'time_status_label' => $timeStatusLabel,
+            'show_scan_button' => $timeStatus === 'upcoming',
+            'attendance_status' => $attendanceStatus,
+            'attendance_status_label' => $attendanceLabel,
         ];
-    }
-
-    private function getDayLabel(string $day): string
-    {
-        return match ($day) {
-            'Saturday' => 'السبت',
-            'Sunday' => 'الأحد',
-            'Monday' => 'الإثنين',
-            'Tuesday' => 'الثلاثاء',
-            'Wednesday' => 'الأربعاء',
-            'Thursday' => 'الخميس',
-            'Friday' => 'الجمعة',
-            default => $day,
-        };
     }
 }

@@ -36,8 +36,11 @@ Route::prefix('student')->name('student.')->group(function () {
         // Assignments Routes
         require __DIR__ . '/student/assignments.php';
 
-        // Assignments Routes
+        // Invoices Routes
         require __DIR__ . '/student/invoices.php';
+
+        // Home Routes
+        require __DIR__ . '/student/home.php';
     });
 
 });

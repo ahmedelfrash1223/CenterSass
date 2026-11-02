@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Student\Schedule;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Student\Schedule\ScheduleByDayRequest;
+use App\Http\Resources\Api\Student\Schedule\StudentScheduleResource;
 use App\Services\Api\Student\Schedule\StudentScheduleService;
 use App\Support\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -13,30 +15,22 @@ class StudentScheduleController extends Controller
         private readonly StudentScheduleService $scheduleService,
     ) {}
 
-
-    public function index(): JsonResponse
+    public function index(ScheduleByDayRequest $request): JsonResponse
     {
         $account = auth('student_account')->user();
 
-        $data = $this->scheduleService->groupedForAccount($account);
-
-        return ApiResponse::success(
-            data: $data,
-            message: 'جدول الطالب الكامل.',
+        $data = $this->scheduleService->getDashboardForAccount(
+            $account,
+            $request->input('day')
         );
-    }
-
-
-    public function today(): JsonResponse
-    {
-        $account = auth('student_account')->user();
-
-        $data = $this->scheduleService->todayForAccount($account);
 
         return ApiResponse::success(
-            data: $data,
-            message: 'مواعيد اليوم.',
-            extra: ['today' => now()->format('Y-m-d'), 'day' => now()->format('l')],
+            data: [
+                'selected_day' => $data['selected_day'],
+                'teachers' => $data['teachers'],
+                'schedules' => StudentScheduleResource::collection($data['schedules'])->resolve(),
+            ],
+            message: 'شاشة المواعيد.',
         );
     }
 }
