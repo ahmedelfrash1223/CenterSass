@@ -11,10 +11,25 @@
 @endpush
 
 @section('main')
+    <div class="nb-login-stage">
+    <div class="nb-book-fit" data-nb-book-fit>
     <main class="nb-login">
+
+        <!-- Open book shape (decorative): two curved pages + stacked page edges -->
+        <img
+            class="nb-login__book"
+            src="{{ asset('assets/teacherPanel/images/login-book.svg') }}"
+            alt=""
+            aria-hidden="true"
+            width="1280"
+            height="860"
+        >
+        <span class="nb-login__spine" aria-hidden="true"></span>
+        <span class="nb-login__ribbon" aria-hidden="true"></span>
 
         <!-- ================= Form column (start side) ================= -->
         <section class="nb-login__main" aria-labelledby="nb-login-title">
+        <div class="nb-page__inner" data-nb-page-inner>
 
             <header class="nb-login__top">
                 <div class="nb-logo">
@@ -59,10 +74,12 @@
                 </span>
             </footer>
 
+        </div>
         </section>
 
         <!-- ================= Brand panel (end side) ================= -->
         <aside class="nb-brand" aria-label="عن نبذة">
+        <div class="nb-page__inner" data-nb-page-inner>
 
             <!-- Hub illustration (decorative) -->
             <div class="nb-hub" aria-hidden="true">
@@ -145,7 +162,10 @@
                 </div>
             </div>
 
+        </div>
         </aside>
 
     </main>
+    </div>
+    </div>
 @endsection

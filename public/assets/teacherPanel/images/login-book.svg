@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 1280 860" width="1280" height="860" preserveAspectRatio="none">
+ <defs>
+  <path id="pr" d="M620,42 C652,42 690,12 820,5 C980,-2 1120,0 1214,2 Q1240,2 1240,28 L1240,716 Q1240,742 1214,742 C1120,744 980,748 820,756 C690,764 652,792 620,792 Z"/>
+  <path id="pl" d="M620,42 C588,42 550,12 420,5 C260,-2 120,0 26,2 Q0,2 0,28 L0,716 Q0,742 26,742 C120,744 260,748 420,756 C550,764 588,792 620,792 Z"/>
+ </defs>
+ <use href="#pr" fill="#BFC9AE" transform="translate(13.2 24)"/><use href="#pl" fill="#BFC9AE" transform="translate(-13.2 24)"/>
+ <use href="#pr" fill="#D2DAC4" transform="translate(12.1 22)"/><use href="#pl" fill="#D2DAC4" transform="translate(-12.1 22)"/>
+ <use href="#pr" fill="#E9EDE1" transform="translate(11 20)"/><use href="#pl" fill="#E9EDE1" transform="translate(-11 20)"/>
+ <use href="#pr" fill="#D2DAC4" transform="translate(9.9 18)"/><use href="#pl" fill="#D2DAC4" transform="translate(-9.9 18)"/>
+ <use href="#pr" fill="#E9EDE1" transform="translate(8.8 16)"/><use href="#pl" fill="#E9EDE1" transform="translate(-8.8 16)"/>
+ <use href="#pr" fill="#D2DAC4" transform="translate(7.7 14)"/><use href="#pl" fill="#D2DAC4" transform="translate(-7.7 14)"/>
+ <use href="#pr" fill="#E9EDE1" transform="translate(6.6 12)"/><use href="#pl" fill="#E9EDE1" transform="translate(-6.6 12)"/>
+ <use href="#pr" fill="#D2DAC4" transform="translate(5.5 10)"/><use href="#pl" fill="#D2DAC4" transform="translate(-5.5 10)"/>
+ <use href="#pr" fill="#E9EDE1" transform="translate(4.4 8)"/><use href="#pl" fill="#E9EDE1" transform="translate(-4.4 8)"/>
+ <use href="#pr" fill="#D2DAC4" transform="translate(3.3 6)"/><use href="#pl" fill="#D2DAC4" transform="translate(-3.3 6)"/>
+ <use href="#pr" fill="#E9EDE1" transform="translate(2.2 4)"/><use href="#pl" fill="#E9EDE1" transform="translate(-2.2 4)"/>
+ <use href="#pr" fill="#D2DAC4" transform="translate(1.1 2)"/><use href="#pl" fill="#D2DAC4" transform="translate(-1.1 2)"/>
+ <use href="#pr" fill="#FFFFFF"/><use href="#pl" fill="#F6F8F2"/>
+</svg>

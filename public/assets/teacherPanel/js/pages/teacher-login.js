@@ -3,6 +3,7 @@
  * - Password show/hide toggle
  * - Caps Lock warning
  * - Brand panel text slider
+ * - Open book: fits the book to the viewport (scale by height, width stretches)
  * Submit loading/disabled state is handled by Livewire (wire:loading) on the button.
  * Vanilla JS, event delegation so it survives Livewire re-renders.
  */
@@ -230,6 +231,152 @@
 
     function initSliders() {
         Array.prototype.forEach.call(document.querySelectorAll('[data-nb-slider]'), initSlider);
+    }
+
+    /* ======================================================================
+       Open book: fit the book to the viewport
+       - Scale from the height: (innerHeight - 32) / 860, clamped 0.6–1.25.
+       - Design width stretches to fill: (innerWidth - 32) / scale, clamped
+         1280–2000px. If even 1280 design px don't fit the width (narrow
+         screens), the scale is lowered so the book still fits.
+       Sets --nb-book-scale / --nb-book-w on [data-nb-book-fit] and
+       body.nb-login--book / body.nb-login--card (single page card).
+       ====================================================================== */
+    var BOOK_H = 860;
+    var BOOK_MIN_W = 1280;
+    var BOOK_MAX_W = 2000;
+    var BOOK_MIN_SCALE = 0.6;
+    var BOOK_MAX_SCALE = 1.25;
+    var BOOK_GUTTER = 32; // 16px around the book
+    var BOOK_MIN_VIEWPORT = 900;
+    var fitFrame = null;
+
+    function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+    }
+
+    function fitBook() {
+        fitFrame = null;
+        var fit = document.querySelector('[data-nb-book-fit]');
+        if (!fit || !document.body) {
+            return;
+        }
+
+        var availW = window.innerWidth - BOOK_GUTTER;
+        var availH = window.innerHeight - BOOK_GUTTER;
+
+        // height decides the scale; never wider than the screen allows
+        var scale = Math.min(availH / BOOK_H, availW / BOOK_MIN_W, BOOK_MAX_SCALE);
+        var isBook = scale >= BOOK_MIN_SCALE && window.innerWidth >= BOOK_MIN_VIEWPORT;
+
+        scale = clamp(scale, BOOK_MIN_SCALE, BOOK_MAX_SCALE);
+        var width = clamp(availW / scale, BOOK_MIN_W, BOOK_MAX_W);
+
+        fit.style.setProperty('--nb-book-scale', scale.toFixed(4));
+        fit.style.setProperty('--nb-book-w', Math.floor(width) + 'px');
+        document.body.classList.toggle('nb-login--book', isBook);
+        document.body.classList.toggle('nb-login--card', !isBook);
+
+        if (isBook) {
+            fitContent(fit, width);
+        } else {
+            fit.style.removeProperty('--nb-content-scale');
+        }
+    }
+
+    /* ----------------------------------------------------------------------
+       Content scale: the page content grows with the book width,
+       clamp(width / 1280, 1, 1.15), but never more than the page height
+       allows (validation errors, Caps Lock hint...). Never below 0.9; past
+       that the form page scrolls inside itself as a last resort.
+       Heights are layout values (offsetHeight), so the transforms don't
+       affect the measurement.
+       ---------------------------------------------------------------------- */
+    var CONTENT_MIN_SCALE = 0.9;
+    var CONTENT_MAX_SCALE = 1.15;
+
+    function px(style, prop) {
+        return parseFloat(style[prop]) || 0;
+    }
+
+    function outerHeight(el) {
+        if (!el) {
+            return 0;
+        }
+        var style = window.getComputedStyle(el);
+        return el.offsetHeight + px(style, 'marginTop') + px(style, 'marginBottom');
+    }
+
+    function paddingY(el) {
+        var style = window.getComputedStyle(el);
+        return px(style, 'paddingTop') + px(style, 'paddingBottom');
+    }
+
+    // unscaled height the page content needs
+    function contentHeight(page) {
+        var inner = page.querySelector('[data-nb-page-inner]');
+        if (!inner) {
+            return 0;
+        }
+        var center = inner.querySelector('.nb-login__center');
+        var total = paddingY(inner);
+
+        Array.prototype.forEach.call(inner.children, function (child) {
+            if (child === center) {
+                // the middle row stretches (1fr): count the form block, not the row
+                total += paddingY(center) + outerHeight(center.firstElementChild);
+            } else {
+                total += outerHeight(child);
+            }
+        });
+        return total;
+    }
+
+    function fitContent(fit, bookWidth) {
+        var pages = fit.querySelectorAll('.nb-login__main, .nb-brand');
+        var wanted = clamp(bookWidth / BOOK_MIN_W, 1, CONTENT_MAX_SCALE);
+        var current = wanted;
+
+        // two passes: a new scale changes the line wrapping, so measure again
+        for (var pass = 0; pass < 2; pass++) {
+            fit.style.setProperty('--nb-content-scale', current.toFixed(4));
+            var next = wanted;
+            Array.prototype.forEach.call(pages, function (page) {
+                var need = contentHeight(page);
+                if (need > 0 && page.clientHeight > 0) {
+                    next = Math.min(next, page.clientHeight / need);
+                }
+            });
+            next = clamp(next, CONTENT_MIN_SCALE, CONTENT_MAX_SCALE);
+            if (Math.abs(next - current) < 0.002) {
+                break;
+            }
+            current = next;
+        }
+        fit.style.setProperty('--nb-content-scale', current.toFixed(4));
+    }
+
+    function requestFit() {
+        if (fitFrame === null) {
+            fitFrame = window.requestAnimationFrame(fitBook);
+        }
+    }
+
+    fitBook();
+    window.addEventListener('resize', requestFit);
+    window.addEventListener('orientationchange', requestFit);
+
+    // Re-fit when the content changes height: validation errors, the Caps Lock
+    // hint, web fonts finishing loading. The scale it sets settles in a frame.
+    if (typeof window.ResizeObserver === 'function') {
+        var contentObserver = new window.ResizeObserver(requestFit);
+        Array.prototype.forEach.call(
+            document.querySelectorAll('.nb-login__form-block, .nb-slider'),
+            function (el) { contentObserver.observe(el); }
+        );
+    }
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(requestFit);
     }
 
     if (document.readyState === 'loading') {
