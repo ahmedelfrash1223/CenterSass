@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Student\Link\ScanStudentRequest;
 use App\Http\Requests\Api\Student\Link\UnlinkStudentRequest;
 use App\Http\Resources\Api\Student\Link\LinkedStudentResource;
-use App\Http\Resources\Api\Student\Link\SubscribedTeacherResource;
 use App\Services\Api\Student\Link\StudentLinkService;
 use App\Support\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +15,6 @@ class StudentLinkController extends Controller
     public function __construct(
         private readonly StudentLinkService $linkService,
     ) {}
-
 
     public function scan(ScanStudentRequest $request): JsonResponse
     {
@@ -35,7 +33,6 @@ class StudentLinkController extends Controller
         );
     }
 
-
     public function index(): JsonResponse
     {
         $account = auth('student_account')->user();
@@ -47,7 +44,6 @@ class StudentLinkController extends Controller
         );
     }
 
-
     public function unlink(UnlinkStudentRequest $request): JsonResponse
     {
         $account = auth('student_account')->user();
@@ -55,16 +51,5 @@ class StudentLinkController extends Controller
         $this->linkService->unlink($account, (int) $request->input('student_id'));
 
         return ApiResponse::success(message: 'تم فصل الطالب من حسابك.');
-    }
-
-    public function teachers(): JsonResponse
-    {
-        $account = auth('student_account')->user();
-        $teachers = $this->linkService->subscribedTeachers($account);
-
-        return ApiResponse::collection(
-            resource: SubscribedTeacherResource::collection($teachers),
-            message: 'قائمة المدرسين المشترك معهم.',
-        );
     }
 }

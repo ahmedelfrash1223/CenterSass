@@ -14,23 +14,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ─── Public ────────────────────────────────────────────
-Route::post('auth/register', [RegisterController::class, 'register'])
+Route::post('register', [RegisterController::class, 'register'])
     ->name('auth.register');
 
-Route::post('auth/login', [LoginController::class, 'login'])
+Route::post('login', [LoginController::class, 'login'])
     ->name('auth.login');
 
-Route::post('auth/google', [GoogleController::class, 'callback'])
+Route::post('google', [GoogleController::class, 'callback'])
     ->name('auth.google');
 
-Route::post('auth/otp/verify', [OtpController::class, 'verify'])
+Route::post('otp/verify', [OtpController::class, 'verify'])
     ->name('auth.otp.verify');
 
-Route::post('auth/otp/resend', [OtpController::class, 'resend'])
+Route::post('otp/resend', [OtpController::class, 'resend'])
     ->name('auth.otp.resend');
 
 // ─── Protected ─────────────────────────────────────────
 Route::middleware(['auth:sanctum', 'student.active', 'student.verified'])->group(function () {
     Route::get('me', [LoginController::class, 'me'])->name('me');
-    Route::post('auth/logout', [LogoutController::class, 'logout'])->name('auth.logout');
+    Route::post('logout', [LogoutController::class, 'logout'])->name('auth.logout');
 });

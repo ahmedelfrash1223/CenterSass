@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'student.active' => \App\Http\Middleware\Api\Student\EnsureAccountIsActive::class,
             'student.verified' => \App\Http\Middleware\Api\Student\EnsureAccountIsVerified::class,
             'parent.only'      => \App\Http\Middleware\Api\Student\EnsureIsParent::class,
+            'student.only'     => \App\Http\Middleware\Api\Student\EnsureIsStudent::class,
 
         ]);
     })

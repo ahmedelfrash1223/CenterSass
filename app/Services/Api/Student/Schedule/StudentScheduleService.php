@@ -13,8 +13,9 @@ class StudentScheduleService
     {
         $selectedDay = $day ?: now()->format('l');
 
-        $students = $account->students()->with('teacher')->get();
-        $studentIds = $students->pluck('id');
+        $students = $account->relationLoaded('students')
+            ? $account->students
+            : $account->students()->with('teacher')->get();        $studentIds = $students->pluck('id');
 
         $teachersData = $students->groupBy('teacher_id')->map(function ($teacherStudents) {
             $teacher = $teacherStudents->first()->teacher;

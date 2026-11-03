@@ -2,20 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes Master
-|--------------------------------------------------------------------------
-|
-*/
 
-Route::prefix('student')->name('student.')->group(function () {
+// ============ Auth Routes (Public) ============
+Route::prefix('auth')->name('auth.')->group(function () {
+    require __DIR__ . '/auth/auth.php';
+});
 
-    // Auth Routes
-    require __DIR__ . '/student/auth.php';
 
-    // Protected Routes
-    Route::middleware(['auth:sanctum', 'student.active', 'student.verified'])->group(function () {
+// Protected Routes  ( Student Only )
+Route::middleware(['auth:sanctum', 'student.active', 'student.verified', 'student.only'])
+    ->prefix('student')
+    ->name('student.')
+    ->group(function () {
 
         // Link Accounts Routes
         require __DIR__ . '/student/links.php';
@@ -43,11 +41,14 @@ Route::prefix('student')->name('student.')->group(function () {
         require __DIR__ . '/student/home.php';
     });
 
-    Route::middleware(['auth:sanctum', 'student.active', 'student.verified', 'parent.only'])->group(function () {
+// Protected Routes  ( Parent Only )
+Route::middleware(['auth:sanctum', 'student.active', 'student.verified', 'parent.only'])
+    ->prefix('parent')
+    ->name('parent.')
+    ->group(function () {
 
-        require __DIR__ . '/student/parent/children.php';
+        require __DIR__ . '/parent/children.php';
 
     });
 
-});
 

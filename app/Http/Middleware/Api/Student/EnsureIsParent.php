@@ -12,7 +12,18 @@ class EnsureIsParent
     {
         $account = $request->user('student_account');
 
-        if (! $account || $account->account_type !== 'parent') {
+        if (! $account) {
+            return response()->json([
+                'success' => false,
+                'message' => 'غير مصرح.',
+            ], 401);
+        }
+
+        $type = $account->account_type instanceof \App\Enums\Student\AccountTypeEnum
+            ? $account->account_type->value
+            : $account->account_type;
+
+        if ($type !== 'parent') {
             return response()->json([
                 'success' => false,
                 'message' => 'هذا المسار مخصص لأولياء الأمور فقط.',

@@ -21,6 +21,7 @@ use App\Services\Api\Student\Parent\ParentService;
 use App\Services\Api\Student\Schedule\StudentScheduleService;
 use App\Support\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class ParentChildrenController extends Controller
 {
@@ -47,9 +48,11 @@ class ParentChildrenController extends Controller
     public function show(int $studentId): JsonResponse
     {
         $parent = auth('student_account')->user();
-        $this->parentService->prepareChildAccount($parent, $studentId);
+        $child = $parent->children()->find($studentId);
 
-        $child = $parent->children()->findOrFail($studentId);
+        if (! $child) {
+            return ApiResponse::notFound('هذا الطالب غير مرتبط بحسابك.');
+        }
 
         return ApiResponse::resource(
             resource: new ParentChildResource($child),
@@ -127,6 +130,14 @@ class ParentChildrenController extends Controller
     public function schedules(ScheduleByDayRequest $request, int $studentId): JsonResponse
     {
         $fakeAccount = $this->parentService->prepareChildAccount(auth('student_account')->user(), $studentId);
+
+        Log::info('Fake Account Debug', [
+            'fake_account_id' => $fakeAccount->id,
+            'has_students_relation' => $fakeAccount->relationLoaded('students'),
+            'students_count' => $fakeAccount->students->count(),
+            'student_ids' => $fakeAccount->students->pluck('id')->toArray(),
+        ]);
+
         $data = $this->scheduleService->getDashboardForAccount($fakeAccount, $request->input('day'));
 
         return ApiResponse::success(
