@@ -43,5 +43,11 @@ Route::prefix('student')->name('student.')->group(function () {
         require __DIR__ . '/student/home.php';
     });
 
+    Route::middleware(['auth:sanctum', 'student.active', 'student.verified', 'parent.only'])->group(function () {
+
+        require __DIR__ . '/student/parent/children.php';
+
+    });
+
 });
 

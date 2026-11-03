@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\Student\Auth;
 
+use App\Enums\Student\AccountTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
@@ -15,7 +17,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'account_type' => ['required', 'string', 'in:student,parent'],
+            'account_type' => ['required', 'string', Rule::enum(AccountTypeEnum::class)],
             'name' => ['required', 'string', 'min:2', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:student_accounts,email'],
             'phone' => ['nullable', 'string', 'max:20', 'unique:student_accounts,phone'],

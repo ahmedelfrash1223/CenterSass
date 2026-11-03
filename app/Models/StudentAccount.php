@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Student\AccountTypeEnum;
 use App\Enums\Student\AuthProviderEnum;
 use App\Enums\Student\StudentAccountStatusEnum;
 use App\Traits\Student\HasAccountIdentityDefaults;
@@ -50,6 +51,7 @@ class StudentAccount extends Authenticatable
             'provider' => AuthProviderEnum::class,
             'status' => StudentAccountStatusEnum::class,
             'is_active' => 'boolean',
+            'account_type' => AccountTypeEnum::class,
         ];
     }
 

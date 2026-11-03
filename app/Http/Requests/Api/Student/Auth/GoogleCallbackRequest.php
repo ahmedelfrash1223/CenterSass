@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\Student\Auth;
 
+use App\Enums\Student\AccountTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GoogleCallbackRequest extends FormRequest
 {
@@ -15,7 +17,7 @@ class GoogleCallbackRequest extends FormRequest
     {
         return [
             'id_token' => ['required', 'string'],
-            'account_type' => ['required', 'string', 'in:student,parent'],
+            'account_type' => ['required', 'string', Rule::enum(AccountTypeEnum::class)],
             'device_name' => ['nullable', 'string', 'max:100'],
         ];
     }

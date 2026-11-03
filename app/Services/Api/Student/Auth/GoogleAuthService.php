@@ -2,6 +2,7 @@
 
 namespace App\Services\Api\Student\Auth;
 
+use App\Enums\Student\AccountTypeEnum;
 use App\Enums\Student\AuthProviderEnum;
 use App\Models\StudentAccount;
 use App\Support\Api\Student\Auth\TokenHelper;
@@ -23,6 +24,12 @@ class GoogleAuthService
      */
     public function authenticateWithIdToken(string $idToken, string $accountType, string $deviceName): array
     {
+        if (! AccountTypeEnum::tryFrom($accountType)) {
+            throw ValidationException::withMessages([
+                'account_type' => ['نوع الحساب غير صالح.'],
+            ]);
+        }
+
         $payload = $this->verifyGoogleIdToken($idToken);
 
         if (! $payload) {
